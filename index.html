@@ -2,31 +2,24 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <title>JS Router</title>
+    <title>Мій Проект</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; padding: 50px; }
+        nav ul { list-style: none; }
+        nav li { margin: 10px 0; }
+        a { text-decoration: none; color: #007bff; font-size: 1.2rem; }
+        a:hover { text-decoration: underline; }
+    </style>
 </head>
 <body>
     <nav>
-        <a href="#doc1" onclick="route('python_datatypes_cheatsheet.html')">python_datatypes_cheatsheet </a> |
-        <a href="#doc2" onclick="route('oop_python_guru_cheatsheet.html')">oop_python_guru_cheatsheet </a> |
-        <a href="#doc3" onclick="route('python_data_types_cheatsheet.html')">python_data_types_cheatsheet </a> |
-        <a href="#doc4" onclick="route('python_cheatsheet.html')">python_cheatsheet 2</a>
+        <h1>Навігація</h1>
+        <ul>
+            <li><a href="python_datatypes_cheatsheet.html">python_datatypes_cheatsheet</a></li>
+            <li><a href="oop_python_guru_cheatsheet.html">oop_python_guru_cheatsheet</a></li>
+            <li><a href="python_data_types_cheatsheet.docx">python_data_types_cheatsheet</a></li>
+            <li><a href="python_cheatsheet.html">python_cheatsheet</a></li>
+        </ul>
     </nav>
-
-    <div id="content">
-        <h2>Вітаю! Оберіть документ вище.</h2>
-    </div>
-
-    <script>
-        async function route(url) {
-            const response = await fetch(url);
-            const html = await response.text();
-            document.getElementById('content').innerHTML = html;
-        }
-
-        // Обробка навігації при завантаженні сторінки за хешем (напр. index.html#doc1)
-        window.addEventListener('hashchange', () => {
-            // Тут можна додати логіку співставлення хешу з файлом
-        });
-    </script>
 </body>
 </html>
