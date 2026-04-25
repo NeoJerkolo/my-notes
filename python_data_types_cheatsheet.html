@@ -1,0 +1,416 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-mono, monospace); }
+.wrap { padding: 1rem 0; }
+.search-bar { display: flex; gap: 8px; margin-bottom: 1.5rem; }
+.search-bar input { flex: 1; font-family: var(--font-mono); font-size: 13px; }
+.tabs { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.tab { padding: 5px 14px; font-size: 12px; border: 0.5px solid var(--color-border-secondary); border-radius: var(--border-radius-md); cursor: pointer; background: transparent; font-family: var(--font-mono); color: var(--color-text-secondary); transition: all 0.15s; }
+.tab:hover { background: var(--color-background-secondary); }
+.tab.active { background: var(--color-background-secondary); color: var(--color-text-primary); border-color: var(--color-border-primary); }
+.section { margin-bottom: 2rem; }
+.section-title { font-size: 11px; font-weight: 500; text-transform: uppercase; letter-spacing: 0.08em; color: var(--color-text-tertiary); margin-bottom: 0.75rem; padding-bottom: 6px; border-bottom: 0.5px solid var(--color-border-tertiary); }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 0.75rem; }
+.card-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; cursor: pointer; user-select: none; }
+.type-badge { font-size: 13px; font-weight: 500; padding: 3px 10px; border-radius: var(--border-radius-md); font-family: var(--font-mono); }
+.badge-int { background: #E6F1FB; color: #0C447C; }
+.badge-float { background: #EEEDFE; color: #3C3489; }
+.badge-bool { background: #EAF3DE; color: #27500A; }
+.badge-str { background: #FAEEDA; color: #633806; }
+.badge-list { background: #E1F5EE; color: #085041; }
+.badge-tuple { background: #FAECE7; color: #712B13; }
+.badge-dict { background: #FBEAF0; color: #72243E; }
+.badge-set { background: #FCEBEB; color: #791F1F; }
+.badge-none { background: #F1EFE8; color: #444441; }
+.badge-bytes { background: #E6F1FB; color: #185FA5; }
+.card-title { font-size: 15px; font-weight: 500; color: var(--color-text-primary); }
+.card-subtitle { font-size: 12px; color: var(--color-text-secondary); margin-left: auto; }
+.card-body { font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; }
+.card-body.hidden { display: none; }
+.sub { margin-top: 10px; }
+.sub-title { font-size: 11px; font-weight: 500; color: var(--color-text-tertiary); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 5px; margin-top: 10px; }
+pre { background: var(--color-background-secondary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 8px 12px; font-size: 12px; font-family: var(--font-mono); overflow-x: auto; line-height: 1.6; color: var(--color-text-primary); white-space: pre-wrap; margin-top: 6px; }
+.complexity-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 6px; }
+.op-row { display: flex; justify-content: space-between; align-items: center; padding: 3px 8px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); font-size: 12px; }
+.op-name { color: var(--color-text-secondary); font-family: var(--font-mono); }
+.op-big { font-weight: 500; color: var(--color-text-primary); }
+.o1 { color: #0F6E56; }
+.on { color: #BA7517; }
+.ologn { color: #185FA5; }
+.on2 { color: #A32D2D; }
+.fun-fact { background: var(--color-background-secondary); border-left: 2px solid var(--color-border-info); border-radius: 0; padding: 8px 12px; font-size: 12px; color: var(--color-text-secondary); margin-top: 10px; line-height: 1.6; }
+.fun-fact strong { color: var(--color-text-primary); }
+.methods-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 6px; }
+.method-tag { font-family: var(--font-mono); font-size: 11px; padding: 3px 7px; background: var(--color-background-secondary); border-radius: var(--border-radius-md); color: var(--color-text-secondary); }
+.chevron { font-size: 10px; color: var(--color-text-tertiary); transition: transform 0.2s; }
+.chevron.open { transform: rotate(90deg); }
+.hidden-count { font-size: 11px; color: var(--color-text-tertiary); margin-top: 4px; }
+</style>
+<div class="wrap">
+<h2 class="sr-only">Python Data Types Cheatsheet — повний огляд усіх типів даних</h2>
+<div class="search-bar">
+  <input type="text" id="search" placeholder="Шукати тип або метод..." oninput="filterCards()">
+</div>
+<div class="tabs" id="tabs">
+  <button class="tab active" onclick="filterTab('all', this)">Всі</button>
+  <button class="tab" onclick="filterTab('числові', this)">Числові</button>
+  <button class="tab" onclick="filterTab('рядки', this)">Рядки</button>
+  <button class="tab" onclick="filterTab('колекції', this)">Колекції</button>
+  <button class="tab" onclick="filterTab('інші', this)">Інші</button>
+</div>
+<div id="cards-container"></div>
+</div>
+
+<script>
+const TYPES = [
+{
+  id:'int', badge:'badge-int', label:'int', title:'Integer', subtitle:'64-bit, необмежений', category:'числові',
+  desc:'Цілі числа. В Python 3 — один тип int без обмежень на розмір (на відміну від C де є int/long).',
+  underHood:`CPython зберігає "малі" числа від -5 до 256 у пулі (кеш об'єктів). Тому a = 5; b = 5 → a is b == True. Великі числа — окремі об'єкти в heap. Зберігається як масив 30-бітних "цифр" (digits) у структурі PyLongObject.`,
+  code:`a = 42
+b = -7
+big = 10 ** 100  # без overflow!
+bin_n = 0b1010   # бінарний = 10
+hex_n = 0xFF     # шістнадцятковий = 255
+oct_n = 0o17     # вісімковий = 15
+
+# Цікавинка: кеш малих чисел
+a = 256; b = 256
+print(a is b)    # True  (один об'єкт)
+a = 257; b = 257
+print(a is b)    # False (різні об'єкти)`,
+  ops:[['int(x)', 'O(1)'],['+ - * //', 'O(1)*'],['** n', 'O(n)'],['bit_length()', 'O(1)']],
+  opsNote:'* для малих чисел. Для великих (bignum) арифметика O(n) де n — кількість цифр.',
+  methods:['int(x, base)', 'bit_length()', 'to_bytes()', 'from_bytes()', 'as_integer_ratio()'],
+  fact:'bool — це підклас int! True == 1, False == 0. Тому True + True = 2, і sum([True, False, True]) = 2.'
+},
+{
+  id:'float', badge:'badge-float', label:'float', title:'Float', subtitle:'64-bit IEEE 754', category:'числові',
+  desc:'Числа з плаваючою крапкою. Python float = C double = 64 біти (52 мантиса + 11 експонента + 1 знак).',
+  underHood:`IEEE 754 double precision. Точно зберігає ~15-17 значущих десяткових цифр. 0.1 в бінарному — нескінченна дріб, тому 0.1 + 0.2 ≠ 0.3. Для грошей використовують decimal.Decimal.`,
+  code:`x = 3.14
+y = 1.5e10      # наукова нотація
+inf = float('inf')
+nan = float('nan')
+
+# Класична пастка
+print(0.1 + 0.2 == 0.3)  # False!
+print(0.1 + 0.2)          # 0.30000000000000004
+
+# Правильне порівняння
+import math
+print(math.isclose(0.1 + 0.2, 0.3))  # True
+
+# Для точних обчислень
+from decimal import Decimal
+print(Decimal('0.1') + Decimal('0.2'))  # 0.3`,
+  ops:[['float(x)', 'O(1)'],['+ - * /', 'O(1)'],['** ', 'O(1)'],['round(x, n)', 'O(1)']],
+  methods:['is_integer()', 'as_integer_ratio()', 'hex()', 'fromhex()', 'math.isclose()'],
+  fact:'float("nan") != float("nan") — NaN не рівне нічому, включно з собою. Це по стандарту IEEE 754.'
+},
+{
+  id:'bool', badge:'badge-bool', label:'bool', title:'Bool', subtitle:'підклас int', category:'числові',
+  desc:'Булевий тип. Насправді підклас int: True = 1, False = 0. Є лише два екземпляри — синглтони.',
+  underHood:`bool успадковує int. True і False — єдині два об'єкти типу bool в усьому процесі Python (singleton). Перевіряти треба через is, а не ==. Будь-який об'єкт може бути "truthy" або "falsy".`,
+  code:`print(type(True))    # <class 'bool'>
+print(isinstance(True, int))  # True!
+print(True + True)   # 2
+print(True * 5)      # 5
+print(True is True)  # True (singleton!)
+
+# Falsy значення
+bool(0), bool(''), bool([]), bool(None)  # всі False
+bool(1), bool('a'), bool([1])            # всі True
+
+# Порівняння
+print(True == 1)     # True
+print(True is 1)     # False (різні типи!)`,
+  ops:[['bool(x)', 'O(1)'],['and / or', 'O(1)'],['not', 'O(1)'],['all()/any()', 'O(n)']],
+  methods:['bool(x)', 'all(iterable)', 'any(iterable)', '__bool__()', '__len__()'],
+  fact:`Чому bool наслідує int? Історична причина: у Python 2 не було bool взагалі, використовували 0/1. Python 2.2 додав bool як підклас int для зворотної сумісності.`
+},
+{
+  id:'str', badge:'badge-str', label:'str', title:'String', subtitle:'immutable, Unicode', category:'рядки',
+  desc:'Рядки — незмінні послідовності Unicode символів (UTF-32 під капотом). Підтримують усі мови світу.',
+  underHood:`CPython використовує "compact strings" — 3 внутрішні формати: Latin-1 (1 байт/символ для ASCII), UCS-2 (2 байти, BMP), UCS-4 (4 байти, всі Unicode). Формат обирається автоматично на основі символів у рядку.`,
+  code:`s = "Привіт"
+s2 = 'Hello'
+multi = """
+рядок
+кілька ліній
+"""
+raw = r"C:\\Users\\no_escape"  # raw string
+
+# f-рядки (Python 3.6+) — найшвидший спосіб
+name = "Вася"
+age = 25
+print(f"{name} має {age} років")  # Вася має 25 років
+print(f"{2**10 = }")              # 2**10 = 1024
+
+# Незмінність
+s = "hello"
+# s[0] = 'H'  → TypeError!
+s = s.replace('h', 'H')  # створює новий рядок
+
+# Інтернінг (interning)
+a = "hello"
+b = "hello"
+print(a is b)  # True (CPython інтернує короткі рядки)`,
+  ops:[['s[i]', 'O(1)'],['len(s)', 'O(1)'],['s + t', 'O(n+m)'],['s in t', 'O(n*m)'],['s.split()', 'O(n)'],['s.join()', 'O(n)']],
+  methods:['upper/lower/title()', 'strip/lstrip/rstrip()', 'split/rsplit(sep)', 'join(iterable)', 'replace(old, new)', 'find/index(sub)', 'startswith/endswith()', 'format/format_map()', 'encode(encoding)', 'count(sub)', 'zfill/center/ljust/rjust()'],
+  fact:`"".join(list) швидше ніж s += "..." у циклі! Причина: += створює новий рядок кожного разу O(n²). join() спочатку рахує загальний розмір, потім виділяє пам'ять один раз — O(n).`
+},
+{
+  id:'list', badge:'badge-list', label:'list', title:'List', subtitle:'dynamic array', category:'колекції',
+  desc:'Динамічний масив. Найуніварсальніша колекція Python — впорядкована, змінна, гетерогенна.',
+  underHood:`Це масив покажчиків (array of pointers) на Python об'єкти. При переповненні — realloc з overallocation (~1.125x). Тому append() амортизовано O(1). Пам'ять: 56 байт (порожній) + 8 байт на елемент (покажчик).`,
+  code:`lst = [1, 'два', 3.0, [4, 5]]
+lst.append(6)        # O(1) amorized
+lst.insert(0, 0)     # O(n) — зсуває всі!
+lst.pop()            # O(1) — з кінця
+lst.pop(0)           # O(n) — з початку
+
+# List comprehension — швидше ніж цикл
+squares = [x**2 for x in range(10)]
+evens = [x for x in range(20) if x % 2 == 0]
+
+# Slice — завжди копія!
+a = [1, 2, 3, 4, 5]
+b = a[1:3]    # [2, 3] — новий список
+c = a[:]      # повна копія
+
+# Сортування
+a.sort()           # in-place, O(n log n), Timsort
+b = sorted(a)      # новий список
+a.sort(key=lambda x: -x)  # зворотній порядок`,
+  ops:[['append(x)', 'O(1)*'],['pop()', 'O(1)'],['pop(i)', 'O(n)'],['insert(i,x)', 'O(n)'],['x in lst', 'O(n)'],['lst[i]', 'O(1)'],['sort()', 'O(n log n)'],['reverse()', 'O(n)']],
+  opsNote:'* amortized — іноді O(n) при reallocate',
+  methods:['append(x)', 'extend(iterable)', 'insert(i, x)', 'remove(x)', 'pop([i])', 'index(x)', 'count(x)', 'sort(key, reverse)', 'reverse()', 'copy()', 'clear()'],
+  fact:`Python використовує Timsort для sort() — гібрид merge sort + insertion sort. Ідеальний для реальних даних (вже частково відсортованих). Стабільний: рівні елементи зберігають порядок.`
+},
+{
+  id:'tuple', badge:'badge-tuple', label:'tuple', title:'Tuple', subtitle:'immutable sequence', category:'колекції',
+  desc:'Незмінна послідовність. Швидша за list, займає менше пам\'яті, може бути ключем словника.',
+  underHood:`Без overallocation — точний розмір у пам'яті. Кортежі 0-20 елементів кешуються CPython (free list). Незмінність ≠ хешованість: якщо в кортежі є list — він не хешований.`,
+  code:`t = (1, 2, 3)
+t2 = 1, 2, 3        # теж кортеж!
+single = (1,)       # кома обов'язкова!
+empty = ()
+
+# Unpacking
+x, y, z = t
+first, *rest = (1, 2, 3, 4, 5)
+# first=1, rest=[2,3,4,5]
+
+# Named tuple
+from collections import namedtuple
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(3, 4)
+print(p.x, p.y)  # 3 4
+
+# Tuple vs List швидкість
+import timeit
+# tuple literal ~2x швидше list literal
+# індексування tuple трохи швидше
+
+# Як ключ словника
+d = {(1, 2): 'точка A', (3, 4): 'точка B'}`,
+  ops:[['t[i]', 'O(1)'],['len(t)', 'O(1)'],['x in t', 'O(n)'],['t + t2', 'O(n+m)'],['count(x)', 'O(n)'],['index(x)', 'O(n)']],
+  methods:['count(x)', 'index(x)', 'len(t)', '_make()', '_asdict()', '_replace()'],
+  fact:`Чому кортежі швидші? list зберігає capacity окремо від len, а також pointer to array. tuple — просто масив покажчиків прямо в об'єкті. Менше indirection = швидше.`
+},
+{
+  id:'dict', badge:'badge-dict', label:'dict', title:'Dictionary', subtitle:'hash table, впорядкований з 3.7', category:'колекції',
+  desc:'Хеш-таблиця. З Python 3.7 — гарантовано зберігає порядок вставки. Найшвидший пошук серед колекцій.',
+  underHood:`Compact hash table (Python 3.6+). Зберігає indices array (малий) + entries array (ключ, значення, хеш). Load factor ~2/3. При колізії — open addressing з quadratic probing. Rehash при переповненні.`,
+  code:`d = {'a': 1, 'b': 2}
+d['c'] = 3           # O(1) avg
+d.get('x', 0)        # безпечно, не KeyError
+d.setdefault('d', []).append(1)
+
+# Dict comprehension
+squares = {x: x**2 for x in range(5)}
+
+# Злиття (Python 3.9+)
+a = {'x': 1}
+b = {'y': 2}
+c = a | b    # {'x': 1, 'y': 2}
+
+# Ітерація
+for k, v in d.items():    # по парах
+    pass
+for k in d:               # по ключах
+    pass
+
+# defaultdict
+from collections import defaultdict
+dd = defaultdict(list)
+dd['key'].append(1)   # не KeyError!
+
+# Counter
+from collections import Counter
+c = Counter("mississippi")
+print(c.most_common(2))  # [('s', 4), ('i', 4)]`,
+  ops:[['d[k]', 'O(1)*'],['d[k]=v', 'O(1)*'],['del d[k]', 'O(1)*'],['k in d', 'O(1)*'],['len(d)', 'O(1)'],['iter(d)', 'O(n)']],
+  opsNote:'* amortized average. Worst case O(n) при колізіях (рідко)',
+  methods:['get(k, default)', 'setdefault(k, v)', 'update(other)', 'pop(k)', 'popitem()', 'keys()', 'values()', 'items()', 'copy()', 'fromkeys()', 'clear()'],
+  fact:`До Python 3.6 dict не гарантував порядок. У 3.6 CPython зробив це impl detail, у 3.7 — офіційна специфікація мови. Новий compact format займає на 20-25% менше пам'яті.`
+},
+{
+  id:'set', badge:'badge-set', label:'set / frozenset', title:'Set', subtitle:'hash set, без дублікатів', category:'колекції',
+  desc:'Невпорядкована колекція унікальних елементів. Базується на хеш-таблиці. Ідеальна для пошуку та операцій над множинами.',
+  underHood:`Реалізований як dict без values (тільки ключі). Хешує кожен елемент. Елементи мають бути hashable (незмінні). frozenset — незмінна версія, може бути ключем dict або елементом іншого set.`,
+  code:`s = {1, 2, 3, 2, 1}   # {1, 2, 3}
+s = set([1, 2, 2, 3])  # теж {1, 2, 3}
+empty = set()           # НЕ {} (це dict!)
+
+s.add(4)
+s.discard(99)  # не кидає помилку якщо немає
+s.remove(1)    # кидає KeyError якщо немає
+
+# Операції над множинами
+a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+a | b   # union       {1,2,3,4,5,6}
+a & b   # intersection {3, 4}
+a - b   # difference   {1, 2}
+a ^ b   # symmetric diff {1,2,5,6}
+
+# Перевірки
+a <= b  # subset
+a < b   # strict subset
+a.isdisjoint(b)  # перетину немає?
+
+# frozenset як ключ
+fs = frozenset([1, 2, 3])
+d = {fs: 'незмінна множина'}`,
+  ops:[['add(x)', 'O(1)*'],['remove(x)', 'O(1)*'],['x in s', 'O(1)*'],['s | t', 'O(n+m)'],['s & t', 'O(min(n,m))'],['s - t', 'O(n)']],
+  methods:['add(x)', 'remove(x)', 'discard(x)', 'pop()', 'union()', 'intersection()', 'difference()', 'symmetric_difference()', 'issubset()', 'issuperset()', 'isdisjoint()', 'copy()', 'update()'],
+  fact:`x in set — O(1), x in list — O(n). Якщо потрібно часто перевіряти наявність елементів у великій колекції — set у 100x+ швидше за list.`
+},
+{
+  id:'none', badge:'badge-none', label:'None', title:'NoneType', subtitle:'singleton, null object', category:'інші',
+  desc:'None — єдиний об\'єкт типу NoneType. Представляє "нічого" або відсутність значення. Singleton.',
+  underHood:`None — глобальний singleton, в CPython зберігається як статичний об'єкт. Завжди той самий об'єкт, тому перевірка через is None — правильна та швидка. None є falsy.`,
+  code:`x = None
+print(type(None))     # <class 'NoneType'>
+print(None is None)   # True (завжди!)
+print(None == None)   # True, але is кращий
+
+# Правильна перевірка
+if x is None:         # правильно
+    pass
+if x == None:         # працює, але не pythonic
+
+# Функції без return повертають None
+def no_return():
+    pass
+print(no_return())    # None
+
+# Типові патерни
+def func(value=None):
+    if value is None:
+        value = []  # уникаємо mutable default arg
+
+# None є falsy
+print(bool(None))     # False`,
+  ops:[['x is None', 'O(1)'],['x is not None', 'O(1)'],['bool(None)', 'O(1)']],
+  methods:['Методів немає — None не має корисних методів'],
+  fact:`Ніколи не пишіть def func(lst=[]) — mutable default argument! Список створюється один раз і спільний між викликами. Використовуйте def func(lst=None): if lst is None: lst = []`
+},
+{
+  id:'bytes', badge:'badge-bytes', label:'bytes / bytearray', title:'Bytes', subtitle:'бінарні дані', category:'інші',
+  desc:'Незмінна (bytes) або змінна (bytearray) послідовність байтів. Для роботи з файлами, мережею, бінарними протоколами.',
+  underHood:`bytes — immutable, оптимізований для читання. bytearray — mutable буфер, схожий на list але тільки int 0-255. memoryview дає доступ до буферу без копіювання.`,
+  code:`b = b"hello"           # bytes literal
+b2 = bytes([72, 101, 108])  # з list чисел
+b3 = "Привіт".encode('utf-8')  # рядок → байти
+s = b3.decode('utf-8')         # байти → рядок
+
+print(b[0])    # 104 (int, не char!)
+print(b[1:3])  # b'el'
+
+# bytearray — змінний
+ba = bytearray(b"hello")
+ba[0] = 72      # OK!
+ba.append(33)   # b"Hello!"
+
+# memoryview — без копіювання
+data = bytearray(b"0123456789")
+view = memoryview(data)
+view[0] = 65    # змінює оригінал!
+
+# hex
+print(b"\\xff\\x00".hex())  # 'ff00'
+print(bytes.fromhex('ff00'))  # b'\\xff\\x00'`,
+  ops:[['b[i]', 'O(1)'],['len(b)', 'O(1)'],['b + b2', 'O(n+m)'],['b in b2', 'O(n*m)'],['decode()', 'O(n)']],
+  methods:['decode(encoding)', 'hex()', 'fromhex()', 'count(sub)', 'find(sub)', 'replace(old, new)', 'split(sep)', 'startswith()', 'upper/lower()', 'join()'],
+  fact:`bytes vs str: bytes — сирі дані (мережа, файли), str — текст для людей. Завжди decode байти якомога раніше ("Unicode sandwich"): читаємо байти → decode → обробляємо str → encode → пишемо байти.`
+}
+];
+
+let activeTab = 'all';
+let searchQuery = '';
+
+function render() {
+  const container = document.getElementById('cards-container');
+  let filtered = TYPES.filter(t => {
+    const matchTab = activeTab === 'all' || t.category === activeTab;
+    const q = searchQuery.toLowerCase();
+    const matchSearch = !q || t.id.includes(q) || t.title.toLowerCase().includes(q) || t.label.toLowerCase().includes(q) || (t.methods && t.methods.some(m => m.toLowerCase().includes(q)));
+    return matchTab && matchSearch;
+  });
+  container.innerHTML = filtered.map(t => renderCard(t)).join('');
+  filtered.forEach(t => {
+    const card = document.getElementById('card-' + t.id);
+    if (card) card.addEventListener('click', (e) => {
+      if (e.target.tagName === 'BUTTON') return;
+      const body = document.getElementById('body-' + t.id);
+      const chev = document.getElementById('chev-' + t.id);
+      if (body) body.classList.toggle('hidden');
+      if (chev) chev.classList.toggle('open');
+    });
+  });
+}
+
+function renderCard(t) {
+  const opsHtml = t.ops ? `<div class="sub-title">Складність операцій</div><div class="complexity-grid">${t.ops.map(([op, big]) => {
+    let cls = big.includes('1)') ? 'o1' : big.includes('log') ? 'ologn' : big.includes('n²') || big.includes('n*m') ? 'on2' : 'on';
+    return `<div class="op-row"><span class="op-name">${op}</span><span class="op-big ${cls}">${big}</span></div>`;
+  }).join('')}</div>${t.opsNote ? `<div style="font-size:11px;color:var(--color-text-tertiary);margin-top:4px;">${t.opsNote}</div>` : ''}` : '';
+  const methodsHtml = t.methods ? `<div class="sub-title">Методи</div><div class="methods-grid">${t.methods.map(m => `<span class="method-tag">${m}</span>`).join('')}</div>` : '';
+  const factHtml = t.fact ? `<div class="fun-fact"><strong>Цікаво:</strong> ${t.fact}</div>` : '';
+  return `<div class="card" id="card-${t.id}" style="cursor:pointer;">
+    <div class="card-header">
+      <span class="type-badge ${t.badge}">${t.label}</span>
+      <span class="card-title">${t.title}</span>
+      <span class="card-subtitle">${t.subtitle}</span>
+      <span class="chevron" id="chev-${t.id}">&#9654;</span>
+    </div>
+    <div class="card-body hidden" id="body-${t.id}">
+      <div>${t.desc}</div>
+      <div class="sub"><div class="sub-title">Під капотом</div><div style="font-size:12px;line-height:1.7;color:var(--color-text-secondary);">${t.underHood}</div></div>
+      <div class="sub"><div class="sub-title">Приклади коду</div><pre>${t.code}</pre></div>
+      ${opsHtml}
+      ${methodsHtml}
+      ${factHtml}
+    </div>
+  </div>`;
+}
+
+function filterTab(tab, el) {
+  activeTab = tab;
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  render();
+}
+
+function filterCards() {
+  searchQuery = document.getElementById('search').value;
+  render();
+}
+
+render();
+</script>
