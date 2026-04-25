@@ -1,0 +1,885 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-mono); }
+.root { padding: 1rem 0; }
+.nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.nav-btn { font-size: 12px; padding: 5px 12px; border: 0.5px solid var(--color-border-secondary); border-radius: 20px; background: transparent; color: var(--color-text-secondary); cursor: pointer; font-family: var(--font-mono); transition: all 0.15s; }
+.nav-btn:hover { background: var(--color-background-secondary); color: var(--color-text-primary); }
+.nav-btn.active { background: #2C2C2A; color: #F1EFE8; border-color: #2C2C2A; }
+.section { display: none; }
+.section.active { display: block; }
+.section-title { font-size: 11px; font-weight: 500; letter-spacing: 0.1em; color: var(--color-text-tertiary); text-transform: uppercase; margin-bottom: 1rem; font-family: var(--font-sans); }
+.card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.card-title { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem; font-family: var(--font-sans); }
+.card-desc { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 0.75rem; line-height: 1.6; font-family: var(--font-sans); }
+.code-block { background: var(--color-background-tertiary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 0.875rem 1rem; font-size: 12px; line-height: 1.7; overflow-x: auto; white-space: pre; font-family: var(--font-mono); color: var(--color-text-primary); }
+.kw { color: #533AB7; }
+.fn { color: #0F6E56; }
+.str { color: #3B6D11; }
+.cm { color: var(--color-text-tertiary); }
+.num { color: #993C1D; }
+.cls { color: #185FA5; }
+.tip { background: #E6F1FB; border-left: 3px solid #378ADD; border-radius: 0; padding: 0.75rem 1rem; font-size: 13px; color: #0C447C; line-height: 1.6; margin-top: 0.75rem; font-family: var(--font-sans); }
+.warn { background: #FAEEDA; border-left: 3px solid #BA7517; border-radius: 0; padding: 0.75rem 1rem; font-size: 13px; color: #633806; line-height: 1.6; margin-top: 0.75rem; font-family: var(--font-sans); }
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+.badge { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 10px; font-family: var(--font-sans); font-weight: 500; margin-bottom: 0.5rem; }
+.badge-blue { background: #E6F1FB; color: #185FA5; }
+.badge-green { background: #EAF3DE; color: #3B6D11; }
+.badge-amber { background: #FAEEDA; color: #854F0B; }
+.badge-coral { background: #FAECE7; color: #993C1D; }
+.badge-purple { background: #EEEDFE; color: #534AB7; }
+.badge-teal { background: #E1F5EE; color: #0F6E56; }
+.pillar-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 1.25rem; }
+.pillar { border-radius: var(--border-radius-md); padding: 0.75rem; text-align: center; }
+.pillar-label { font-size: 11px; font-weight: 500; font-family: var(--font-sans); margin-top: 4px; }
+.pillar-icon { font-size: 20px; }
+@media (max-width: 500px) { .pillar-grid { grid-template-columns: repeat(2,1fr); } }
+hr { border: none; border-top: 0.5px solid var(--color-border-tertiary); margin: 1rem 0; }
+</style>
+
+<div class="root">
+<h2 class="sr-only" style="position:absolute;left:-9999px">ООП в Python — повна шпаргалка для гуру</h2>
+
+<div class="pillar-grid">
+  <div class="pillar" style="background:#EEEDFE"><div class="pillar-icon">🔒</div><div class="pillar-label" style="color:#534AB7">Інкапсуляція</div></div>
+  <div class="pillar" style="background:#E1F5EE"><div class="pillar-icon">🧬</div><div class="pillar-label" style="color:#0F6E56">Наслідування</div></div>
+  <div class="pillar" style="background:#E6F1FB"><div class="pillar-icon">🎭</div><div class="pillar-label" style="color:#185FA5">Поліморфізм</div></div>
+  <div class="pillar" style="background:#FAECE7"><div class="pillar-icon">🗂️</div><div class="pillar-label" style="color:#993C1D">Абстракція</div></div>
+</div>
+
+<nav class="nav">
+  <button class="nav-btn active" onclick="show('basics')">Класи і об'єкти</button>
+  <button class="nav-btn" onclick="show('encap')">Інкапсуляція</button>
+  <button class="nav-btn" onclick="show('inherit')">Наслідування</button>
+  <button class="nav-btn" onclick="show('poly')">Поліморфізм</button>
+  <button class="nav-btn" onclick="show('abstract')">Абстракція</button>
+  <button class="nav-btn" onclick="show('magic')">Магічні методи</button>
+  <button class="nav-btn" onclick="show('meta')">Метакласи</button>
+  <button class="nav-btn" onclick="show('patterns')">Патерни</button>
+  <button class="nav-btn" onclick="show('advanced')">Просунуте</button>
+</nav>
+
+<!-- BASICS -->
+<div id="basics" class="section active">
+  <p class="section-title">Класи і об'єкти — основа всього</p>
+
+  <div class="card">
+    <div class="badge badge-blue">Анатомія класу</div>
+    <div class="card-desc">Клас — це шаблон. Об'єкт — це екземпляр шаблону. <code>__init__</code> — конструктор, <code>self</code> — посилання на поточний екземпляр.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Car</span>:
+    <span class="cm"># Атрибут класу — спільний для всіх екземплярів</span>
+    wheels: <span class="num">int</span> = <span class="num">4</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, brand: <span class="num">str</span>, speed: <span class="num">int</span>) -> <span class="kw">None</span>:
+        <span class="cm"># Атрибути екземпляра — унікальні для кожного об'єкта</span>
+        self.brand = brand        <span class="cm"># публічний</span>
+        self._speed = speed       <span class="cm"># захищений (конвенція)</span>
+        self.__vin = <span class="str">"SECRET"</span>   <span class="cm"># приватний (name mangling)</span>
+
+    <span class="kw">def</span> <span class="fn">describe</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"</span>{self.brand}<span class="str">, </span>{self._speed}<span class="str"> km/h"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"Car(brand={self.brand!r})"</span>
+
+car = <span class="cls">Car</span>(<span class="str">"BMW"</span>, <span class="num">200</span>)
+print(car.describe())         <span class="cm"># BMW, 200 km/h</span>
+print(car._Car__vin)          <span class="cm"># SECRET (name mangling розкривається так)</span>
+print(car.wheels)             <span class="cm"># 4 (атрибут класу)</span>
+<span class="cls">Car</span>.wheels = <span class="num">6</span>                <span class="cm"># зміна для ВСІХ екземплярів!</span></div>
+    <div class="tip">self — це перший аргумент будь-якого методу екземпляра. Python передає його автоматично при виклику car.describe(). Ім'я "self" — лише конвенція, але не міняй його.</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="badge badge-green">@classmethod</div>
+      <div class="card-desc">Метод класу — отримує клас (cls), а не екземпляр. Використовується як альтернативний конструктор.</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">Date</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, y, m, d):
+        self.year, self.month, self.day = y, m, d
+
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_string</span>(cls, s: <span class="num">str</span>):
+        y, m, d = map(<span class="num">int</span>, s.split(<span class="str">"-"</span>))
+        <span class="kw">return</span> cls(y, m, d)  <span class="cm"># cls() = Date()</span>
+
+d = <span class="cls">Date</span>.from_string(<span class="str">"2024-01-15"</span>)</div>
+    </div>
+    <div class="card">
+      <div class="badge badge-amber">@staticmethod</div>
+      <div class="card-desc">Статичний метод — не отримує ні self, ні cls. Просто функція всередині класу для логічної організації.</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">MathHelper</span>:
+    <span class="kw">@staticmethod</span>
+    <span class="kw">def</span> <span class="fn">is_prime</span>(n: <span class="num">int</span>) -> <span class="num">bool</span>:
+        <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return False</span>
+        <span class="kw">for</span> i <span class="kw">in</span> <span class="num">range</span>(<span class="num">2</span>, <span class="num">int</span>(n**<span class="num">0.5</span>)+<span class="num">1</span>):
+            <span class="kw">if</span> n % i == <span class="num">0</span>: <span class="kw">return False</span>
+        <span class="kw">return True</span>
+
+<span class="cls">MathHelper</span>.is_prime(<span class="num">17</span>)  <span class="cm"># True</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-purple">__slots__ — оптимізація пам'яті</div>
+    <div class="card-desc">За замовчуванням Python зберігає атрибути в словнику __dict__. __slots__ замінює словник на більш ефективну структуру — економить 40-60% пам'яті.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Point</span>:
+    __slots__ = (<span class="str">'x'</span>, <span class="str">'y'</span>)  <span class="cm"># тільки ці атрибути дозволені!</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, x: <span class="num">float</span>, y: <span class="num">float</span>):
+        self.x = x
+        self.y = y
+
+p = <span class="cls">Point</span>(<span class="num">1.0</span>, <span class="num">2.0</span>)
+<span class="cm"># p.z = 3.0  → AttributeError! тільки x і y</span>
+<span class="cm"># p.__dict__  → AttributeError! немає словника</span>
+
+<span class="cm"># Корисно для мільйонів об'єктів (точки, вектори, записи)</span></div>
+    <div class="warn">__slots__ не наслідується автоматично. Підклас без __slots__ знову матиме __dict__. Оголошуй __slots__ у кожному класі ієрархії.</div>
+  </div>
+</div>
+
+<!-- ENCAPSULATION -->
+<div id="encap" class="section">
+  <p class="section-title">Інкапсуляція — контроль доступу до даних</p>
+
+  <div class="card">
+    <div class="badge badge-purple">@property — геттери і сеттери по-пітонячому</div>
+    <div class="card-desc">Property дозволяє звертатись до методу як до атрибута, додаючи логіку валідації без зміни публічного API.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Temperature</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, celsius: <span class="num">float</span> = <span class="num">0</span>):
+        self._celsius = celsius
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(self) -> <span class="num">float</span>:
+        <span class="str">"""Геттер — викликається при t.celsius"""</span>
+        <span class="kw">return</span> self._celsius
+
+    <span class="kw">@celsius.setter</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(self, value: <span class="num">float</span>) -> <span class="kw">None</span>:
+        <span class="str">"""Сеттер — викликається при t.celsius = value"""</span>
+        <span class="kw">if</span> value < <span class="num">-273.15</span>:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">f"Нижче абсолютного нуля: </span>{value}<span class="str">"</span>)
+        self._celsius = value
+
+    <span class="kw">@property</span>
+    <span class="kw">def</span> <span class="fn">fahrenheit</span>(self) -> <span class="num">float</span>:
+        <span class="str">"""Обчислюваний (read-only) атрибут"""</span>
+        <span class="kw">return</span> self._celsius * <span class="num">9</span>/<span class="num">5</span> + <span class="num">32</span>
+
+    <span class="kw">@celsius.deleter</span>
+    <span class="kw">def</span> <span class="fn">celsius</span>(self) -> <span class="kw">None</span>:
+        self._celsius = <span class="num">0</span>  <span class="cm"># reset при del t.celsius</span>
+
+t = <span class="cls">Temperature</span>()
+t.celsius = <span class="num">100</span>         <span class="cm"># OK</span>
+print(t.fahrenheit)    <span class="cm"># 212.0</span>
+t.celsius = <span class="num">-300</span>      <span class="cm"># ValueError!</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-blue">Дескриптори — @property на стероїдах</div>
+    <div class="card-desc">Дескриптор — об'єкт, що реалізує __get__, __set__, __delete__. Це механізм, на якому побудований @property, classmethod, staticmethod. Використовуй для реюзабельної логіки валідації.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Validated</span>:
+    <span class="str">"""Дескриптор: перевіряє тип і діапазон значення"""</span>
+    <span class="kw">def</span> <span class="fn">__set_name__</span>(self, owner, name):
+        self.name = name
+        self.private_name = <span class="str">f"_</span>{name}<span class="str">"</span>
+
+    <span class="kw">def</span> <span class="fn">__get__</span>(self, obj, objtype=<span class="kw">None</span>):
+        <span class="kw">if</span> obj <span class="kw">is None</span>: <span class="kw">return</span> self  <span class="cm"># доступ через клас</span>
+        <span class="kw">return</span> <span class="fn">getattr</span>(obj, self.private_name, <span class="kw">None</span>)
+
+    <span class="kw">def</span> <span class="fn">__set__</span>(self, obj, value):
+        <span class="kw">if not isinstance</span>(value, (<span class="num">int</span>, <span class="num">float</span>)):
+            <span class="kw">raise</span> <span class="cls">TypeError</span>(<span class="str">f"{self.name} має бути числом"</span>)
+        <span class="kw">if</span> value < <span class="num">0</span>:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">f"{self.name} має бути ≥ 0"</span>)
+        <span class="fn">setattr</span>(obj, self.private_name, value)
+
+<span class="kw">class</span> <span class="cls">Product</span>:
+    price = <span class="cls">Validated</span>()     <span class="cm"># дескриптор застосовується</span>
+    quantity = <span class="cls">Validated</span>()  <span class="cm"># до кожного атрибута окремо</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, price, quantity):
+        self.price = price
+        self.quantity = quantity
+
+p = <span class="cls">Product</span>(<span class="num">9.99</span>, <span class="num">100</span>)
+p.price = <span class="num">-1</span>   <span class="cm"># ValueError!</span></div>
+    <div class="tip">Протокол дескриптора: якщо об'єкт має __get__ — він non-data descriptor (як функції). Якщо має __get__ і __set__ — data descriptor (вищий пріоритет над __dict__ екземпляра).</div>
+  </div>
+</div>
+
+<!-- INHERITANCE -->
+<div id="inherit" class="section">
+  <p class="section-title">Наслідування — ієрархія та повторне використання</p>
+
+  <div class="card">
+    <div class="badge badge-green">Базове наслідування + super()</div>
+    <div class="card-desc">super() повертає проксі-об'єкт, що делегує виклики методів до наступного класу в MRO (Method Resolution Order).</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name: <span class="num">str</span>):
+        self.name = name
+        print(<span class="str">f"Animal.__init__: </span>{name}<span class="str">"</span>)
+
+    <span class="kw">def</span> <span class="fn">speak</span>(self) -> <span class="num">str</span>:
+        <span class="kw">raise</span> <span class="cls">NotImplementedError</span>
+
+<span class="kw">class</span> <span class="cls">Dog</span>(<span class="cls">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name: <span class="num">str</span>, breed: <span class="num">str</span>):
+        <span class="fn">super</span>().__init__(name)   <span class="cm"># викликаємо батьківський __init__</span>
+        self.breed = breed
+
+    <span class="kw">def</span> <span class="fn">speak</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"{self.name}: Гав!"</span>
+
+<span class="kw">class</span> <span class="cls">GuideDog</span>(<span class="cls">Dog</span>):
+    <span class="kw">def</span> <span class="fn">speak</span>(self) -> <span class="num">str</span>:
+        base = <span class="fn">super</span>().speak()  <span class="cm"># Dog.speak()</span>
+        <span class="kw">return</span> <span class="str">f"{base} (тихіше)"</span>
+
+d = <span class="cls">GuideDog</span>(<span class="str">"Рекс"</span>, <span class="str">"Лабрадор"</span>)
+print(d.speak())  <span class="cm"># Рекс: Гав! (тихіше)</span>
+print(<span class="fn">isinstance</span>(d, <span class="cls">Animal</span>))   <span class="cm"># True — ланцюжок isinstance</span>
+print(<span class="fn">issubclass</span>(<span class="cls">GuideDog</span>, <span class="cls">Dog</span>))  <span class="cm"># True</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-coral">Множинне наслідування + MRO (C3 лінеаризація)</div>
+    <div class="card-desc">Python визначає порядок пошуку методів за алгоритмом C3. Результат доступний через .__mro__ або mro().</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">A</span>:
+    <span class="kw">def</span> <span class="fn">hello</span>(self): <span class="kw">return</span> <span class="str">"A"</span>
+
+<span class="kw">class</span> <span class="cls">B</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">hello</span>(self): <span class="kw">return</span> <span class="str">"B → "</span> + <span class="fn">super</span>().hello()
+
+<span class="kw">class</span> <span class="cls">C</span>(<span class="cls">A</span>):
+    <span class="kw">def</span> <span class="fn">hello</span>(self): <span class="kw">return</span> <span class="str">"C → "</span> + <span class="fn">super</span>().hello()
+
+<span class="kw">class</span> <span class="cls">D</span>(<span class="cls">B</span>, <span class="cls">C</span>):  <span class="cm"># Diamond inheritance!</span>
+    <span class="kw">pass</span>
+
+d = <span class="cls">D</span>()
+print(d.hello())        <span class="cm"># B → C → A  (не B → A, C → A!)</span>
+print(<span class="cls">D</span>.__mro__)
+<span class="cm"># (D, B, C, A, object) — MRO гарантує кожен клас 1 раз</span>
+
+<span class="cm"># Правило: super() завжди дивиться на MRO, не на пряму батьківщину!</span></div>
+    <div class="warn">Множинне наслідування ускладнює код. Надавай перевагу Mixins або Composition. Якщо є сумніви — використовуй issubclass(C, B) для перевірки ієрархії.</div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-teal">Mixin — горизонтальне наслідування</div>
+    <div class="card-desc">Mixin — клас, що додає поведінку без власного стану. Не використовується самостійно. Ідеальний спосіб уникнути глибокої ієрархії.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">JsonMixin</span>:
+    <span class="str">"""Додає JSON серіалізацію будь-якому класу"""</span>
+    <span class="kw">def</span> <span class="fn">to_json</span>(self) -> <span class="num">str</span>:
+        <span class="kw">import</span> json
+        <span class="kw">return</span> json.dumps(self.__dict__)
+
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">from_json</span>(cls, data: <span class="num">str</span>):
+        <span class="kw">import</span> json
+        obj = cls.__new__(cls)
+        obj.__dict__.update(json.loads(data))
+        <span class="kw">return</span> obj
+
+<span class="kw">class</span> <span class="cls">LogMixin</span>:
+    <span class="str">"""Додає логування методів"""</span>
+    <span class="kw">def</span> <span class="fn">log</span>(self, msg: <span class="num">str</span>) -> <span class="kw">None</span>:
+        print(<span class="str">f"[</span>{self.__class__.__name__}<span class="str">] </span>{msg}<span class="str">"</span>)
+
+<span class="kw">class</span> <span class="cls">User</span>(<span class="cls">JsonMixin</span>, <span class="cls">LogMixin</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, name: <span class="num">str</span>, email: <span class="num">str</span>):
+        self.name = name
+        self.email = email
+
+u = <span class="cls">User</span>(<span class="str">"Alice"</span>, <span class="str">"a@b.com"</span>)
+print(u.to_json())         <span class="cm"># {"name": "Alice", "email": "a@b.com"}</span>
+u.log(<span class="str">"Увійшов у систему"</span>)  <span class="cm"># [User] Увійшов у систему</span></div>
+  </div>
+</div>
+
+<!-- POLYMORPHISM -->
+<div id="poly" class="section">
+  <p class="section-title">Поліморфізм — один інтерфейс, різна поведінка</p>
+
+  <div class="card">
+    <div class="badge badge-blue">Duck Typing — "якщо крякає як качка..."</div>
+    <div class="card-desc">Python не перевіряє тип — він перевіряє поведінку. Якщо об'єкт має потрібний метод — він підходить.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Duck</span>:
+    <span class="kw">def</span> <span class="fn">quack</span>(self): <span class="kw">return</span> <span class="str">"Кря!"</span>
+    <span class="kw">def</span> <span class="fn">walk</span>(self): <span class="kw">return</span> <span class="str">"Ходжу перевалюючись"</span>
+
+<span class="kw">class</span> <span class="cls">Person</span>:
+    <span class="kw">def</span> <span class="fn">quack</span>(self): <span class="kw">return</span> <span class="str">"Я можу крякати!"</span>
+    <span class="kw">def</span> <span class="fn">walk</span>(self): <span class="kw">return</span> <span class="str">"Ходжу нормально"</span>
+
+<span class="kw">def</span> <span class="fn">make_it_quack</span>(duck):  <span class="cm"># немає type hint на клас!</span>
+    <span class="cm"># Python не перевіряє — головне щоб метод існував</span>
+    print(duck.quack())
+
+<span class="fn">make_it_quack</span>(<span class="cls">Duck</span>())    <span class="cm"># Кря!</span>
+<span class="fn">make_it_quack</span>(<span class="cls">Person</span>())  <span class="cm"># Я можу крякати!</span>
+<span class="fn">make_it_quack</span>(<span class="str">"я теж"</span>)   <span class="cm"># AttributeError — рядок не крякає</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-green">Перевантаження операторів (operator overloading)</div>
+    <div class="card-desc">Python дозволяє визначити поведінку стандартних операторів (+, -, *, ==, <, []) для власних класів через magic methods.</div>
+    <div class="code-block"><span class="kw">from</span> __future__ <span class="kw">import</span> annotations
+<span class="kw">from</span> math <span class="kw">import</span> sqrt
+
+<span class="kw">class</span> <span class="cls">Vector</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, x: <span class="num">float</span>, y: <span class="num">float</span>):
+        self.x, self.y = x, y
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(self, other: <span class="cls">Vector</span>) -> <span class="cls">Vector</span>:
+        <span class="kw">return</span> <span class="cls">Vector</span>(self.x + other.x, self.y + other.y)
+
+    <span class="kw">def</span> <span class="fn">__mul__</span>(self, scalar: <span class="num">float</span>) -> <span class="cls">Vector</span>:
+        <span class="kw">return</span> <span class="cls">Vector</span>(self.x * scalar, self.y * scalar)
+
+    <span class="kw">def</span> <span class="fn">__rmul__</span>(self, scalar: <span class="num">float</span>) -> <span class="cls">Vector</span>:
+        <span class="kw">return</span> self.__mul__(scalar)  <span class="cm"># 3 * v = v * 3</span>
+
+    <span class="kw">def</span> <span class="fn">__abs__</span>(self) -> <span class="num">float</span>:
+        <span class="kw">return</span> sqrt(self.x**<span class="num">2</span> + self.y**<span class="num">2</span>)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other: object) -> <span class="num">bool</span>:
+        <span class="kw">if not isinstance</span>(other, <span class="cls">Vector</span>): <span class="kw">return</span> <span class="cls">NotImplemented</span>
+        <span class="kw">return</span> self.x == other.x <span class="kw">and</span> self.y == other.y
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(self) -> <span class="num">str</span>:
+        <span class="kw">return</span> <span class="str">f"Vector({self.x}, {self.y})"</span>
+
+v1 = <span class="cls">Vector</span>(<span class="num">1</span>, <span class="num">2</span>)
+v2 = <span class="cls">Vector</span>(<span class="num">3</span>, <span class="num">4</span>)
+print(v1 + v2)    <span class="cm"># Vector(4, 6)</span>
+print(<span class="num">2</span> * v1)     <span class="cm"># Vector(2, 4)</span>
+print(<span class="fn">abs</span>(v2))   <span class="cm"># 5.0</span></div>
+    <div class="tip">Завжди повертай NotImplemented (не raise!), якщо тип other не підтримується. Python тоді спробує викликати зворотній метод other.__radd__(self).</div>
+  </div>
+</div>
+
+<!-- ABSTRACT -->
+<div id="abstract" class="section">
+  <p class="section-title">Абстракція — інтерфейси та ABC</p>
+
+  <div class="card">
+    <div class="badge badge-coral">ABC — Abstract Base Classes</div>
+    <div class="card-desc">ABC визначає контракт: підклас ЗОБОВ'ЯЗАНИЙ реалізувати всі абстрактні методи. Неможливо створити екземпляр ABC з нереалізованими методами.</div>
+    <div class="code-block"><span class="kw">from</span> abc <span class="kw">import</span> ABC, abstractmethod
+<span class="kw">from</span> typing <span class="kw">import</span> List
+
+<span class="kw">class</span> <span class="cls">DataStore</span>(<span class="cls">ABC</span>):
+    <span class="str">"""Абстрактний інтерфейс для сховища даних"""</span>
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">save</span>(self, key: <span class="num">str</span>, value: <span class="num">str</span>) -> <span class="kw">None</span>: ...
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">load</span>(self, key: <span class="num">str</span>) -> <span class="num">str</span>: ...
+
+    <span class="kw">@abstractmethod</span>
+    <span class="kw">def</span> <span class="fn">delete</span>(self, key: <span class="num">str</span>) -> <span class="kw">None</span>: ...
+
+    <span class="kw">def</span> <span class="fn">save_many</span>(self, items: <span class="num">dict</span>) -> <span class="kw">None</span>:
+        <span class="cm"># Конкретний метод у ABC — може використовувати abstract методи!</span>
+        <span class="kw">for</span> k, v <span class="kw">in</span> items.items():
+            self.save(k, v)  <span class="cm"># поліморфний виклик</span>
+
+<span class="kw">class</span> <span class="cls">RedisStore</span>(<span class="cls">DataStore</span>):
+    <span class="kw">def</span> <span class="fn">save</span>(self, key, value): print(<span class="str">f"Redis: SET {key} {value}"</span>)
+    <span class="kw">def</span> <span class="fn">load</span>(self, key): <span class="kw">return</span> <span class="str">f"redis_value_{key}"</span>
+    <span class="kw">def</span> <span class="fn">delete</span>(self, key): print(<span class="str">f"Redis: DEL {key}"</span>)
+
+<span class="cm"># DataStore()  → TypeError: Can't instantiate abstract class</span>
+store = <span class="cls">RedisStore</span>()
+store.save_many({<span class="str">"a"</span>: <span class="str">"1"</span>, <span class="str">"b"</span>: <span class="str">"2"</span>})  <span class="cm"># Redis: SET a 1 / SET b 2</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-teal">Protocol — структурна типізація (Python 3.8+)</div>
+    <div class="card-desc">Protocol дозволяє duck typing з підтримкою статичного аналізу (mypy). Клас відповідає Protocol, якщо має потрібні методи — без явного наслідування!</div>
+    <div class="code-block"><span class="kw">from</span> typing <span class="kw">import</span> Protocol, runtime_checkable
+
+<span class="kw">@runtime_checkable</span>  <span class="cm"># дозволяє isinstance() перевірку</span>
+<span class="kw">class</span> <span class="cls">Drawable</span>(<span class="cls">Protocol</span>):
+    <span class="kw">def</span> <span class="fn">draw</span>(self) -> <span class="kw">None</span>: ...
+    <span class="kw">def</span> <span class="fn">resize</span>(self, factor: <span class="num">float</span>) -> <span class="kw">None</span>: ...
+
+<span class="kw">class</span> <span class="cls">Circle</span>:  <span class="cm"># НЕ наслідує Drawable!</span>
+    <span class="kw">def</span> <span class="fn">draw</span>(self): print(<span class="str">"O"</span>)
+    <span class="kw">def</span> <span class="fn">resize</span>(self, f): self.r *= f
+
+<span class="kw">class</span> <span class="cls">Square</span>:  <span class="cm"># теж не наслідує</span>
+    <span class="kw">def</span> <span class="fn">draw</span>(self): print(<span class="str">"□"</span>)
+    <span class="kw">def</span> <span class="fn">resize</span>(self, f): self.side *= f
+
+<span class="kw">def</span> <span class="fn">render</span>(shape: <span class="cls">Drawable</span>) -> <span class="kw">None</span>:  <span class="cm"># mypy перевіряє Protocol!</span>
+    shape.draw()
+
+<span class="fn">render</span>(<span class="cls">Circle</span>())   <span class="cm"># OK — Circle структурно відповідає Drawable</span>
+print(<span class="fn">isinstance</span>(<span class="cls">Circle</span>(), <span class="cls">Drawable</span>))  <span class="cm"># True (runtime_checkable)</span></div>
+    <div class="tip">Різниця: ABC потребує явного наслідування (is-a). Protocol використовує структурну типізацію (has-a). Protocol ближчий до справжнього duck typing, але з підтримкою mypy.</div>
+  </div>
+</div>
+
+<!-- MAGIC METHODS -->
+<div id="magic" class="section">
+  <p class="section-title">Магічні методи (Dunder methods) — Python data model</p>
+
+  <div class="card">
+    <div class="badge badge-purple">Повний довідник dunder методів</div>
+    <div class="code-block"><span class="cm"># ── Представлення ─────────────────────────────────</span>
+__repr__(self)        <span class="cm"># repr(obj) — для розробника, eval()-able</span>
+__str__(self)         <span class="cm"># str(obj)  — для користувача, print()</span>
+__format__(self, spec)<span class="cm"># format(obj, spec), f"{obj:spec}"</span>
+__bytes__(self)       <span class="cm"># bytes(obj)</span>
+
+<span class="cm"># ── Порівняння ────────────────────────────────────</span>
+__eq__(self, other)   <span class="cm"># ==   (не забудь __hash__!)</span>
+__ne__(self, other)   <span class="cm"># !=   (auto якщо визначений __eq__)</span>
+__lt__(self, other)   <span class="cm"># <    (+ functools.total_ordering)</span>
+__le__(self, other)   <span class="cm"># <=</span>
+__gt__(self, other)   <span class="cm"># ></span>
+__ge__(self, other)   <span class="cm"># >=</span>
+__hash__(self)        <span class="cm"># hash(obj), потрібен для set/dict</span>
+
+<span class="cm"># ── Арифметика ────────────────────────────────────</span>
+__add__(self, other)  <span class="cm"># +</span>
+__sub__(self, other)  <span class="cm"># -</span>
+__mul__(self, other)  <span class="cm"># *</span>
+__truediv__           <span class="cm"># /</span>
+__floordiv__          <span class="cm"># //</span>
+__mod__               <span class="cm"># %</span>
+__pow__               <span class="cm"># **</span>
+__radd__, __rsub__... <span class="cm"># зворотні (якщо лівий не знає як)</span>
+__iadd__, __isub__... <span class="cm"># += -= (in-place)</span>
+__neg__(self)         <span class="cm"># унарний -</span>
+__pos__(self)         <span class="cm"># унарний +</span>
+__abs__(self)         <span class="cm"># abs()</span>
+
+<span class="cm"># ── Контейнери ────────────────────────────────────</span>
+__len__(self)         <span class="cm"># len(obj)</span>
+__getitem__(self, key)<span class="cm"># obj[key]</span>
+__setitem__(self, k,v)<span class="cm"># obj[key] = value</span>
+__delitem__(self, key)<span class="cm"># del obj[key]</span>
+__contains__(self, x) <span class="cm"># x in obj</span>
+__iter__(self)        <span class="cm"># iter(obj), for loops</span>
+__next__(self)        <span class="cm"># next(obj)</span>
+__reversed__(self)    <span class="cm"># reversed(obj)</span>
+
+<span class="cm"># ── Контекстний менеджер ──────────────────────────</span>
+__enter__(self)       <span class="cm"># with obj as x:</span>
+__exit__(self,tp,v,tb)<span class="cm"># після блоку with (навіть при exception)</span>
+
+<span class="cm"># ── Виклик ────────────────────────────────────────</span>
+__call__(self, ...)   <span class="cm"># obj() — об'єкт поводиться як функція</span>
+
+<span class="cm"># ── Атрибути ──────────────────────────────────────</span>
+__getattr__(self, n)  <span class="cm"># якщо атрибут НЕ знайдений звичайно</span>
+__getattribute__      <span class="cm"># кожен доступ до атрибута (обережно!)</span>
+__setattr__(self,n,v) <span class="cm"># obj.attr = value</span>
+__delattr__(self, n)  <span class="cm"># del obj.attr</span>
+
+<span class="cm"># ── Клас/метаклас ─────────────────────────────────</span>
+__init_subclass__     <span class="cm"># викликається при наслідуванні</span>
+__class_getitem__     <span class="cm"># підтримка Generic[T]</span></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="badge badge-amber">__call__ — callable об'єкти</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">Counter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.count = <span class="num">0</span>
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(self, step=<span class="num">1</span>):
+        self.count += step
+        <span class="kw">return</span> self.count
+
+c = <span class="cls">Counter</span>()
+c()      <span class="cm"># 1</span>
+c()      <span class="cm"># 2</span>
+c(<span class="num">5</span>)    <span class="cm"># 7</span>
+<span class="fn">callable</span>(c)  <span class="cm"># True</span></div>
+    </div>
+    <div class="card">
+      <div class="badge badge-teal">__enter__/__exit__ — context manager</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">Timer</span>:
+    <span class="kw">import</span> time
+    <span class="kw">def</span> <span class="fn">__enter__</span>(self):
+        self.start = self.time.time()
+        <span class="kw">return</span> self  <span class="cm"># as timer</span>
+
+    <span class="kw">def</span> <span class="fn">__exit__</span>(self, *args):
+        elapsed = self.time.time()-self.start
+        print(<span class="str">f"{elapsed:.3f}s"</span>)
+        <span class="kw">return False</span>  <span class="cm"># не глушити exc</span>
+
+<span class="kw">with</span> <span class="cls">Timer</span>() <span class="kw">as</span> t:
+    x = <span class="num">sum</span>(<span class="fn">range</span>(<span class="num">10_000_000</span>))</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-blue">total_ordering + __hash__ — правильне порівняння</div>
+    <div class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> total_ordering
+
+<span class="kw">@total_ordering</span>  <span class="cm"># генерує __le__, __gt__, __ge__ автоматично</span>
+<span class="kw">class</span> <span class="cls">Version</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, major, minor, patch):
+        self.v = (major, minor, patch)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(self, other):
+        <span class="kw">if not isinstance</span>(other, <span class="cls">Version</span>): <span class="kw">return</span> <span class="cls">NotImplemented</span>
+        <span class="kw">return</span> self.v == other.v
+
+    <span class="kw">def</span> <span class="fn">__lt__</span>(self, other):
+        <span class="kw">if not isinstance</span>(other, <span class="cls">Version</span>): <span class="kw">return</span> <span class="cls">NotImplemented</span>
+        <span class="kw">return</span> self.v < other.v
+
+    <span class="kw">def</span> <span class="fn">__hash__</span>(self):  <span class="cm"># ВАЖЛИВО: якщо __eq__ — потрібен __hash__!</span>
+        <span class="kw">return</span> <span class="fn">hash</span>(self.v)
+
+v1 = <span class="cls">Version</span>(<span class="num">1</span>, <span class="num">2</span>, <span class="num">0</span>)
+v2 = <span class="cls">Version</span>(<span class="num">2</span>, <span class="num">0</span>, <span class="num">0</span>)
+print(v1 < v2)   <span class="cm"># True</span>
+print(v1 >= v2)  <span class="cm"># False (total_ordering!)</span>
+{v1, v2}         <span class="cm"># можна в set (є __hash__)</span></div>
+    <div class="warn">Якщо визначаєш __eq__ без __hash__ — клас стає unhashable (Python встановлює __hash__ = None). Не можна використовувати в set і dict!</div>
+  </div>
+</div>
+
+<!-- METACLASSES -->
+<div id="meta" class="section">
+  <p class="section-title">Метакласи — клас класів</p>
+
+  <div class="card">
+    <div class="badge badge-purple">Як Python створює клас</div>
+    <div class="card-desc">Метаклас — це "фабрика класів". Так само як клас — фабрика об'єктів, метаклас — фабрика класів. type — дефолтний метаклас.</div>
+    <div class="code-block"><span class="cm"># Ці два записи ЕКВІВАЛЕНТНІ:</span>
+<span class="kw">class</span> <span class="cls">Dog</span>:
+    sound = <span class="str">"Гав"</span>
+
+<span class="cm"># ↓ Python робить саме це всередині:</span>
+<span class="cls">Dog</span> = <span class="fn">type</span>(<span class="str">"Dog"</span>, (), {<span class="str">"sound"</span>: <span class="str">"Гав"</span>})
+<span class="cm"># type(name, bases, namespace)</span>
+
+<span class="cm"># Порядок створення класу:</span>
+<span class="cm"># 1. metaclass.__prepare__() → namespace dict</span>
+<span class="cm"># 2. Виконується тіло класу → заповнює namespace</span>
+<span class="cm"># 3. metaclass.__new__()  → створює клас-об'єкт</span>
+<span class="cm"># 4. metaclass.__init__() → ініціалізує клас</span>
+
+<span class="kw">class</span> <span class="cls">SingletonMeta</span>(<span class="fn">type</span>):
+    <span class="str">"""Метаклас, що робить будь-який клас Singleton"""</span>
+    _instances = {}
+
+    <span class="kw">def</span> <span class="fn">__call__</span>(cls, *args, **kwargs):
+        <span class="kw">if</span> cls <span class="kw">not in</span> cls._instances:
+            <span class="cm"># super().__call__() = __new__ + __init__</span>
+            cls._instances[cls] = <span class="fn">super</span>().__call__(*args, **kwargs)
+        <span class="kw">return</span> cls._instances[cls]
+
+<span class="kw">class</span> <span class="cls">Database</span>(metaclass=<span class="cls">SingletonMeta</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self.conn = <span class="str">"active"</span>
+
+db1 = <span class="cls">Database</span>()
+db2 = <span class="cls">Database</span>()
+print(db1 <span class="kw">is</span> db2)  <span class="cm"># True — один і той самий об'єкт</span></div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-coral">__init_subclass__ — легша альтернатива метакласам</div>
+    <div class="card-desc">Python 3.6+. Викликається автоматично при наслідуванні — ідеально для реєстрації плагінів та валідації підкласів.</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">Plugin</span>:
+    _registry: dict = {}
+
+    <span class="kw">def</span> <span class="fn">__init_subclass__</span>(cls, name: <span class="num">str</span> = <span class="str">""</span>, **kwargs):
+        <span class="fn">super</span>().__init_subclass__(**kwargs)
+        <span class="kw">if not</span> name:
+            <span class="kw">raise</span> <span class="cls">TypeError</span>(<span class="str">f"{cls} потребує name= аргумент"</span>)
+        <span class="kw">if</span> name <span class="kw">in</span> cls._registry:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(<span class="str">f"Плагін '{name}' вже існує"</span>)
+        cls._registry[name] = cls
+        print(<span class="str">f"Зареєстровано плагін: {name}"</span>)
+
+<span class="kw">class</span> <span class="cls">CSVPlugin</span>(<span class="cls">Plugin</span>, name=<span class="str">"csv"</span>):
+    <span class="kw">def</span> <span class="fn">process</span>(self, data): ...
+
+<span class="kw">class</span> <span class="cls">JSONPlugin</span>(<span class="cls">Plugin</span>, name=<span class="str">"json"</span>):
+    <span class="kw">def</span> <span class="fn">process</span>(self, data): ...
+
+print(<span class="cls">Plugin</span>._registry)
+<span class="cm"># {'csv': CSVPlugin, 'json': JSONPlugin}</span>
+
+plugin = <span class="cls">Plugin</span>._registry[<span class="str">"csv"</span>]()
+plugin.process(<span class="str">"data"</span>)</div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-blue">__class_getitem__ — Generic-підтримка</div>
+    <div class="code-block"><span class="kw">class</span> <span class="cls">TypedList</span>:
+    <span class="kw">def</span> <span class="fn">__class_getitem__</span>(cls, item):
+        <span class="cm"># Повертає спеціалізовану версію класу</span>
+        <span class="kw">class</span> <span class="cls">SpecializedList</span>(cls):
+            element_type = item
+            <span class="kw">def</span> <span class="fn">append</span>(self, value):
+                <span class="kw">if not isinstance</span>(value, item):
+                    <span class="kw">raise</span> <span class="cls">TypeError</span>(<span class="str">f"Очікується {item}"</span>)
+                <span class="fn">super</span>().append(value)
+        <span class="kw">return</span> <span class="cls">SpecializedList</span>
+
+IntList = <span class="cls">TypedList</span>[<span class="num">int</span>]
+lst = <span class="cls">IntList</span>()
+lst.append(<span class="num">42</span>)     <span class="cm"># OK</span>
+lst.append(<span class="str">"str"</span>) <span class="cm"># TypeError!</span></div>
+  </div>
+</div>
+
+<!-- PATTERNS -->
+<div id="patterns" class="section">
+  <p class="section-title">Патерни проектування в Python</p>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="badge badge-blue">Singleton</div>
+      <div class="code-block"><span class="cm"># Через __new__</span>
+<span class="kw">class</span> <span class="cls">Config</span>:
+    _instance = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">__new__</span>(cls):
+        <span class="kw">if</span> cls._instance <span class="kw">is None</span>:
+            cls._instance = <span class="fn">super</span>().__new__(cls)
+        <span class="kw">return</span> cls._instance
+
+a = <span class="cls">Config</span>()
+b = <span class="cls">Config</span>()
+<span class="fn">print</span>(a <span class="kw">is</span> b)  <span class="cm"># True</span></div>
+    </div>
+    <div class="card">
+      <div class="badge badge-green">Factory Method</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">Animal</span>:
+    <span class="kw">@classmethod</span>
+    <span class="kw">def</span> <span class="fn">create</span>(cls, kind: <span class="num">str</span>):
+        animals = {
+            <span class="str">"dog"</span>: <span class="cls">Dog</span>,
+            <span class="str">"cat"</span>: <span class="cls">Cat</span>,
+        }
+        <span class="kw">if</span> kind <span class="kw">not in</span> animals:
+            <span class="kw">raise</span> <span class="cls">ValueError</span>(kind)
+        <span class="kw">return</span> animals[kind]()
+
+a = <span class="cls">Animal</span>.create(<span class="str">"dog"</span>)</div>
+    </div>
+    <div class="card">
+      <div class="badge badge-amber">Observer (Publisher/Subscriber)</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">EventEmitter</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self._handlers = {}
+
+    <span class="kw">def</span> <span class="fn">on</span>(self, event, fn):
+        self._handlers.setdefault(event, []).append(fn)
+
+    <span class="kw">def</span> <span class="fn">emit</span>(self, event, *args):
+        <span class="kw">for</span> fn <span class="kw">in</span> self._handlers.get(event, []):
+            fn(*args)
+
+bus = <span class="cls">EventEmitter</span>()
+bus.on(<span class="str">"login"</span>, <span class="kw">lambda</span> u: print(<span class="str">f"Hi {u}"</span>))
+bus.emit(<span class="str">"login"</span>, <span class="str">"Alice"</span>)</div>
+    </div>
+    <div class="card">
+      <div class="badge badge-coral">Decorator Pattern</div>
+      <div class="code-block"><span class="kw">from</span> functools <span class="kw">import</span> wraps
+
+<span class="kw">def</span> <span class="fn">retry</span>(times=<span class="num">3</span>):
+    <span class="kw">def</span> <span class="fn">decorator</span>(fn):
+        <span class="kw">@wraps</span>(fn)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*a, **kw):
+            <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(times):
+                <span class="kw">try</span>: <span class="kw">return</span> fn(*a, **kw)
+                <span class="kw">except Exception</span>:
+                    <span class="kw">if</span> i == times-<span class="num">1</span>: <span class="kw">raise</span>
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="kw">@retry</span>(times=<span class="num">3</span>)
+<span class="kw">def</span> <span class="fn">fetch</span>(url): ...</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-purple">Composition over Inheritance — правильна архітектура</div>
+    <div class="card-desc">Наслідування — це "є" (Dog is Animal). Композиція — "має" (Car has Engine). Для гнучкої архітектури надавай перевагу композиції.</div>
+    <div class="code-block"><span class="cm"># ❌ Проблема з наслідуванням:</span>
+<span class="cm"># class FlyingFish(Fish, Bird)? → diamond problem, крихкий код</span>
+
+<span class="cm"># ✅ Рішення через композицію:</span>
+<span class="kw">class</span> <span class="cls">FlyBehavior</span>:
+    <span class="kw">def</span> <span class="fn">fly</span>(self): print(<span class="str">"Лечу!"</span>)
+
+<span class="kw">class</span> <span class="cls">SwimBehavior</span>:
+    <span class="kw">def</span> <span class="fn">swim</span>(self): print(<span class="str">"Пливу!"</span>)
+
+<span class="kw">class</span> <span class="cls">Duck</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.fly_behavior = <span class="cls">FlyBehavior</span>()
+        self.swim_behavior = <span class="cls">SwimBehavior</span>()
+
+    <span class="kw">def</span> <span class="fn">fly</span>(self): self.fly_behavior.fly()
+    <span class="kw">def</span> <span class="fn">swim</span>(self): self.swim_behavior.swim()
+
+<span class="cm"># Легко змінити поведінку в runtime!</span>
+duck = <span class="cls">Duck</span>()
+duck.fly_behavior = <span class="cls">NoFlyBehavior</span>()  <span class="cm"># качка з обрізаними крилами</span></div>
+  </div>
+</div>
+
+<!-- ADVANCED -->
+<div id="advanced" class="section">
+  <p class="section-title">Просунуті концепції</p>
+
+  <div class="card">
+    <div class="badge badge-teal">dataclass — автогенерація boilerplate (Python 3.7+)</div>
+    <div class="card-desc">@dataclass автоматично генерує __init__, __repr__, __eq__ і більше. field() дає точний контроль над кожним полем.</div>
+    <div class="code-block"><span class="kw">from</span> dataclasses <span class="kw">import</span> dataclass, field, KW_ONLY
+<span class="kw">from</span> typing <span class="kw">import</span> ClassVar, List
+
+<span class="kw">@dataclass</span>(frozen=<span class="kw">True</span>, order=<span class="kw">True</span>)  <span class="cm"># immutable + сортування</span>
+<span class="kw">class</span> <span class="cls">Point</span>:
+    x: <span class="num">float</span>
+    y: <span class="num">float</span>
+    z: <span class="num">float</span> = <span class="num">0.0</span>
+
+<span class="kw">@dataclass</span>
+<span class="kw">class</span> <span class="cls">Inventory</span>:
+    name: <span class="num">str</span>
+    count: <span class="cls">ClassVar</span>[<span class="num">int</span>] = <span class="num">0</span>           <span class="cm"># не в __init__!</span>
+    items: <span class="cls">List</span>[<span class="num">str</span>] = <span class="fn">field</span>(default_factory=<span class="fn">list</span>)
+    _id: <span class="num">int</span> = <span class="fn">field</span>(init=<span class="kw">False</span>, repr=<span class="kw">False</span>)
+    _: <span class="cls">KW_ONLY</span>                          <span class="cm"># наступні — keyword-only</span>
+    max_size: <span class="num">int</span> = <span class="num">100</span>
+
+    <span class="kw">def</span> <span class="fn">__post_init__</span>(self):
+        <span class="cls">Inventory</span>.count += <span class="num">1</span>
+        self._id = <span class="cls">Inventory</span>.count       <span class="cm"># обчислення після init</span>
+
+inv = <span class="cls">Inventory</span>(<span class="str">"Склад"</span>, max_size=<span class="num">200</span>)
+p1, p2 = <span class="cls">Point</span>(<span class="num">0</span>,<span class="num">0</span>), <span class="cls">Point</span>(<span class="num">1</span>,<span class="num">1</span>)
+print(p1 < p2)  <span class="cm"># True (order=True)</span>
+<span class="cm"># p1.x = 5  → FrozenInstanceError (frozen=True)</span></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <div class="badge badge-coral">__new__ vs __init__</div>
+      <div class="card-desc">__new__ створює об'єкт, __init__ ініціалізує. __new__ потрібен для іммутабельних типів та метакласів.</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">ImmutablePoint</span>(<span class="fn">tuple</span>):
+    <span class="kw">def</span> <span class="fn">__new__</span>(cls, x, y):
+        <span class="cm"># tuple іммутабельний — лише __new__</span>
+        <span class="kw">return</span> <span class="fn">super</span>().__new__(cls, (x, y))
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, x, y):
+        <span class="cm"># tuple вже створено в __new__!</span>
+        self.x = x
+        self.y = y
+
+p = <span class="cls">ImmutablePoint</span>(<span class="num">3</span>, <span class="num">4</span>)
+print(p[<span class="num">0</span>], p.x)  <span class="cm"># 3 3</span></div>
+    </div>
+    <div class="card">
+      <div class="badge badge-purple">__getattr__ vs __getattribute__</div>
+      <div class="code-block"><span class="kw">class</span> <span class="cls">Proxy</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, target):
+        <span class="cm"># НЕ self.target = target!</span>
+        <span class="fn">object</span>.__setattr__(self, <span class="str">'_t'</span>, target)
+
+    <span class="kw">def</span> <span class="fn">__getattr__</span>(self, name):
+        <span class="cm"># Лише якщо attr не знайдений</span>
+        <span class="kw">return</span> <span class="fn">getattr</span>(self._t, name)
+
+    <span class="kw">def</span> <span class="fn">__getattribute__</span>(self, name):
+        <span class="cm"># КОЖЕН доступ — небезпечно!</span>
+        <span class="cm"># Легко зациклитись тут</span>
+        <span class="kw">return</span> <span class="fn">object</span>.__getattribute__(self, name)</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-amber">Weak References та __del__</div>
+    <div class="card-desc">weakref дозволяє посилатись на об'єкт без збільшення лічильника посилань. Об'єкт буде знищений GC, коли більше немає strong references.</div>
+    <div class="code-block"><span class="kw">import</span> weakref
+
+<span class="kw">class</span> <span class="cls">Cache</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        <span class="cm"># Значення зберігаються як weak refs</span>
+        self._data = weakref.WeakValueDictionary()
+
+    <span class="kw">def</span> <span class="fn">set</span>(self, key, value): self._data[key] = value
+    <span class="kw">def</span> <span class="fn">get</span>(self, key): <span class="kw">return</span> self._data.get(key)
+
+<span class="kw">class</span> <span class="cls">Resource</span>:
+    <span class="kw">def</span> <span class="fn">__del__</span>(self):
+        <span class="cm"># Фіналайзер — викликається при знищенні</span>
+        <span class="cm"># Обережно: не гарантований порядок виклику!</span>
+        print(<span class="str">"Ресурс звільнено"</span>)
+
+cache = <span class="cls">Cache</span>()
+r = <span class="cls">Resource</span>()
+cache.set(<span class="str">"key"</span>, r)
+print(cache.get(<span class="str">"key"</span>))  <span class="cm"># &lt;Resource object&gt;</span>
+<span class="kw">del</span> r
+<span class="cm"># "Ресурс звільнено" + cache["key"] тепер None</span></div>
+    <div class="warn">Уникай __del__ для звільнення ресурсів — використовуй контекстні менеджери (with). __del__ не гарантується при завершенні інтерпретатора та може спричинити циклічні посилання.</div>
+  </div>
+
+  <div class="card">
+    <div class="badge badge-blue">MRO та super() у множинному наслідуванні — детально</div>
+    <div class="code-block"><span class="cm"># Cooperative multiple inheritance — правильний патерн</span>
+<span class="kw">class</span> <span class="cls">Base</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, **kwargs):
+        <span class="cm"># Base повинен поглинати залишкові kwargs</span>
+        <span class="fn">super</span>().__init__(**kwargs)  <span class="cm"># передаємо в object</span>
+
+<span class="kw">class</span> <span class="cls">Timestamped</span>(<span class="cls">Base</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, created_at=<span class="kw">None</span>, **kwargs):
+        self.created_at = created_at
+        <span class="fn">super</span>().__init__(**kwargs)  <span class="cm"># передаємо решту далі по MRO</span>
+
+<span class="kw">class</span> <span class="cls">Tagged</span>(<span class="cls">Base</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, tags=<span class="kw">None</span>, **kwargs):
+        self.tags = tags <span class="kw">or</span> []
+        <span class="fn">super</span>().__init__(**kwargs)
+
+<span class="kw">class</span> <span class="cls">Article</span>(<span class="cls">Timestamped</span>, <span class="cls">Tagged</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, title, **kwargs):
+        self.title = title
+        <span class="fn">super</span>().__init__(**kwargs)
+
+<span class="cm"># MRO: Article → Timestamped → Tagged → Base → object</span>
+a = <span class="cls">Article</span>(
+    title=<span class="str">"Hello"</span>,
+    created_at=<span class="str">"2024-01-01"</span>,
+    tags=[<span class="str">"python"</span>, <span class="str">"oop"</span>]
+)
+print(a.title, a.created_at, a.tags)  <span class="cm"># всі атрибути є!</span></div>
+    <div class="tip">Правило кооперативного наслідування: кожен __init__ ЗАВЖДИ викликає super().__init__(**kwargs) і ЗАВЖДИ приймає **kwargs. Так super() може коректно пройти весь ланцюжок MRO.</div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

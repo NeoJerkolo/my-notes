@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Types — Шпаргалка</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0f0f0f;
+  --bg2: #1a1a1a;
+  --bg3: #232323;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.15);
+  --text: #e8e8e0;
+  --text2: #9a9a8e;
+  --text3: #666;
+  --accent: #7c9ef5;
+  --green: #5dca8a;
+  --amber: #f5a623;
+  --red: #e05c5c;
+  --purple: #b39ef5;
+  --teal: #5dcab5;
+  --pink: #f57cb3;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.app { display: flex; min-height: 100vh; }
+
+.sidebar {
+  width: 180px;
+  min-width: 180px;
+  background: var(--bg2);
+  border-right: 0.5px solid var(--border2);
+  padding: 1.5rem 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-title {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  text-transform: uppercase;
+  padding: 0 1rem 0.75rem;
+}
+
+.nav-btn {
+  display: block;
+  width: 100%;
+  padding: 7px 1rem;
+  background: none;
+  border: none;
+  color: var(--text2);
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-align: left;
+  cursor: pointer;
+  transition: all 0.15s;
+  border-left: 2px solid transparent;
+}
+.nav-btn:hover { color: var(--text); background: var(--bg3); }
+.nav-btn.active { color: var(--accent); border-left-color: var(--accent); background: rgba(124,158,245,0.08); }
+
+.nav-divider {
+  height: 0.5px;
+  background: var(--border);
+  margin: 0.5rem 1rem;
+}
+
+.main {
+  flex: 1;
+  padding: 2rem 2.5rem;
+  max-width: 960px;
+  overflow-x: hidden;
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+.sec-header {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 0.5px solid var(--border2);
+}
+
+.sec-name {
+  font-family: 'Courier New', monospace;
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.badges { display: flex; gap: 6px; flex-wrap: wrap; }
+
+.badge {
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-weight: 500;
+}
+.b-blue { background: rgba(124,158,245,0.15); color: var(--accent); border: 0.5px solid rgba(124,158,245,0.3); }
+.b-green { background: rgba(93,202,138,0.15); color: var(--green); border: 0.5px solid rgba(93,202,138,0.3); }
+.b-amber { background: rgba(245,166,35,0.15); color: var(--amber); border: 0.5px solid rgba(245,166,35,0.3); }
+.b-red { background: rgba(224,92,92,0.15); color: var(--red); border: 0.5px solid rgba(224,92,92,0.3); }
+.b-purple { background: rgba(179,158,245,0.15); color: var(--purple); border: 0.5px solid rgba(179,158,245,0.3); }
+.b-teal { background: rgba(93,202,181,0.15); color: var(--teal); border: 0.5px solid rgba(93,202,181,0.3); }
+.b-gray { background: rgba(255,255,255,0.06); color: var(--text2); border: 0.5px solid var(--border2); }
+
+.card {
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: 10px;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 8px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.card-desc {
+  font-size: 13px;
+  color: var(--text2);
+  margin-bottom: 10px;
+  line-height: 1.65;
+}
+
+pre.code {
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+  color: #c9d1d9;
+  line-height: 1.75;
+  overflow-x: auto;
+  margin-bottom: 10px;
+  white-space: pre;
+}
+
+.comment { color: #555; }
+.kw { color: #79b8ff; }
+.str { color: #85e89d; }
+.num { color: #f8a87c; }
+.fn { color: var(--accent); }
+
+.callout {
+  border-radius: 0 6px 6px 0;
+  padding: 7px 12px;
+  font-size: 12px;
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+.callout-info { border-left: 2px solid var(--accent); background: rgba(124,158,245,0.08); color: #9ab5f8; }
+.callout-warn { border-left: 2px solid var(--amber); background: rgba(245,166,35,0.08); color: #e8b96a; }
+.callout-cool { border-left: 2px solid var(--green); background: rgba(93,202,138,0.08); color: #7dd4a0; }
+.callout-hood { border-left: 2px solid var(--purple); background: rgba(179,158,245,0.08); color: #c0aafc; }
+
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+
+@media (max-width: 700px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .sidebar { width: 140px; min-width: 140px; }
+  .main { padding: 1rem; }
+}
+
+.mcard {
+  background: var(--bg3);
+  border: 0.5px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 12px;
+}
+
+.mcard-name {
+  font-family: 'Courier New', monospace;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+
+.mcard-desc {
+  font-size: 11.5px;
+  color: var(--text2);
+  margin-bottom: 7px;
+  line-height: 1.5;
+}
+
+.ctags { display: flex; gap: 5px; flex-wrap: wrap; margin-top: 6px; }
+.ctag {
+  font-size: 10.5px;
+  padding: 1px 7px;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+}
+.o1 { background: rgba(93,202,138,0.12); color: var(--green); }
+.on { background: rgba(245,166,35,0.12); color: var(--amber); }
+.ologn { background: rgba(93,202,181,0.12); color: var(--teal); }
+.on2 { background: rgba(224,92,92,0.12); color: var(--red); }
+
+.divider { height: 0.5px; background: var(--border); margin: 1rem 0; }
+
+.ic { font-family: 'Courier New', monospace; font-size: 11.5px; background: var(--bg3); padding: 1px 5px; border-radius: 3px; color: var(--text); }
+
+table.comp {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: 'Courier New', monospace;
+  font-size: 12px;
+}
+table.comp th {
+  text-align: left;
+  padding: 6px 10px;
+  color: var(--text2);
+  font-weight: 600;
+  border-bottom: 0.5px solid var(--border2);
+}
+table.comp td {
+  padding: 5px 10px;
+  border-bottom: 0.5px solid var(--border);
+  color: var(--text);
+}
+table.comp tr:last-child td { border-bottom: none; }
+.cell-o1 { color: var(--green); }
+.cell-on { color: var(--amber); }
+.cell-ologn { color: var(--teal); }
+.cell-dash { color: var(--text3); }
+</style>
+</head>
+<body>
+
+<div class="app">
+<nav class="sidebar">
+  <div class="sidebar-title">Типи даних</div>
+  <button class="nav-btn active" onclick="show('int')">int</button>
+  <button class="nav-btn" onclick="show('float')">float</button>
+  <button class="nav-btn" onclick="show('bool')">bool</button>
+  <button class="nav-btn" onclick="show('str')">str</button>
+  <button class="nav-btn" onclick="show('bytes')">bytes</button>
+  <div class="nav-divider"></div>
+  <button class="nav-btn" onclick="show('list')">list</button>
+  <button class="nav-btn" onclick="show('tuple')">tuple</button>
+  <button class="nav-btn" onclick="show('dict')">dict</button>
+  <button class="nav-btn" onclick="show('set')">set</button>
+  <div class="nav-divider"></div>
+  <button class="nav-btn" onclick="show('none')">NoneType</button>
+  <button class="nav-btn" onclick="show('complex')">complex</button>
+  <div class="nav-divider"></div>
+  <button class="nav-btn" onclick="show('memory')">Пам'ять&nbsp;/&nbsp;GC</button>
+  <button class="nav-btn" onclick="show('bigpicture')">Big Picture</button>
+</nav>
+
+<main class="main">
+
+<!-- ==================== INT ==================== -->
+<div class="section active" id="sec-int">
+  <div class="sec-header">
+    <span class="sec-name">int</span>
+    <div class="badges">
+      <span class="badge b-blue">immutable</span>
+      <span class="badge b-green">нескінченна точність</span>
+      <span class="badge b-gray">hashable</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке int у Python</div>
+    <div class="card-desc">Python int — довільної точності (BigNum). Немає переповнення як у C/Java. Маленькі int (-5..256) — синглтони: CPython кешує їх при старті.</div>
+    <div class="callout callout-hood">
+      <b>Під капотом:</b> CPython зберігає int як <span class="ic">PyLongObject</span> — масив 30-бітних "digit". Маленькі числа — 1 digit. Великі — масив. Операції над великими числами: O(n) де n — кількість digit.
+    </div>
+<pre class="code">x = 10 ** 100        <span class="comment"># Гугол — без проблем, немає OverflowError</span>
+type(x)              <span class="comment"># &lt;class 'int'&gt;</span>
+x.bit_length()       <span class="comment"># 333</span>
+
+<span class="comment"># Кешування [-5..256] — identity trick</span>
+a = 256; b = 256
+a is b               <span class="comment"># True  — один і той самий об'єкт!</span>
+a = 257; b = 257
+a is b               <span class="comment"># False — вже різні об'єкти</span>
+
+<span class="comment"># Системи числення</span>
+bin(255)             <span class="comment"># '0b11111111'</span>
+oct(255)             <span class="comment"># '0o377'</span>
+hex(255)             <span class="comment"># '0xff'</span>
+int('ff', 16)        <span class="comment"># 255</span>
+int('0b1010', 2)     <span class="comment"># 10</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Методи int</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">x.bit_length()</div>
+        <div class="mcard-desc">Мінімальна кількість біт для представлення. 0→0, 1→1, 255→8</div>
+<pre class="code" style="font-size:11px">(255).bit_length()   <span class="comment"># 8</span>
+(256).bit_length()   <span class="comment"># 9</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">x.bit_count() &nbsp;<span style="color:var(--text3);font-size:10px">3.10+</span></div>
+        <div class="mcard-desc">Кількість одиниць у бінарному представленні (popcount)</div>
+<pre class="code" style="font-size:11px">(0b10110).bit_count()  <span class="comment"># 3</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">x.to_bytes(n, order)</div>
+        <div class="mcard-desc">int → bytes. order: 'big' або 'little'. Для мережевих протоколів.</div>
+<pre class="code" style="font-size:11px">(1024).to_bytes(2, 'big')    <span class="comment"># b'\x04\x00'</span>
+(1024).to_bytes(4, 'little') <span class="comment"># b'\x00\x04\x00\x00'</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">int.from_bytes(b, order)</div>
+        <div class="mcard-desc">bytes → int. Класметод.</div>
+<pre class="code" style="font-size:11px">int.from_bytes(b'\x04\x00', 'big')
+<span class="comment"># 1024</span></pre>
+      </div>
+    </div>
+    <div class="callout callout-warn" style="margin-top:10px">
+      <b>// і % нюанс:</b> floor division завжди до -∞: -7 // 2 == -4 (не -3). Остача: -7 % 2 == 1 (знак знаменника, не діленого). Це відрізняється від C/Java!
+    </div>
+    <div class="callout callout-cool">
+      <b>pow(a, b, mod)</b> набагато швидше ніж (a**b) % mod для криптографії — використовує fast modular exponentiation O(log b).
+    </div>
+  </div>
+</div>
+
+<!-- ==================== FLOAT ==================== -->
+<div class="section" id="sec-float">
+  <div class="sec-header">
+    <span class="sec-name">float</span>
+    <div class="badges">
+      <span class="badge b-blue">immutable</span>
+      <span class="badge b-amber">IEEE 754 double</span>
+      <span class="badge b-red">≈15–17 знаків</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке float</div>
+    <div class="card-desc">64-бітний double precision: 1 знак + 11 exp + 52 мантиса. Не всі десяткові дроби представимі точно у двійковій системі.</div>
+    <div class="callout callout-hood">
+      <b>Під капотом:</b> 0.1 у binary — 0.0001100110011... (нескінченний дріб). IEEE 754 округлює → накопичується похибка. float у CPython — C <span class="ic">double</span> всередині <span class="ic">PyObject</span>.
+    </div>
+<pre class="code">0.1 + 0.2              <span class="comment"># 0.30000000000000004 ← класика!</span>
+0.1 + 0.2 == 0.3       <span class="comment"># False</span>
+
+<span class="comment"># Правильне порівняння:</span>
+import math
+math.isclose(0.1 + 0.2, 0.3)          <span class="comment"># True</span>
+math.isclose(a, b, rel_tol=1e-9)      <span class="comment"># з точністю</span>
+
+<span class="comment"># Для грошей — Decimal:</span>
+from decimal import Decimal
+Decimal('0.1') + Decimal('0.2')        <span class="comment"># Decimal('0.3') — точно!</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Спеціальні значення</div>
+<pre class="code">float('inf')            <span class="comment"># +∞</span>
+float('-inf')           <span class="comment"># -∞</span>
+float('nan')            <span class="comment"># Not a Number</span>
+
+nan = float('nan')
+nan == nan              <span class="comment"># False! NaN ≠ NaN (за IEEE 754)</span>
+nan is nan              <span class="comment"># True  (той самий об'єкт)</span>
+math.isnan(nan)         <span class="comment"># True  ← так треба перевіряти</span>
+
+1 / 0.0                 <span class="comment"># ZeroDivisionError (не inf!)</span>
+import math
+math.inf + 1            <span class="comment"># inf</span>
+math.inf - math.inf     <span class="comment"># nan</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Методи float</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">x.is_integer()</div>
+        <div class="mcard-desc">True якщо число ціле (без дробової частини)</div>
+<pre class="code" style="font-size:11px">(2.0).is_integer()   <span class="comment"># True</span>
+(2.5).is_integer()   <span class="comment"># False</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">x.as_integer_ratio()</div>
+        <div class="mcard-desc">Точне представлення float як дроб p/q</div>
+<pre class="code" style="font-size:11px">(0.5).as_integer_ratio()  <span class="comment"># (1, 2)</span>
+(0.1).as_integer_ratio()
+<span class="comment"># (3602879701896397, 36028797018963968)</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">x.hex() / float.fromhex()</div>
+        <div class="mcard-desc">Hex repr — точний, без втрат. Корисно для серіалізації.</div>
+<pre class="code" style="font-size:11px">(0.1).hex()
+<span class="comment"># '0x1.999999999999ap-4'</span>
+float.fromhex('0x1.8p+0')  <span class="comment"># 1.5</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">round(x, n)</div>
+        <div class="mcard-desc">Banker's rounding — до парного при .5! Не звичне округлення.</div>
+<pre class="code" style="font-size:11px">round(0.5)    <span class="comment"># 0 (не 1!)</span>
+round(1.5)    <span class="comment"># 2</span>
+round(2.5)    <span class="comment"># 2 (не 3!)</span>
+round(1.234, 2)  <span class="comment"># 1.23</span></pre>
+      </div>
+    </div>
+    <div class="callout callout-cool" style="margin-top:10px">
+      <span class="ic">sys.float_info</span> містить: max (~1.8e308), min (5e-324), epsilon (~2.2e-16) — найменше число таке що 1.0 + epsilon != 1.0.
+    </div>
+  </div>
+</div>
+
+<!-- ==================== BOOL ==================== -->
+<div class="section" id="sec-bool">
+  <div class="sec-header">
+    <span class="sec-name">bool</span>
+    <div class="badges">
+      <span class="badge b-purple">підклас int</span>
+      <span class="badge b-blue">immutable</span>
+      <span class="badge b-gray">синглтони</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">bool IS-A int — чому?</div>
+    <div class="card-desc">Гвідо ван Россум додав bool у Python 2.3 (2002). До цього використовували 0/1. Для зворотної сумісності bool зробили підкласом int. True і False — глобальні синглтони в CPython.</div>
+<pre class="code">isinstance(True, int)    <span class="comment"># True ← bool справді int!</span>
+isinstance(True, bool)   <span class="comment"># True</span>
+bool.__bases__           <span class="comment"># (&lt;class 'int'&gt;,)</span>
+
+True + True              <span class="comment"># 2</span>
+True * 5                 <span class="comment"># 5</span>
+False + 1                <span class="comment"># 1</span>
+sum([True, False, True]) <span class="comment"># 2 (підрахунок True)</span>
+
+True is True             <span class="comment"># завжди True (синглтон)</span>
+bool(1)  == True         <span class="comment"># True</span>
+1        == True         <span class="comment"># True</span>
+1        is True         <span class="comment"># False! (різні об'єкти)</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Truthy / Falsy значення</div>
+<pre class="code"><span class="comment"># Falsy — bool(x) == False:</span>
+bool(0)         <span class="comment"># False</span>
+bool(0.0)       <span class="comment"># False</span>
+bool(0j)        <span class="comment"># False (complex нуль)</span>
+bool('')        <span class="comment"># False</span>
+bool([])        <span class="comment"># False</span>
+bool({})        <span class="comment"># False (порожній dict)</span>
+bool(set())     <span class="comment"># False</span>
+bool(None)      <span class="comment"># False</span>
+
+<span class="comment"># Truthy — все інше:</span>
+bool(-1)        <span class="comment"># True (будь-яке ненульове число!)</span>
+bool(' ')       <span class="comment"># True (пробіл — не порожній рядок)</span>
+bool([0])       <span class="comment"># True (список з нулем — непорожній)</span>
+bool([False])   <span class="comment"># True!</span></pre>
+    <div class="callout callout-warn">
+      <b>Класична помилка:</b> -1 і будь-яке від'ємне — truthy! Якщо функція повертає -1 як помилку: <span class="ic">if result:</span> не спрацює. Треба <span class="ic">if result != -1:</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Логічні оператори — повертають значення, не bool!</div>
+<pre class="code"><span class="comment"># and: перший falsy АБО останній (якщо всі truthy)</span>
+0 and 'hello'      <span class="comment"># 0</span>
+1 and 'hello'      <span class="comment"># 'hello'</span>
+[] and [1,2]       <span class="comment"># []</span>
+
+<span class="comment"># or: перший truthy АБО останній</span>
+0 or 'hello'       <span class="comment"># 'hello'</span>
+'' or [] or 0      <span class="comment"># 0 (всі falsy → останній)</span>
+'yes' or 'no'      <span class="comment"># 'yes'</span>
+
+<span class="comment"># Паттерн default value:</span>
+name = user_input or 'Anonymous'
+
+<span class="comment"># not завжди повертає bool:</span>
+not 0              <span class="comment"># True</span>
+not 'anything'     <span class="comment"># False</span>
+
+<span class="comment"># Short-circuit — правий не обчислюється якщо результат відомий:</span>
+data = get_data()
+if data and data[0] == 'x':   <span class="comment"># безпечно: data перевіряється першим</span>
+    ...</pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">__bool__ vs __len__ протокол</div>
+<pre class="code">class MyList:
+    def __init__(self, data): self.data = data
+    def __len__(self): return len(self.data)
+
+<span class="comment"># Python шукає: __bool__ → __len__ → True (якщо немає нічого)</span>
+bool(MyList([]))    <span class="comment"># False (len == 0)</span>
+bool(MyList([1]))   <span class="comment"># True  (len > 0)</span>
+
+class AlwaysTrue:
+    def __bool__(self): return True
+
+bool(AlwaysTrue())  <span class="comment"># True (навіть якщо len == 0)</span></pre>
+  </div>
+</div>
+
+<!-- ==================== STR ==================== -->
+<div class="section" id="sec-str">
+  <div class="sec-header">
+    <span class="sec-name">str</span>
+    <div class="badges">
+      <span class="badge b-blue">immutable</span>
+      <span class="badge b-teal">Unicode</span>
+      <span class="badge b-gray">hashable</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке str</div>
+    <div class="card-desc">Python 3 str — завжди Unicode. Immutable — кожна операція створює новий рядок.</div>
+    <div class="callout callout-hood">
+      <b>Flexible string representation (PEP 393):</b> CPython зберігає рядок у найменшому форматі: Latin-1 (1 байт/символ) якщо всі ≤ U+00FF, UCS-2 (2 байти) до U+FFFF, UCS-4 (4 байти) якщо є emoji. 'hello' займає ~50 байт, 'hello😀' — значно більше.
+    </div>
+<pre class="code"><span class="comment"># Інтернування рядків</span>
+a = 'hello'; b = 'hello'
+a is b            <span class="comment"># True  (CPython інтернує прості str)</span>
+
+a = 'hello world'; b = 'hello world'
+a is b            <span class="comment"># False або True — не гарантовано!</span>
+
+import sys
+a = sys.intern('hello world')
+b = sys.intern('hello world')
+a is b            <span class="comment"># True  (явне інтернування)</span>
+
+<span class="comment"># НІКОЛИ не порівнюй рядки через is — тільки ==</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Пошук та перевірка</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">s.find(sub, start, end)</div>
+        <div class="mcard-desc">Індекс першого входження або -1. Не кидає виключення.</div>
+<pre class="code" style="font-size:11px">'hello world'.find('o')    <span class="comment"># 4</span>
+'hello world'.find('o', 5) <span class="comment"># 7</span>
+'hello world'.find('xyz')  <span class="comment"># -1</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.index(sub)</div>
+        <div class="mcard-desc">Як find, але ValueError якщо не знайдено</div>
+<pre class="code" style="font-size:11px">'hello'.index('l')    <span class="comment"># 2</span>
+'hello'.index('xyz')  <span class="comment"># ValueError!</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.count(sub)</div>
+        <div class="mcard-desc">Кількість входжень без перекриття</div>
+<pre class="code" style="font-size:11px">'aababab'.count('ab')  <span class="comment"># 3</span>
+'aaaa'.count('aa')     <span class="comment"># 2 (не 3!)</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">startswith() / endswith()</div>
+        <div class="mcard-desc">Приймають tuple! Перевіряють кілька варіантів одночасно.</div>
+<pre class="code" style="font-size:11px">'readme.md'.endswith(('.md','.txt'))
+<span class="comment"># True</span>
+'GET /path'.startswith(('GET','POST'))
+<span class="comment"># True</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Зміна регістру</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">s.upper() / s.lower()</div>
+        <div class="mcard-desc">Повний Unicode. 'ß'.upper() → 'SS' (2 символи!)</div>
+<pre class="code" style="font-size:11px">'straße'.upper()   <span class="comment"># 'STRASSE'</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.casefold()</div>
+        <div class="mcard-desc">Агресивний lower для порівняння. Краще ніж lower() для i18n.</div>
+<pre class="code" style="font-size:11px">'ß'.casefold()   <span class="comment"># 'ss'</span>
+'ß'.lower()      <span class="comment"># 'ß'</span>
+<span class="comment"># Для порівняння: s1.casefold() == s2.casefold()</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.strip(chars)</div>
+        <div class="mcard-desc">chars — множина символів, не підрядок! Видаляє з обох боків.</div>
+<pre class="code" style="font-size:11px">'xxhelloxx'.strip('x')   <span class="comment"># 'hello'</span>
+'xyxhello'.strip('xy')   <span class="comment"># 'hello' (і x, і y)</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">removeprefix() / removesuffix()</div>
+        <div class="mcard-desc">Python 3.9+. Видаляє підрядок (не символи як strip).</div>
+<pre class="code" style="font-size:11px">'unhappy'.removeprefix('un')   <span class="comment"># 'happy'</span>
+'test.py'.removesuffix('.py')  <span class="comment"># 'test'</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Розбивка та об'єднання</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">s.split(sep, maxsplit)</div>
+        <div class="mcard-desc">Без sep — по whitespace + видаляє порожні. З sep — ні.</div>
+<pre class="code" style="font-size:11px">'a  b  c'.split()       <span class="comment"># ['a','b','c']</span>
+'a  b  c'.split(' ')    <span class="comment"># ['a','','b','','c']</span>
+'a,b,c'.split(',', 1)   <span class="comment"># ['a','b,c']</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">sep.join(iterable)</div>
+        <div class="mcard-desc">Правильний спосіб конкатенації! += у циклі — O(n²), join — O(n).</div>
+<pre class="code" style="font-size:11px">'-'.join(['a','b','c'])  <span class="comment"># 'a-b-c'</span>
+''.join(map(str, [1,2])) <span class="comment"># '12'</span>
+<span class="comment"># Будувати рядок:</span>
+parts = [str(x) for x in data]
+result = ', '.join(parts)  <span class="comment"># O(n)</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.partition(sep)</div>
+        <div class="mcard-desc">Завжди 3 елементи: (before, sep, after). Якщо немає → (s, '', '').</div>
+<pre class="code" style="font-size:11px">'user@host.com'.partition('@')
+<span class="comment"># ('user', '@', 'host.com')</span>
+'no-at'.partition('@')
+<span class="comment"># ('no-at', '', '')</span></pre>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.splitlines()</div>
+        <div class="mcard-desc">Розуміє \n, \r\n, \r та Unicode line endings.</div>
+<pre class="code" style="font-size:11px">'a\nb\r\nc'.splitlines()
+<span class="comment"># ['a', 'b', 'c']</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Форматування рядків</div>
+<pre class="code">name, val = 'Python', 3.14159
+
+<span class="comment"># f-strings (3.6+) — швидкі та читабельні</span>
+f'{name!r} = {val:.2f}'       <span class="comment"># "'Python' = 3.14"</span>
+f'{val:>10.3f}'               <span class="comment"># '     3.142' (ширина, вирівнювання)</span>
+f'{1_000_000:_}'              <span class="comment"># '1_000_000' (роздільник тисяч)</span>
+f'{255:#010b}'                <span class="comment"># '0b11111111'</span>
+f'{"hi":^20}'                 <span class="comment"># '        hi        ' (по центру)</span>
+f'{val = }'                   <span class="comment"># 'val = 3.14159' (debug, 3.8+)</span>
+
+<span class="comment"># format()</span>
+'{0} and {0}'.format('yes')   <span class="comment"># 'yes and yes'</span>
+'{name}'.format(name='Bob')   <span class="comment"># 'Bob'</span>
+
+<span class="comment"># % — старий стиль</span>
+'%s = %.2f' % (name, val)     <span class="comment"># 'Python = 3.14'</span></pre>
+    <div class="callout callout-info">f-strings у Python 3.12 підтримують довільні вирази всередині, включаючи вкладені f-strings та умовні вирази.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">isdigit / isnumeric / isdecimal — різниця!</div>
+<pre class="code"><span class="comment"># isdecimal — тільки 0-9 (найстрогіше)</span>
+'123'.isdecimal()   <span class="comment"># True</span>
+'²'.isdecimal()     <span class="comment"># False</span>
+
+<span class="comment"># isdigit — додає Unicode "цифри" (верхні індекси і т.д.)</span>
+'²'.isdigit()       <span class="comment"># True</span>
+'½'.isdigit()       <span class="comment"># False</span>
+
+<span class="comment"># isnumeric — найширше (дроби, ієрогліфи-числа)</span>
+'½'.isnumeric()     <span class="comment"># True</span>
+'Ⅻ'.isnumeric()     <span class="comment"># True (римська XII)</span></pre>
+    <div class="callout callout-warn">isdigit() повертає True для '²', але int('²') кидає ValueError! Для перевірки введення юзером — використовуй isdecimal().</div>
+  </div>
+</div>
+
+<!-- ==================== BYTES ==================== -->
+<div class="section" id="sec-bytes">
+  <div class="sec-header">
+    <span class="sec-name">bytes</span>
+    <div class="badges">
+      <span class="badge b-blue">immutable</span>
+      <span class="badge b-amber">0–255</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">bytes / bytearray / memoryview</div>
+<pre class="code">b = b'hello'                          <span class="comment"># bytes literal</span>
+b = bytes([72, 101, 108, 108, 111])   <span class="comment"># із списку int</span>
+b = bytes(5)                          <span class="comment"># b'\x00\x00\x00\x00\x00'</span>
+
+b[0]        <span class="comment"># 72 (int, не символ!)</span>
+b[0:2]      <span class="comment"># b'He'</span>
+
+<span class="comment"># bytearray — mutable версія</span>
+ba = bytearray(b'hello')
+ba[0] = 72  <span class="comment"># можна змінювати</span>
+ba.append(33)  <span class="comment"># !</span>
+
+<span class="comment"># Кодування/декодування</span>
+'привіт'.encode('utf-8')          <span class="comment"># b'\xd0\xbf\xd1\x80...'</span>
+b'\xd0\xbf'.decode('utf-8')       <span class="comment"># 'п'</span>
+'hello'.encode('ascii')           <span class="comment"># b'hello'</span>
+b'hello'.decode('latin-1')        <span class="comment"># 'hello'</span>
+
+<span class="comment"># errors parameter:</span>
+'café'.encode('ascii', errors='ignore')   <span class="comment"># b'caf'</span>
+'café'.encode('ascii', errors='replace')  <span class="comment"># b'caf?'</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">memoryview — zero-copy slicing</div>
+<pre class="code">data = bytearray(b'hello world')
+mv = memoryview(data)
+
+<span class="comment"># Slice без копіювання даних у пам'яті!</span>
+chunk = mv[0:5]        <span class="comment"># &lt;memory at 0x...&gt;</span>
+bytes(chunk)           <span class="comment"># b'hello' (копія тільки тут)</span>
+
+<span class="comment"># Можна змінювати оригінал через view:</span>
+mv[0] = ord('H')
+print(data)            <span class="comment"># bytearray(b'Hello world')</span>
+
+<span class="comment"># Корисно для великих буферів (відео, мережа):</span>
+# Без memoryview: кожен slice = нова копія (O(n) пам'яті)
+# З memoryview:   slice = view (O(1) пам'яті)</span></pre>
+    <div class="callout callout-cool">memoryview критичний для продуктивності при роботі з великими бінарними даними — передає дані до socket/file без зайвих копій.</div>
+  </div>
+</div>
+
+<!-- ==================== LIST ==================== -->
+<div class="section" id="sec-list">
+  <div class="sec-header">
+    <span class="sec-name">list</span>
+    <div class="badges">
+      <span class="badge b-green">mutable</span>
+      <span class="badge b-blue">dynamic array</span>
+      <span class="badge b-amber">ordered</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке list</div>
+    <div class="card-desc">list — динамічний масив вказівників на PyObject. Не LinkedList! Кожен елемент — 8-байтовий вказівник на об'єкт.</div>
+    <div class="callout callout-hood">
+      <b>Під капотом — dynamic array з over-allocation:</b> При append, якщо місця немає — виділяє новий масив з надлишком (~n*1.125). Тому амортизований O(1) для append. Послідовність росту: 0→4→8→16→25→35→46→58→72→88...
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Основні методи</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">lst.append(x)</div>
+        <div class="mcard-desc">Додає в кінець. Амортизований O(1).</div>
+<pre class="code" style="font-size:11px">lst = [1, 2, 3]
+lst.append(4)   <span class="comment"># [1, 2, 3, 4]</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1) amorт.</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.insert(i, x)</div>
+        <div class="mcard-desc">Всі елементи правіше зсуваються — повільно для початку!</div>
+<pre class="code" style="font-size:11px">lst.insert(0, 'x')   <span class="comment"># вставка на початок</span>
+<span class="comment"># Для черги → collections.deque</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.pop(i=-1)</div>
+        <div class="mcard-desc">pop() з кінця O(1). pop(0) — O(n)!</div>
+<pre class="code" style="font-size:11px">lst.pop()     <span class="comment"># останній — O(1)</span>
+lst.pop(0)    <span class="comment"># перший   — O(n)!</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1) кінець</span><span class="ctag on">O(n) інакше</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.remove(x)</div>
+        <div class="mcard-desc">Видаляє ПЕРШЕ входження. ValueError якщо немає.</div>
+<pre class="code" style="font-size:11px">[1,2,2,3].remove(2)  <span class="comment"># [1, 2, 3]</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.extend(iter)</div>
+        <div class="mcard-desc">+= теж extend. Не те саме що append!</div>
+<pre class="code" style="font-size:11px">lst.extend([4,5])   <span class="comment"># [1,2,3,4,5]</span>
+lst.append([4,5])   <span class="comment"># [1,2,3,[4,5]] ← список!</span></pre>
+        <div class="ctags"><span class="ctag on">O(k)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.sort(key, reverse)</div>
+        <div class="mcard-desc">Timsort. In-place. Стабільний. key — функція перетворення.</div>
+<pre class="code" style="font-size:11px">words = ['banana','apple','fig']
+words.sort(key=len)
+<span class="comment"># ['fig', 'apple', 'banana']</span></pre>
+        <div class="ctags"><span class="ctag ologn">O(n log n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.copy()</div>
+        <div class="mcard-desc">Shallow copy! Вкладені об'єкти — ті самі.</div>
+<pre class="code" style="font-size:11px">a = [[1,2],[3,4]]
+b = a.copy()
+b[0].append(9)
+print(a)  <span class="comment"># [[1,2,9],[3,4]] !</span>
+import copy; c = copy.deepcopy(a)</pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">lst.index(x, s, e)</div>
+        <div class="mcard-desc">Індекс першого входження. ValueError якщо немає.</div>
+<pre class="code" style="font-size:11px">[1,2,3,2].index(2)     <span class="comment"># 1</span>
+[1,2,3,2].index(2, 2)  <span class="comment"># 3</span></pre>
+        <div class="ctags"><span class="ctag on">O(n)</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Comprehensions та ідіоми</div>
+<pre class="code"><span class="comment"># Comprehension — ідіоматично і швидше ніж for+append</span>
+squares = [x**2 for x in range(10)]
+evens   = [x for x in range(20) if x % 2 == 0]
+
+<span class="comment"># Вкладений comprehension (читай зліва направо)</span>
+matrix = [[i*j for j in range(3)] for i in range(3)]
+flat   = [x for row in matrix for x in row]  <span class="comment"># flatten</span>
+
+<span class="comment"># zip — паралельний ітератор</span>
+names  = ['Alice', 'Bob', 'Carol']
+scores = [95, 87, 92]
+list(zip(names, scores))    <span class="comment"># [('Alice',95), ('Bob',87), ...]</span>
+dict(zip(names, scores))    <span class="comment"># {'Alice':95, 'Bob':87, ...}</span>
+
+<span class="comment"># enumerate — індекс + значення</span>
+for i, name in enumerate(names, start=1):
+    print(f'{i}. {name}')
+
+<span class="comment"># * розпаковка</span>
+first, *rest = [1, 2, 3, 4, 5]    <span class="comment"># first=1, rest=[2,3,4,5]</span>
+*head, last  = [1, 2, 3, 4, 5]    <span class="comment"># head=[1,2,3,4], last=5</span>
+a, *_, b     = [1, 2, 3, 4, 5]    <span class="comment"># a=1, b=5</span></pre>
+  </div>
+</div>
+
+<!-- ==================== TUPLE ==================== -->
+<div class="section" id="sec-tuple">
+  <div class="sec-header">
+    <span class="sec-name">tuple</span>
+    <div class="badges">
+      <span class="badge b-blue">immutable</span>
+      <span class="badge b-gray">hashable*</span>
+      <span class="badge b-green">швидший за list</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке tuple</div>
+    <div class="card-desc">Immutable послідовність. Може бути ключем dict/set. Швидший за list для read-only. CPython кешує порожній tuple і малі tuple.</div>
+<pre class="code"><span class="comment"># Одноелементний — ПОТРІБНА КОМА!</span>
+t = (1)     <span class="comment"># int! Це просто дужки</span>
+t = (1,)    <span class="comment"># tuple</span>
+t = 1,      <span class="comment"># теж tuple (дужки необов'язкові)</span>
+
+<span class="comment"># Unpacking</span>
+x, y = 1, 2
+x, y = y, x          <span class="comment"># swap без тимчасової змінної!</span>
+
+a, b, *rest = (1, 2, 3, 4, 5)
+<span class="comment"># a=1, b=2, rest=[3,4,5]</span>
+
+<span class="comment"># Hashable якщо всі елементи hashable</span>
+hash((1, 'hello', 3.14))   <span class="comment"># OK</span>
+hash(([1,2], 3))            <span class="comment"># TypeError! list не hashable</span>
+
+<span class="comment"># Ключ dict:</span>
+d = {(0,0): 'origin', (1,0): 'right'}
+d[(0,0)]    <span class="comment"># 'origin'</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">namedtuple — tuple з іменами</div>
+<pre class="code">from collections import namedtuple
+
+Point = namedtuple('Point', ['x', 'y'])
+p = Point(3, 4)
+
+p.x           <span class="comment"># 3</span>
+p[0]          <span class="comment"># 3 (і як tuple)</span>
+p._asdict()   <span class="comment"># {'x': 3, 'y': 4}</span>
+p._replace(x=10)  <span class="comment"># Point(x=10, y=4) — новий об'єкт</span>
+
+<span class="comment"># Сучасна альтернатива — dataclass:</span>
+from dataclasses import dataclass
+
+@dataclass(frozen=True)   <span class="comment"># frozen = immutable = hashable</span>
+class Point:
+    x: float
+    y: float</pre>
+  </div>
+</div>
+
+<!-- ==================== DICT ==================== -->
+<div class="section" id="sec-dict">
+  <div class="sec-header">
+    <span class="sec-name">dict</span>
+    <div class="badges">
+      <span class="badge b-green">mutable</span>
+      <span class="badge b-purple">hash map</span>
+      <span class="badge b-teal">ordered 3.7+</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке dict</div>
+    <div class="callout callout-hood">
+      <b>Compact hash table (PEP 468, Python 3.6+):</b> Два масиви: indices (sparse, для хешування) та entries (dense, key+value+hash). Load factor ~2/3 → resize. При колізії — open addressing з perturbation. Ця оптимізація зменшила розмір dict на ~25% і гарантувала порядок вставки.
+    </div>
+<pre class="code"><span class="comment"># Створення</span>
+d = {'key': 'value'}
+d = dict(a=1, b=2)
+d = dict([('a', 1), ('b', 2)])
+
+<span class="comment"># Доступ</span>
+d['key']            <span class="comment"># KeyError якщо немає</span>
+d.get('key')        <span class="comment"># None якщо немає</span>
+d.get('key', 0)     <span class="comment"># 0 якщо немає</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Методи dict</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">d.get(key, default)</div>
+        <div class="mcard-desc">Безпечний доступ. Не кидає KeyError.</div>
+<pre class="code" style="font-size:11px">{'a':1}.get('z', 0)   <span class="comment"># 0</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">d.setdefault(key, def)</div>
+        <div class="mcard-desc">Якщо ключ є — повертає value. Якщо немає — встановлює і повертає.</div>
+<pre class="code" style="font-size:11px">d = {}
+d.setdefault('a', []).append(1)
+d.setdefault('a', []).append(2)
+<span class="comment"># {'a': [1, 2]}</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">d.pop(key, default)</div>
+        <div class="mcard-desc">Видаляє і повертає. З default — без KeyError.</div>
+<pre class="code" style="font-size:11px">d.pop('key')          <span class="comment"># повертає value</span>
+d.pop('missing', None) <span class="comment"># None, без помилки</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">d.popitem()</div>
+        <div class="mcard-desc">Видаляє і повертає ОСТАННІЙ вставлений (LIFO з 3.7+).</div>
+<pre class="code" style="font-size:11px">d = {'a': 1, 'b': 2}
+d.popitem()   <span class="comment"># ('b', 2)</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">d.update(other)</div>
+        <div class="mcard-desc">Merge. Перезаписує існуючі ключі. 3.9+: d1 | d2 оператор.</div>
+<pre class="code" style="font-size:11px">d.update({'c': 3})
+d.update(x=4)
+new = d1 | d2    <span class="comment"># новий dict (3.9+)</span>
+d1 |= d2         <span class="comment"># in-place (3.9+)</span></pre>
+        <div class="ctags"><span class="ctag on">O(k)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">d.keys() / values() / items()</div>
+        <div class="mcard-desc">View-об'єкти! Динамічно відображають поточний стан dict.</div>
+<pre class="code" style="font-size:11px">d = {'a': 1}
+kv = d.keys()
+d['b'] = 2
+list(kv)   <span class="comment"># ['a','b'] ← оновилось!</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1) отримання</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">defaultdict, Counter, comprehension</div>
+<pre class="code">from collections import defaultdict, Counter
+
+<span class="comment"># defaultdict — авто-ініціалізація</span>
+dd = defaultdict(list)
+dd['key'].append(1)   <span class="comment"># не треба ініціалізувати!</span>
+
+dd = defaultdict(int)
+for word in 'hello world hello'.split():
+    dd[word] += 1
+<span class="comment"># defaultdict(int, {'hello': 2, 'world': 1})</span>
+
+<span class="comment"># Counter — підрахунок елементів</span>
+c = Counter('abracadabra')
+c.most_common(3)      <span class="comment"># [('a',5), ('b',2), ('r',2)]</span>
+c['a']                <span class="comment"># 5</span>
+c['z']                <span class="comment"># 0 (не KeyError!)</span>
+c + Counter('abc')    <span class="comment"># об'єднання підрахунків</span>
+
+<span class="comment"># Dict comprehension</span>
+sq = {x: x**2 for x in range(5)}
+inv = {v: k for k, v in d.items()}  <span class="comment"># інвертувати</span>
+filtered = {k: v for k, v in d.items() if v > 0}</span></pre>
+  </div>
+</div>
+
+<!-- ==================== SET ==================== -->
+<div class="section" id="sec-set">
+  <div class="sec-header">
+    <span class="sec-name">set</span>
+    <div class="badges">
+      <span class="badge b-green">mutable</span>
+      <span class="badge b-purple">hash table</span>
+      <span class="badge b-amber">unordered</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Що таке set</div>
+    <div class="callout callout-hood">
+      <b>Під капотом:</b> Hash table без values — тільки ключі. {} створює dict, НЕ set! Порожній set: <span class="ic">set()</span>. frozenset — immutable версія, може бути ключем dict.
+    </div>
+<pre class="code">s = {1, 2, 3}
+s = set([1, 2, 2, 3])    <span class="comment"># {1, 2, 3} — дедублікація</span>
+s = set('hello')          <span class="comment"># {'h','e','l','o'}</span>
+
+<span class="comment"># Порожній:</span>
+empty = set()             <span class="comment"># НЕ {} — це dict!</span>
+
+<span class="comment"># frozenset — hashable, може бути ключем:</span>
+fs = frozenset([1, 2, 3])
+d = {fs: 'frozen'}        <span class="comment"># OK</span>
+d = {{1,2,3}: 'set'}      <span class="comment"># TypeError!</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Операції множин</div>
+<pre class="code">a = {1, 2, 3, 4}
+b = {3, 4, 5, 6}
+
+a | b   <span class="comment"># {1,2,3,4,5,6}   union — об'єднання</span>
+a & b   <span class="comment"># {3,4}           intersection — перетин</span>
+a - b   <span class="comment"># {1,2}           difference — різниця</span>
+a ^ b   <span class="comment"># {1,2,5,6}       symmetric diff</span>
+
+<span class="comment"># Перевірки:</span>
+{1,2}.issubset({1,2,3})      <span class="comment"># True</span>
+{1,2,3}.issuperset({1,2})    <span class="comment"># True</span>
+{1,2}.isdisjoint({3,4})      <span class="comment"># True (немає спільних)</span>
+
+<span class="comment"># Найчастіше використання:</span>
+unique = list(set(my_list))  <span class="comment"># дедублікація</span>
+if item in big_set:           <span class="comment"># O(1) vs O(n) для list!</span>
+    ...</pre>
+    <div class="ctags" style="margin-top:8px"><span class="ctag o1">O(1): in, add, remove</span><span class="ctag on">O(n): union, intersection, iteration</span></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Методи set</div>
+    <div class="grid2">
+      <div class="mcard">
+        <div class="mcard-name">s.add(x)</div>
+        <div class="mcard-desc">Додає. Ніякої помилки якщо вже є.</div>
+<pre class="code" style="font-size:11px">s.add(3)   <span class="comment"># дублю немає</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.remove(x) / discard(x)</div>
+        <div class="mcard-desc">remove → KeyError. discard → тихо ігнорує.</div>
+<pre class="code" style="font-size:11px">s.remove(99)   <span class="comment"># KeyError!</span>
+s.discard(99)  <span class="comment"># OK, мовчить</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.pop()</div>
+        <div class="mcard-desc">Видаляє ДОВІЛЬНИЙ елемент (set — unordered)!</div>
+<pre class="code" style="font-size:11px">s = {1, 2, 3}
+s.pop()   <span class="comment"># може бути будь-який</span></pre>
+        <div class="ctags"><span class="ctag o1">O(1)</span></div>
+      </div>
+      <div class="mcard">
+        <div class="mcard-name">s.update(*others)</div>
+        <div class="mcard-desc">In-place union з кількома множинами/ітерабельними.</div>
+<pre class="code" style="font-size:11px">s.update([4,5], {6,7})
+s |= {8, 9}  <span class="comment"># те саме</span></pre>
+        <div class="ctags"><span class="ctag on">O(k)</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ==================== NONE ==================== -->
+<div class="section" id="sec-none">
+  <div class="sec-header">
+    <span class="sec-name">NoneType</span>
+    <div class="badges">
+      <span class="badge b-gray">синглтон</span>
+      <span class="badge b-blue">immutable</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">None — єдиний об'єкт NoneType</div>
+<pre class="code">type(None)      <span class="comment"># &lt;class 'NoneType'&gt;</span>
+
+<span class="comment"># Правильне порівняння — через is, не ==!</span>
+x = None
+x is None       <span class="comment"># True  ← завжди так</span>
+x == None       <span class="comment"># True  (але PEP8 каже is)</span>
+x is not None   <span class="comment"># False</span>
+
+<span class="comment"># Чому is, а не ==?</span>
+class Weird:
+    def __eq__(self, other): return True  <span class="comment"># завжди True!</span>
+
+w = Weird()
+w == None   <span class="comment"># True  ← обманює нас</span>
+w is None   <span class="comment"># False ← правда</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">None у функціях та sentinel pattern</div>
+<pre class="code"><span class="comment"># Функція без return повертає None</span>
+def nothing(): pass
+nothing() is None   <span class="comment"># True</span>
+
+<span class="comment"># Type hints:</span>
+def greet(name: str | None = None) -> str:
+    if name is None:
+        name = 'World'
+    return f'Hello, {name}!'
+
+<span class="comment"># Проблема: None як валідне значення</span>
+def process(value=None):   <span class="comment"># що якщо None — valid input?</span>
+    if value is None:      <span class="comment"># не розрізняємо "не передано" і None</span>
+        ...
+
+<span class="comment"># Рішення: унікальний sentinel</span>
+_MISSING = object()        <span class="comment"># унікальний об'єкт</span>
+def process(value=_MISSING):
+    if value is _MISSING:  <span class="comment"># точно "не передано"</span>
+        value = compute_default()
+    # тут value може бути None — і це нормально</span></pre>
+    <div class="callout callout-info">None — falsy, але перевіряти <span class="ic">if x is None</span> краще ніж <span class="ic">if not x</span>, бо 0, '', [] теж falsy — результат різний!</div>
+  </div>
+</div>
+
+<!-- ==================== COMPLEX ==================== -->
+<div class="section" id="sec-complex">
+  <div class="sec-header">
+    <span class="sec-name">complex</span>
+    <div class="badges">
+      <span class="badge b-purple">вбудований</span>
+      <span class="badge b-blue">immutable</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">complex — комплексні числа</div>
+<pre class="code">z = 3 + 4j      <span class="comment"># j замість i (інженерна нотація)</span>
+z = complex(3, 4)
+
+z.real          <span class="comment"># 3.0</span>
+z.imag          <span class="comment"># 4.0</span>
+z.conjugate()   <span class="comment"># (3-4j)</span>
+abs(z)          <span class="comment"># 5.0 (модуль = sqrt(3²+4²))</span>
+
+<span class="comment"># cmath — комплексна математика</span>
+import cmath
+cmath.phase(z)        <span class="comment"># кут у радіанах (arctan(4/3))</span>
+cmath.polar(z)        <span class="comment"># (5.0, 0.927...) — (модуль, кут)</span>
+cmath.rect(5, 0.927)  <span class="comment"># назад у прямокутні координати</span>
+cmath.sqrt(-1)        <span class="comment"># 1j (не помилка!)</span>
+
+<span class="comment"># Формула Ейлера: e^(iπ) = -1</span>
+import cmath, math
+cmath.exp(1j * math.pi)   <span class="comment"># (-1+1.2246e-16j) ≈ -1</span></pre>
+    <div class="callout callout-cool">complex вбудований прямо в мову — не потрібна бібліотека. Корисний для FFT, обробки сигналів, фізичних симуляцій.</div>
+  </div>
+</div>
+
+<!-- ==================== MEMORY ==================== -->
+<div class="section" id="sec-memory">
+  <div class="sec-header">
+    <span class="sec-name">Пам'ять / GC</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Розмір об'єктів</div>
+<pre class="code">import sys
+sys.getsizeof(0)           <span class="comment"># 24 байт</span>
+sys.getsizeof(10**100)     <span class="comment"># більше (bignum)</span>
+sys.getsizeof('')          <span class="comment"># 49 байт</span>
+sys.getsizeof('a')         <span class="comment"># 50 байт (+1 за символ latin-1)</span>
+sys.getsizeof([])          <span class="comment"># 56 байт</span>
+sys.getsizeof([1,2,3])     <span class="comment"># 88 байт (56 + 3*8)</span>
+sys.getsizeof(())          <span class="comment"># 40 байт (менше ніж list!)</span>
+sys.getsizeof({})          <span class="comment"># 64 байт</span>
+sys.getsizeof(set())       <span class="comment"># 216 байт</span></pre>
+    <div class="callout callout-warn">getsizeof рахує ТІЛЬКИ сам об'єкт, не вкладені! Для повного розміру: <span class="ic">import tracemalloc</span> або рекурсивна функція.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Hashable — що і чому</div>
+<pre class="code"><span class="comment"># Hashable → може бути ключем dict/set</span>
+hash(1)              <span class="comment"># OK</span>
+hash('hello')        <span class="comment"># OK</span>
+hash((1, 2))         <span class="comment"># OK (tuple з immutable)</span>
+hash(frozenset([1])) <span class="comment"># OK</span>
+
+<span class="comment"># Unhashable:</span>
+hash([1, 2])         <span class="comment"># TypeError: unhashable type: 'list'</span>
+hash({1: 2})         <span class="comment"># TypeError</span>
+
+<span class="comment"># Хеш однакових значень рівний!</span>
+hash(1) == hash(1.0) == hash(True)   <span class="comment"># True!</span>
+<span class="comment"># Тому це один ключ у dict:</span>
+d = {1: 'int'}
+d[1.0]    <span class="comment"># 'int'  (не новий ключ)</span>
+d[True]   <span class="comment"># 'int'  (True == 1)</span></pre>
+    <div class="callout callout-warn">hash() недетермінований між запусками Python (PYTHONHASHSEED). Ніколи не зберігай hash() у файл між сесіями!</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Reference counting та GC</div>
+<pre class="code">import sys, gc
+
+x = [1, 2, 3]
+sys.getrefcount(x)   <span class="comment"># 2 (x + аргумент функції)</span>
+y = x
+sys.getrefcount(x)   <span class="comment"># 3</span>
+del y
+sys.getrefcount(x)   <span class="comment"># 2</span>
+
+<span class="comment"># Циклічні посилання — GC їх збирає</span>
+a = []
+a.append(a)          <span class="comment"># a вказує на себе!</span>
+del a                <span class="comment"># refcount не падає до 0 → потрібен GC</span>
+
+gc.collect()         <span class="comment"># примусовий збір циклів</span>
+gc.disable()         <span class="comment"># вимкнути GC (обережно!)</span></pre>
+    <div class="callout callout-hood"><b>CPython:</b> Reference counting (основний) + Cyclic GC для циклічних посилань. PyPy використовує tracing GC. __del__ (finalizer) викликається при refcount → 0, але не гарантовано при циклах.</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Shallow vs Deep copy</div>
+<pre class="code">import copy
+
+original = [[1, 2], [3, 4]]
+
+a = original               <span class="comment"># той самий об'єкт</span>
+a is original              <span class="comment"># True</span>
+
+b = original.copy()        <span class="comment"># або original[:]</span>
+b is original              <span class="comment"># False</span>
+b[0] is original[0]        <span class="comment"># True ← вкладені ті ж!</span>
+b[0].append(99)
+print(original)            <span class="comment"># [[1,2,99],[3,4]] ← змінилось!</span>
+
+c = copy.deepcopy(original)
+c[0].append(99)
+print(original)            <span class="comment"># [[1,2],[3,4]] ← не змінилось</span></pre>
+  </div>
+</div>
+
+<!-- ==================== BIG PICTURE ==================== -->
+<div class="section" id="sec-bigpicture">
+  <div class="sec-header">
+    <span class="sec-name">Big Picture</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Таблиця складностей</div>
+    <table class="comp">
+      <thead>
+        <tr><th>Операція</th><th>list</th><th>dict</th><th>set</th><th>tuple</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Доступ [i]</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-dash">—</td><td class="cell-o1">O(1)</td></tr>
+        <tr><td>Пошук (x in s)</td><td class="cell-on">O(n)</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-on">O(n)</td></tr>
+        <tr><td>Вставка в кінець</td><td class="cell-o1">O(1)*</td><td class="cell-o1">O(1)*</td><td class="cell-o1">O(1)*</td><td class="cell-dash">—</td></tr>
+        <tr><td>Вставка на початок</td><td class="cell-on">O(n)</td><td class="cell-o1">O(1)*</td><td class="cell-o1">O(1)*</td><td class="cell-dash">—</td></tr>
+        <tr><td>Видалення з кінця</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-dash">—</td></tr>
+        <tr><td>Видалення [i]</td><td class="cell-on">O(n)</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-dash">—</td></tr>
+        <tr><td>Ітерація</td><td class="cell-on">O(n)</td><td class="cell-on">O(n)</td><td class="cell-on">O(n)</td><td class="cell-on">O(n)</td></tr>
+        <tr><td>len()</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td><td class="cell-o1">O(1)</td></tr>
+        <tr><td>sort()</td><td class="cell-ologn">O(n log n)</td><td class="cell-dash">—</td><td class="cell-dash">—</td><td class="cell-dash">—</td></tr>
+        <tr><td>union / intersection</td><td class="cell-dash">—</td><td class="cell-dash">—</td><td class="cell-on">O(n)</td><td class="cell-dash">—</td></tr>
+      </tbody>
+    </table>
+    <div style="margin-top:8px;font-size:11px;color:var(--text3);">* амортизований O(1)</div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mutable vs Immutable vs Hashable</div>
+<pre class="code"><span class="comment">Тип         Mutable   Hashable   Ordered   Дублікати</span>
+<span class="comment">─────────────────────────────────────────────────────</span>
+int         Ні        Так        —         —
+float       Ні        Так        —         —
+bool        Ні        Так        —         —
+str         Ні        Так        Так       Так
+bytes       Ні        Так        Так       Так
+tuple       Ні        Так*       Так       Tak
+<span class="comment">─────────────────────────────────────────────────────</span>
+list        Так       Ні         Так       Так
+bytearray   Так       Ні         Так       Так
+dict        Так       Ні         Так(3.7+) Ключі — ні
+set         Так       Ні         Ні        Ні
+<span class="comment">─────────────────────────────────────────────────────</span>
+frozenset   Ні        Так        Ні        Ні
+complex     Ні        Так        —         —
+NoneType    Ні        Так        —         —
+
+<span class="comment">* tuple hashable тільки якщо всі елементи hashable</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Коли що використовувати</div>
+<pre class="code"><span class="comment">Потрібна унікальність + O(1) пошук     → set</span>
+<span class="comment">Ключ → значення                         → dict</span>
+<span class="comment">Порядок + дублікати + зміни             → list</span>
+<span class="comment">Порядок + дублікати + тільки читання   → tuple</span>
+<span class="comment">Фіксована структура з іменами           → namedtuple / dataclass</span>
+<span class="comment">Велика кількість чисел одного типу      → array.array / numpy</span>
+<span class="comment">Черга (FIFO) з обох кінців              → collections.deque</span>
+<span class="comment">Впорядкований dict                      → dict (3.7+)</span>
+<span class="comment">Підрахунок елементів                    → collections.Counter</span>
+<span class="comment">Точна арифметика                        → decimal.Decimal</span>
+<span class="comment">Раціональні числа                       → fractions.Fraction</span></pre>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Найцікавіші WTFs Python</div>
+<pre class="code"><span class="comment"># 1. bool — підклас int</span>
+True + True == 2           <span class="comment"># True</span>
+isinstance(True, int)      <span class="comment"># True</span>
+
+<span class="comment"># 2. Mutable default argument — класична пастка</span>
+def append(x, lst=[]):     <span class="comment"># lst ОДИН ОБ'ЄКТ для всіх викликів!</span>
+    lst.append(x)
+    return lst
+append(1)  <span class="comment"># [1]</span>
+append(2)  <span class="comment"># [1, 2] ← не [2]!</span>
+<span class="comment"># Правильно: def append(x, lst=None): if lst is None: lst = []</span>
+
+<span class="comment"># 3. is vs ==</span>
+a = 257; b = 257
+a == b  <span class="comment"># True</span>
+a is b  <span class="comment"># False (або True — залежить від контексту!)</span>
+
+<span class="comment"># 4. NaN не рівний собі</span>
+nan = float('nan')
+nan == nan  <span class="comment"># False!</span>
+
+<span class="comment"># 5. hash(1) == hash(1.0) == hash(True)</span>
+d = {}; d[1] = 'one'
+d[True]   <span class="comment"># 'one' (True == 1 == 1.0 як ключ)</span>
+
+<span class="comment"># 6. Порожня функція повертає None</span>
+def f(): pass
+f() is None   <span class="comment"># True</span>
+
+<span class="comment"># 7. list.sort() vs sorted()</span>
+lst = [3,1,2]
+new = sorted(lst)  <span class="comment"># новий список, lst не змінюється</span>
+lst.sort()         <span class="comment"># in-place, повертає None!</span>
+x = lst.sort()     <span class="comment"># x == None ← класична помилка</span></pre>
+  </div>
+</div>
+
+</main>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('sec-' + id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    if (b.getAttribute('onclick') === `show('${id}')`) b.classList.add('active');
+  });
+  window.scrollTo(0, 0);
+}
+</script>
+</body>
+</html>
