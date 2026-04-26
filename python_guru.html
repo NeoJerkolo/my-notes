@@ -1,0 +1,1326 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Guru — Шпаргалка</title>
+<style>
+  :root {
+    --bg: #0d1117; --bg2: #161b22; --bg3: #21262d;
+    --border: #30363d; --text: #e6edf3; --muted: #8b949e;
+    --green: #3fb950; --blue: #58a6ff; --purple: #bc8cff;
+    --orange: #d29922; --red: #f85149; --teal: #39d353;
+    --pink: #ff7b72; --yellow: #e3b341;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; line-height: 1.6; }
+  header { background: var(--bg2); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; position: sticky; top: 0; z-index: 100; display: flex; align-items: center; gap: 1rem; flex-wrap: wrap; }
+  header h1 { font-size: 1.1rem; font-weight: 600; color: var(--green); white-space: nowrap; }
+  nav { display: flex; gap: 4px; flex-wrap: wrap; }
+  nav button {
+    background: var(--bg3); border: 1px solid var(--border); color: var(--muted);
+    padding: 4px 12px; border-radius: 20px; cursor: pointer; font-size: 12px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  nav button:hover { color: var(--text); border-color: var(--blue); }
+  nav button.active { background: var(--green); color: #000; border-color: var(--green); font-weight: 600; }
+  main { max-width: 1200px; margin: 0 auto; padding: 1.5rem; }
+  .section { display: none; }
+  .section.active { display: block; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(500px, 1fr)); gap: 1rem; }
+  .card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; }
+  .card-title {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--green); margin-bottom: 1rem; padding-bottom: 0.6rem;
+    border-bottom: 1px solid var(--border);
+  }
+  pre, code {
+    font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', Consolas, monospace;
+    font-size: 12.5px; line-height: 1.7;
+  }
+  pre {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 6px;
+    padding: 0.85rem 1rem; margin: 0.6rem 0; overflow-x: auto;
+  }
+  code { background: var(--bg3); padding: 1px 5px; border-radius: 4px; color: var(--green); }
+  .kw { color: var(--purple); }
+  .fn { color: var(--blue); }
+  .str { color: var(--orange); }
+  .cm { color: var(--muted); font-style: italic; }
+  .num { color: var(--yellow); }
+  .op { color: var(--pink); }
+  p { color: var(--muted); margin: 0.4rem 0; font-size: 13px; }
+  h3 { font-size: 13px; font-weight: 600; margin: 0.8rem 0 0.3rem; color: var(--text); }
+  .tip { background: #0d2318; border-left: 3px solid var(--green); border-radius: 0 6px 6px 0; padding: 0.65rem 0.85rem; font-size: 12.5px; color: #3fb950; margin: 0.6rem 0; }
+  .warn { background: #2d1a00; border-left: 3px solid var(--orange); border-radius: 0 6px 6px 0; padding: 0.65rem 0.85rem; font-size: 12.5px; color: var(--yellow); margin: 0.6rem 0; }
+  .danger { background: #2d0f0f; border-left: 3px solid var(--red); border-radius: 0 6px 6px 0; padding: 0.65rem 0.85rem; font-size: 12.5px; color: var(--red); margin: 0.6rem 0; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; padding: 1px 8px; border-radius: 12px; }
+  .b-green { background: #0d2318; color: #3fb950; }
+  .b-red { background: #2d0f0f; color: #f85149; }
+  .b-amber { background: #2d1a00; color: #e3b341; }
+  .b-blue { background: #0d1f35; color: #58a6ff; }
+  .b-purple { background: #1a0f2d; color: #bc8cff; }
+  .b-teal { background: #0a2318; color: #39d353; }
+  table { width: 100%; border-collapse: collapse; font-size: 12.5px; margin: 0.5rem 0; }
+  th { text-align: left; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 5px 8px; border-bottom: 1px solid var(--border); }
+  td { padding: 5px 8px; border-bottom: 1px solid var(--border); color: var(--muted); vertical-align: top; }
+  td:first-child { color: var(--text); font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+  tr:last-child td { border-bottom: none; }
+  .row { display: flex; gap: 0.5rem; align-items: flex-start; margin: 0.3rem 0; font-size: 12.5px; }
+  section-intro { display: block; font-size: 13px; color: var(--muted); margin-bottom: 1rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐍 Python Guru</h1>
+  <nav>
+    <button class="active" onclick="show('lists', this)">Списки</button>
+    <button onclick="show('dicts', this)">Словники</button>
+    <button onclick="show('sets', this)">Множини</button>
+    <button onclick="show('tuples', this)">Кортежі</button>
+    <button onclick="show('strings', this)">Рядки</button>
+    <button onclick="show('comprehensions', this)">Comprehensions</button>
+    <button onclick="show('itertools', this)">Itertools</button>
+    <button onclick="show('oop', this)">ООП</button>
+    <button onclick="show('funcs', this)">Функції</button>
+    <button onclick="show('memory', this)">Пам'ять</button>
+    <button onclick="show('gotchas', this)">Пастки</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ===== LISTS ===== -->
+<div class="section active" id="s-lists">
+<div class="grid">
+
+<div>
+<div class="card">
+<div class="card-title">List — під капотом</div>
+<p>Динамічний масив (C array). В пам'яті — суцільний блок покажчиків на PyObject. При перевищенні capacity Python алоцює новий блок із надлишком (~12.5%). Саме тому <code>append()</code> — амортизована O(1).</p>
+<pre><span class="kw">import</span> sys
+lst = []
+<span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">10</span>):
+    lst.append(i)
+    print(sys.getsizeof(lst))
+<span class="cm"># Побачиш стрибки: 56→88→88→88→88→120→120→...</span>
+<span class="cm"># growth: 0→4→8→16→25→35→46→58→72→88 slots</span></pre>
+<div class="tip">append() є амортизованою O(1). Для справжньої O(1) на обох кінцях → <code>collections.deque</code>.</div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Складність операцій</div>
+<table>
+<tr><th>Операція</th><th>Складність</th><th>Деталь</th></tr>
+<tr><td>l[i]</td><td><span class="badge b-green">O(1)</span></td><td>прямий доступ по індексу</td></tr>
+<tr><td>append(x)</td><td><span class="badge b-green">O(1)*</span></td><td>амортизована, рідко O(n)</td></tr>
+<tr><td>pop()</td><td><span class="badge b-green">O(1)</span></td><td>з кінця — завжди</td></tr>
+<tr><td>pop(0) / insert(0,x)</td><td><span class="badge b-red">O(n)</span></td><td>зсув усіх елементів!</td></tr>
+<tr><td>x in l</td><td><span class="badge b-amber">O(n)</span></td><td>лінійний пошук</td></tr>
+<tr><td>l.index(x)</td><td><span class="badge b-amber">O(n)</span></td><td>або ValueError</td></tr>
+<tr><td>sort()</td><td><span class="badge b-amber">O(n log n)</span></td><td>Timsort, стабільний</td></tr>
+<tr><td>reverse()</td><td><span class="badge b-amber">O(n)</span></td><td>in-place</td></tr>
+<tr><td>l[a:b]</td><td><span class="badge b-amber">O(k)</span></td><td>k=b-a, завжди копія!</td></tr>
+<tr><td>del l[i]</td><td><span class="badge b-amber">O(n)</span></td><td>зсув решти</td></tr>
+<tr><td>extend(lst)</td><td><span class="badge b-amber">O(k)</span></td><td>k = len(lst)</td></tr>
+<tr><td>len(l)</td><td><span class="badge b-green">O(1)</span></td><td>зберігається як ob_size</td></tr>
+</table>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Всі методи з нюансами</div>
+<pre><span class="cm"># ── МУТУЮЧІ (in-place, return None!) ──────────</span>
+lst.append(x)           <span class="cm"># O(1)* — додає в кінець</span>
+lst.extend(iterable)    <span class="cm"># O(k) — розгортає будь-який ітерабл</span>
+lst.insert(i, x)        <span class="cm"># O(n) — вставка (уникай у циклах!)</span>
+lst.remove(x)           <span class="cm"># O(n) — видаляє ПЕРШИЙ x або ValueError</span>
+lst.pop(i=-1)           <span class="cm"># O(1) з кінця, O(n) з середини</span>
+lst.clear()             <span class="cm"># O(n) — очищує (той самий об'єкт)</span>
+lst.sort(key=None, reverse=False)  <span class="cm"># O(n log n) Timsort</span>
+lst.reverse()           <span class="cm"># O(n) — перевертає in-place</span>
+
+<span class="cm"># ── НЕ МУТУЮЧІ ────────────────────────────────</span>
+lst.copy()              <span class="cm"># O(n) — SHALLOW copy!</span>
+lst.index(x, start, end)<span class="cm"># O(n) — або ValueError</span>
+lst.count(x)            <span class="cm"># O(n) — кількість входжень</span>
+<span class="fn">len</span>(lst)               <span class="cm"># O(1) — C-рівень ob_size</span>
+<span class="fn">min</span>(lst), <span class="fn">max</span>(lst)     <span class="cm"># O(n)</span>
+<span class="fn">sorted</span>(lst)            <span class="cm"># O(n log n) — НОВИЙ список!</span></pre>
+
+<div class="warn">⚠️ <strong>sort() vs sorted():</strong> sort() мутує і повертає None. sorted() повертає новий список. Класична помилка: <code>lst = lst.sort()</code> → lst стане None!</div>
+
+<h3>Timsort — як він працює</h3>
+<p>Гібрид mergesort + insertion sort. Шукає вже відсортовані "runs" (мін. 32-64 елементи), потім merge. Стабільний. O(n) на вже відсортованих даних, O(n log n) у гіршому.</p>
+<pre><span class="cm"># key= функція викликається O(n) разів, не O(n log n)</span>
+<span class="cm"># → використовуй operator замість lambda — швидше</span>
+<span class="kw">from</span> operator <span class="kw">import</span> itemgetter, attrgetter
+lst.sort(key=itemgetter(<span class="num">1</span>))          <span class="cm"># по другому елементу</span>
+lst.sort(key=attrgetter(<span class="str">'name'</span>))     <span class="cm"># по атрибуту</span>
+lst.sort(key=itemgetter(<span class="num">1</span>, <span class="num">0</span>))       <span class="cm"># мультисортування</span>
+
+<span class="cm"># Schwartzian transform (DSU) — обчисли ключ один раз</span>
+decorated = [(key(x), x) <span class="kw">for</span> x <span class="kw">in</span> lst]
+decorated.sort()
+result = [x <span class="kw">for</span> _, x <span class="kw">in</span> decorated]</pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Slicing — повний арсенал</div>
+<pre>lst[start:stop:step]
+lst[::<span class="op">-</span><span class="num">1</span>]        <span class="cm"># реверс — нова копія O(n)</span>
+lst[::2]         <span class="cm"># кожен другий</span>
+lst[1:10:3]      <span class="cm"># 1, 4, 7</span>
+lst[<span class="op">-</span><span class="num">3</span>:]         <span class="cm"># останні 3</span>
+
+<span class="cm"># Slice assignment — мутує БЕЗ нового об'єкта!</span>
+lst[<span class="num">1</span>:<span class="num">3</span>] = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>]  <span class="cm"># заміна 2 елементів на 3</span>
+lst[::] = []              <span class="cm"># очищає той самий об'єкт</span>
+lst[<span class="num">1</span>:<span class="num">1</span>] = [<span class="num">5</span>, <span class="num">6</span>]        <span class="cm"># вставка без видалення</span>
+
+<span class="cm"># slice об'єкт — можна зберегти</span>
+s = <span class="fn">slice</span>(<span class="num">1</span>, <span class="num">10</span>, <span class="num">2</span>)
+lst[s]  <span class="cm"># те саме що lst[1:10:2]</span></pre>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== DICTS ===== -->
+<div class="section" id="s-dicts">
+<div class="grid">
+
+<div>
+<div class="card">
+<div class="card-title">Dict — під капотом (Compact Hash Table)</div>
+<p>CPython 3.6+ використовує compact dict: окремий масив індексів + щільний масив (key, hash, value). До 3.6 порядок не зберігався. Collision resolution — open addressing з pseudo-random probing.</p>
+<pre><span class="cm"># Як відбувається lookup d[k]:</span>
+<span class="cm"># 1. hash(k) → хеш значення</span>
+<span class="cm"># 2. hash % capacity → початковий слот</span>
+<span class="cm"># 3. Якщо slot зайнятий іншим ключем → probing</span>
+<span class="cm"># 4. load factor > 2/3 → resize (подвоєння capacity)</span>
+
+<span class="cm"># Цікавий факт: рівні хеші = проблема</span>
+<span class="fn">hash</span>(<span class="num">1</span>) == <span class="fn">hash</span>(<span class="num">1.0</span>) == <span class="fn">hash</span>(<span class="kw">True</span>)  <span class="cm"># True!</span>
+d = {<span class="num">1</span>: <span class="str">'a'</span>, <span class="num">1.0</span>: <span class="str">'b'</span>}
+<span class="cm"># → {1: 'b'} — тільки 1 ключ! 1.0 перезаписав</span>
+<span class="cm"># Бо: 1 == 1.0 AND hash(1) == hash(1.0)</span></pre>
+<div class="tip">Для ключа dict необхідно: (1) реалізувати __hash__, (2) реалізувати __eq__, (3) якщо a == b то hash(a) == hash(b). Hashable: str, int, float, tuple*, frozenset. НЕ hashable: list, dict, set.</div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Складність</div>
+<table>
+<tr><th>Операція</th><th>Середня</th><th>Гірший</th></tr>
+<tr><td>d[k]</td><td><span class="badge b-green">O(1)</span></td><td>O(n) — всі collision</td></tr>
+<tr><td>d[k] = v</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>del d[k]</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>k in d</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>d.keys/values/items()</td><td><span class="badge b-green">O(1)</span></td><td>view об'єкт!</td></tr>
+<tr><td>ітерація</td><td><span class="badge b-amber">O(n)</span></td><td>—</td></tr>
+<tr><td>copy()</td><td><span class="badge b-amber">O(n)</span></td><td>shallow</td></tr>
+<tr><td>update(other)</td><td><span class="badge b-amber">O(k)</span></td><td>k=len(other)</td></tr>
+</table>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Всі методи</div>
+<pre><span class="cm"># ── ЧИТАННЯ ───────────────────────────────────</span>
+d[k]                  <span class="cm"># KeyError якщо нема</span>
+d.get(k)              <span class="cm"># None якщо нема — безпечно</span>
+d.get(k, default)     <span class="cm"># власний default</span>
+d.keys()              <span class="cm"># dict_keys VIEW — живий!</span>
+d.values()            <span class="cm"># dict_values VIEW</span>
+d.items()             <span class="cm"># dict_items VIEW — для for k,v in d.items()</span>
+
+<span class="cm"># ── МОДИФІКАЦІЯ ───────────────────────────────</span>
+d[k] = v
+d.update(other_dict)  <span class="cm"># перезаписує існуючі ключі</span>
+d.update(a=<span class="num">1</span>, b=<span class="num">2</span>)   <span class="cm"># через kwargs</span>
+d.setdefault(k, v)    <span class="cm"># встановлює ТІЛЬКИ якщо ключа нема, повертає значення</span>
+d.pop(k)              <span class="cm"># видаляє і повертає, KeyError якщо нема</span>
+d.pop(k, default)     <span class="cm"># безпечна версія</span>
+d.popitem()           <span class="cm"># LIFO — видаляє останній вставлений (3.7+)</span>
+d.clear()
+
+<span class="cm"># ── MERGE (Python 3.9+) ───────────────────────</span>
+merged = d1 | d2      <span class="cm"># новий dict, d2 перезаписує d1</span>
+d1 |= d2              <span class="cm"># in-place update</span>
+
+<span class="cm"># ── dict_keys підтримує set-операції ──────────</span>
+d1.keys() & d2.keys() <span class="cm"># перетин ключів</span>
+d1.keys() - d2.keys() <span class="cm"># ключі тільки в d1</span>
+d1.keys() | d2.keys() <span class="cm"># всі ключі</span>
+
+<span class="cm"># ── КОРИСНІ ПАТЕРНИ ───────────────────────────</span>
+<span class="cm"># Swap keys and values</span>
+inverted = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> d.items()}
+
+<span class="cm"># Групування</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+groups = defaultdict(list)
+<span class="kw">for</span> item <span class="kw">in</span> items:
+    groups[item.category].append(item)
+
+<span class="cm"># Фільтрація</span>
+filtered = {k: v <span class="kw">for</span> k, v <span class="kw">in</span> d.items() <span class="kw">if</span> v > <span class="num">0</span>}</pre>
+
+<div class="warn">⚠️ d.keys(), d.values(), d.items() — VIEW об'єкти! Вони відображають актуальний стан dict в реальному часі. При ітерації не модифікуй dict — RuntimeError!</div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Спеціальні словники</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> defaultdict, OrderedDict, Counter
+
+<span class="cm"># defaultdict — автоматичне створення значень</span>
+dd = defaultdict(list)
+dd[<span class="str">'a'</span>].append(<span class="num">1</span>)   <span class="cm"># без KeyError</span>
+dd = defaultdict(int) <span class="cm"># dd[k] += 1 безпечно</span>
+dd = defaultdict(<span class="kw">lambda</span>: <span class="str">'N/A'</span>)  <span class="cm"># кастомний default</span>
+
+<span class="cm"># Counter — підрахунок частот</span>
+c = Counter(<span class="str">'abracadabra'</span>)     <span class="cm"># {'a':5,'b':2,'r':2,'c':1,'d':1}</span>
+c = Counter([<span class="num">1</span>,<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">1</span>])
+c.most_common(<span class="num">3</span>)               <span class="cm"># O(n log k) top-3</span>
+c1 + c2                         <span class="cm"># злиття (лише позитивні)</span>
+c1 - c2                         <span class="cm"># різниця (лише позитивні)</span>
+c1 & c2                         <span class="cm"># min кожного</span>
+c1 | c2                         <span class="cm"># max кожного</span>
+c[<span class="str">'z'</span>]                         <span class="cm"># 0, не KeyError!</span>
+c.total()                       <span class="cm"># 3.10+ сума всіх значень</span>
+
+<span class="cm"># OrderedDict — унікальні методи</span>
+od.move_to_end(k)               <span class="cm"># перемістити в кінець</span>
+od.move_to_end(k, last=<span class="kw">False</span>)  <span class="cm"># перемістити на початок</span></pre>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== SETS ===== -->
+<div class="section" id="s-sets">
+<div class="grid">
+
+<div>
+<div class="card">
+<div class="card-title">Set — під капотом</div>
+<p>По суті dict без values. Hash table з open addressing. Елементи мають бути hashable. Немає дублікатів, немає гарантованого порядку (хоча CPython 3.7+ зберігає порядок вставки для dict, але НЕ для set).</p>
+<pre><span class="cm"># Literals vs constructor — важлива відмінність!</span>
+s = {<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>}          <span class="cm"># set literal</span>
+s = <span class="fn">set</span>()              <span class="cm"># ПОРОЖНІЙ set ← правильно</span>
+s = {}                  <span class="cm"># ПОРОЖНІЙ dict! ← пастка!</span>
+s = <span class="fn">frozenset</span>([<span class="num">1</span>,<span class="num">2</span>])  <span class="cm"># незмінний, hashable</span>
+
+<span class="cm"># set з дублікатами — автоматично видаляє</span>
+s = {<span class="num">1</span>, <span class="num">1</span>, <span class="num">2</span>, <span class="num">2</span>, <span class="num">3</span>}   <span class="cm"># → {1, 2, 3}</span>
+
+<span class="cm"># set як "seen" для дедуплікації з порядком</span>
+seen = <span class="fn">set</span>()
+unique = [x <span class="kw">for</span> x <span class="kw">in</span> lst <span class="kw">if</span> x <span class="kw">not in</span> seen <span class="kw">and not</span> seen.add(x)]</pre>
+<div class="tip">set значно швидший за list для перевірки <code>in</code>: O(1) vs O(n). Якщо робиш багато перевірок — конвертуй список у set першим ділом.</div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Складність</div>
+<table>
+<tr><th>Операція</th><th>Середня</th><th>Гірший</th></tr>
+<tr><td>x in s</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>add(x)</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>remove(x)</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>discard(x)</td><td><span class="badge b-green">O(1)</span></td><td>O(n)</td></tr>
+<tr><td>union s1|s2</td><td><span class="badge b-amber">O(m+n)</span></td><td>—</td></tr>
+<tr><td>intersection s1&amp;s2</td><td><span class="badge b-amber">O(min(m,n))</span></td><td>ітерує менший</td></tr>
+<tr><td>difference s1-s2</td><td><span class="badge b-amber">O(m)</span></td><td>m=|s1|</td></tr>
+<tr><td>issubset s1&lt;=s2</td><td><span class="badge b-amber">O(n)</span></td><td>n=|менший|</td></tr>
+<tr><td>isdisjoint</td><td><span class="badge b-amber">O(min(m,n))</span></td><td>short-circuit</td></tr>
+</table>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Всі методи</div>
+<pre><span class="cm"># ── МУТУЮЧІ ───────────────────────────────────</span>
+s.add(x)                    <span class="cm"># O(1) avg</span>
+s.remove(x)                 <span class="cm"># O(1), KeyError якщо нема</span>
+s.discard(x)                <span class="cm"># O(1), мовчки якщо нема ← безпечний</span>
+s.pop()                     <span class="cm"># видаляє ДОВІЛЬНИЙ елемент!</span>
+s.clear()
+
+<span class="cm"># In-place операції (мутують s)</span>
+s.update(other)             <span class="cm"># |= додає всі елементи other</span>
+s.intersection_update(o)    <span class="cm"># &= залишає тільки спільні</span>
+s.difference_update(o)      <span class="cm"># -= видаляє що є в o</span>
+s.symmetric_difference_update(o) <span class="cm"># ^= тільки в одному</span>
+
+<span class="cm"># ── НЕ МУТУЮЧІ (повертають новий set) ─────────</span>
+s1 <span class="op">|</span> s2  == s1.union(s2)
+s1 <span class="op">&</span> s2  == s1.intersection(s2)
+s1 <span class="op">-</span> s2  == s1.difference(s2)
+s1 <span class="op">^</span> s2  == s1.symmetric_difference(s2)
+<span class="cm"># ^ = елементи що є РІВНО в одному з двох множин</span>
+
+<span class="cm"># Порівняння</span>
+s1 <span class="op"><=</span> s2  == s1.issubset(s2)     <span class="cm"># s1 ⊆ s2</span>
+s1 <span class="op"><</span> s2   <span class="cm"># строге підмножина: s1 ⊂ s2</span>
+s1 <span class="op">>=</span> s2  == s1.issuperset(s2)   <span class="cm"># s1 ⊇ s2</span>
+s1.isdisjoint(s2)               <span class="cm"># True якщо s1 ∩ s2 = ∅</span></pre>
+
+<h3>frozenset — кілька особливостей</h3>
+<pre><span class="cm"># frozenset hashable → може бути ключем dict або елементом set</span>
+graph_edges = {frozenset({<span class="num">1</span>,<span class="num">2</span>}), frozenset({<span class="num">2</span>,<span class="num">3</span>})}
+lookup = {frozenset({<span class="num">1</span>,<span class="num">2</span>}): <span class="str">'edge AB'</span>}
+
+<span class="cm"># set of frozensets — унікальні підмножини</span>
+power_set = {frozenset(s) <span class="kw">for</span> r <span class="kw">in</span> range(<span class="fn">len</span>(lst)+<span class="num">1</span>)
+             <span class="kw">for</span> s <span class="kw">in</span> itertools.combinations(lst, r)}</pre>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Практичні патерни</div>
+<pre><span class="cm"># Видалення дублікатів зі збереженням порядку</span>
+unique_ordered = <span class="fn">list</span>(<span class="fn">dict</span>.fromkeys(lst))
+
+<span class="cm"># Швидке порівняння колекцій</span>
+only_in_a = <span class="fn">set</span>(a) - <span class="fn">set</span>(b)
+only_in_b = <span class="fn">set</span>(b) - <span class="fn">set</span>(a)
+common    = <span class="fn">set</span>(a) & <span class="fn">set</span>(b)
+all_elem  = <span class="fn">set</span>(a) | <span class="fn">set</span>(b)
+
+<span class="cm"># Перевірка: чи є спільні елементи (short-circuit)</span>
+<span class="kw">not</span> <span class="fn">set</span>(a).isdisjoint(b)  <span class="cm"># True якщо є спільні</span></pre>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+
+<!-- ===== TUPLES ===== -->
+<div class="section" id="s-tuples">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">Tuple — під капотом</div>
+<p>Незмінний масив покажчиків. Менший за list (немає overhead на resize). Python кешує tuple до 20 елементів — повторне створення може не алоцювати нову пам'ять!</p>
+<pre>import sys
+sys.getsizeof((<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>))  <span class="cm"># ~72 bytes</span>
+sys.getsizeof([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])  <span class="cm"># ~88 bytes</span>
+
+<span class="cm"># Tuple з 1 елементом — КОМА обов'язкова!</span>
+t = (<span class="num">1</span>,)    <span class="cm"># tuple ✓</span>
+t = (<span class="num">1</span>)     <span class="cm"># int! ← пастка</span>
+t = <span class="num">1</span>,      <span class="cm"># tuple теж! (без дужок)</span>
+
+<span class="cm"># Кешування малих tuple</span>
+a = (<span class="num">1</span>, <span class="num">2</span>)
+b = (<span class="num">1</span>, <span class="num">2</span>)
+a <span class="kw">is</span> b  <span class="cm"># True! (CPython оптимізація)</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Unpacking — всі форми</div>
+<pre><span class="cm"># Базовий unpacking</span>
+a, b, c = <span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>
+a, b = b, a          <span class="cm"># swap без temp — атомарно!</span>
+
+<span class="cm"># Extended unpacking (3.0+)</span>
+first, *rest = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]   <span class="cm"># first=1, rest=[2,3,4]</span>
+*init, last = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]   <span class="cm"># init=[1,2,3], last=4</span>
+a, *_, z = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]      <span class="cm"># a=1, z=5, _=[2,3,4]</span>
+a, (b, c) = <span class="num">1</span>, (<span class="num">2</span>, <span class="num">3</span>)       <span class="cm"># вкладений unpacking</span>
+
+<span class="cm"># В for loops</span>
+<span class="kw">for</span> a, *b <span class="kw">in</span> [(1,2,3), (4,5,6)]:
+    print(a, b)  <span class="cm"># 1 [2,3], 4 [5,6]</span></pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Чому tuple hashable, а list — ні?</div>
+<p>Hash об'єкта має бути незмінним протягом його lifetime. List мутабельний → hash міг би змінитись → порушилась би інваріантність dict/set. Tuple незмінний → hash стабільний. Але є нюанс:</p>
+<pre><span class="cm"># Tuple з mutable елементом — НЕ hashable</span>
+t = ([<span class="num">1</span>, <span class="num">2</span>], <span class="num">3</span>)
+<span class="fn">hash</span>(t)  <span class="cm"># TypeError: unhashable type: 'list'</span>
+
+<span class="cm"># Лексикографічне порівняння tuple</span>
+(<span class="num">1</span>, <span class="num">2</span>) < (<span class="num">1</span>, <span class="num">3</span>)    <span class="cm"># True — перша різниця</span>
+(<span class="num">1</span>,) < (<span class="num">1</span>, <span class="num">2</span>)      <span class="cm"># True — коротший менший</span>
+(<span class="num">1</span>, <span class="num">2</span>) == (<span class="num">1</span>, <span class="num">2</span>)  <span class="cm"># True</span></pre>
+
+<h3>Коли tuple, коли list?</h3>
+<div class="row"><span class="badge b-purple">tuple</span><span>гетерогенні дані (координата, запис БД, кортеж повернення), константи, ключі dict, return multiple values</span></div>
+<div class="row"><span class="badge b-blue">list</span><span>гомогенна колекція елементів що змінюється, черга, стек</span></div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">namedtuple та NamedTuple</div>
+<pre><span class="kw">from</span> collections <span class="kw">import</span> namedtuple
+
+Point = namedtuple(<span class="str">'Point'</span>, [<span class="str">'x'</span>, <span class="str">'y'</span>])
+<span class="cm"># або: namedtuple('Point', 'x y')</span>
+p = Point(<span class="num">1</span>, <span class="num">2</span>)
+p.x == p[<span class="num">0</span>]  <span class="cm"># True — обидва варіанти</span>
+p._asdict()  <span class="cm"># → {'x': 1, 'y': 2}</span>
+p._replace(x=<span class="num">10</span>)  <span class="cm"># новий екземпляр! (immutable)</span>
+Point._fields   <span class="cm"># ('x', 'y')</span>
+Point._make([<span class="num">1</span>, <span class="num">2</span>])  <span class="cm"># з ітерабла</span>
+
+<span class="cm"># typing.NamedTuple — сучасніший, підтримує default</span>
+<span class="kw">from</span> typing <span class="kw">import</span> NamedTuple
+<span class="kw">class</span> <span class="fn">Employee</span>(NamedTuple):
+    name: <span class="fn">str</span>
+    dept: <span class="fn">str</span>
+    salary: <span class="fn">float</span> = <span class="num">50000.0</span>  <span class="cm"># default!</span>
+
+<span class="cm"># dataclass vs NamedTuple</span>
+<span class="cm"># NamedTuple: immutable, hashable, tuple-compatible, менша RAM</span>
+<span class="cm"># dataclass: mutable (або frozen=True), методи, спадкування, slots</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== STRINGS ===== -->
+<div class="section" id="s-strings">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">String — під капотом (PEP 393)</div>
+<p>CPython використовує Flexible String Representation: 3 внутрішніх формати залежно від max codepoint символу в рядку: Latin-1 (1 byte/char), UCS-2 (2 bytes), UCS-4 (4 bytes). Python обирає автоматично.</p>
+<pre><span class="cm"># Interning — кешування рядків</span>
+a = <span class="str">'hello'</span>; b = <span class="str">'hello'</span>
+a <span class="kw">is</span> b  <span class="cm"># True — короткі ASCII без пробілів</span>
+
+c = <span class="str">'hello world'</span>; d = <span class="str">'hello world'</span>
+c <span class="kw">is</span> d  <span class="cm"># False (CPython-specific, не гарантовано)</span>
+
+<span class="kw">import</span> sys
+sys.intern(s)  <span class="cm"># примусовий interning</span>
+
+<span class="cm"># Strings IMMUTABLE → конкатенація у циклі = O(n²)!</span>
+result = <span class="str">""</span>
+<span class="kw">for</span> s <span class="kw">in</span> lst: result += s  <span class="cm"># ПОГАНО: кожен += нова копія</span>
+
+result = <span class="str">""</span>.join(lst)      <span class="cm"># ДОБРЕ: O(n), один прохід</span>
+result = <span class="fn">io</span>.StringIO()    <span class="cm"># ДОБРЕ для великих обсягів</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">f-strings — повний арсенал (3.6+)</div>
+<pre><span class="cm"># Конверсія</span>
+f<span class="str">"{obj!r}"</span>     <span class="cm"># repr() — для debug</span>
+f<span class="str">"{obj!s}"</span>     <span class="cm"># str()</span>
+f<span class="str">"{obj!a}"</span>     <span class="cm"># ascii() — escapes non-ASCII</span>
+
+<span class="cm"># Числовий формат</span>
+f<span class="str">"{v:.2f}"</span>     <span class="cm"># 2 знаки: 3.14</span>
+f<span class="str">"{v:,}"</span>       <span class="cm"># 1,234,567</span>
+f<span class="str">"{v:_}"</span>       <span class="cm"># 1_234_567</span>
+f<span class="str">"{v:e}"</span>       <span class="cm"># 1.234567e+06</span>
+f<span class="str">"{v:b}"</span>       <span class="cm"># бінарне</span>
+f<span class="str">"{v:08b}"</span>     <span class="cm"># 00001010 (8 знаків, з нулями)</span>
+f<span class="str">"{v:+.3f}"</span>    <span class="cm"># +3.140 (завжди зі знаком)</span>
+f<span class="str">"{v:.1%}"</span>     <span class="cm"># 85.3% (0..1 → відсоток)</span>
+f<span class="str">"{v:#x}"</span>      <span class="cm"># 0x1a (hex з префіксом)</span>
+f<span class="str">"{v:#o}"</span>      <span class="cm"># 0o17 (octal)</span>
+
+<span class="cm"># Вирівнювання</span>
+f<span class="str">"{s:&lt;20}"</span>     <span class="cm"># ліво, 20 символів</span>
+f<span class="str">"{s:&gt;20}"</span>     <span class="cm"># право</span>
+f<span class="str">"{s:^20}"</span>     <span class="cm"># центр</span>
+f<span class="str">"{s:*^20}"</span>    <span class="cm"># центр зі * замість пробілів</span>
+
+<span class="cm"># Debug (3.8+) — найзручніше!</span>
+x = <span class="num">42</span>
+f<span class="str">"{x=}"</span>        <span class="cm"># → 'x=42'</span>
+f<span class="str">"{x*2+1=}"</span>    <span class="cm"># → 'x*2+1=85'</span>
+f<span class="str">"{obj.attr=}"</span> <span class="cm"># → 'obj.attr=value'</span></pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Всі методи</div>
+<pre><span class="cm"># ── ПОШУК ─────────────────────────────────────</span>
+s.find(sub, start, end)   <span class="cm"># -1 якщо нема</span>
+s.rfind(sub)              <span class="cm"># з правого кінця</span>
+s.index(sub)              <span class="cm"># ValueError якщо нема</span>
+s.rindex(sub)             <span class="cm"># з правого кінця</span>
+s.startswith(prefix)      <span class="cm"># або TUPLE префіксів!</span>
+s.endswith(suffix)        <span class="cm"># або tuple суфіксів!</span>
+s.count(sub)              <span class="cm"># кількість входжень (без перекрить)</span>
+
+<span class="cm"># ── ТРАНСФОРМАЦІЯ (повертають новий str!) ──────</span>
+s.strip(chars=None)       <span class="cm"># обрізає пробіли/chars з обох</span>
+s.lstrip(), s.rstrip()
+s.replace(old, new, count=-1)  <span class="cm"># всі або перші count</span>
+s.lower(), s.upper()
+s.title()                 <span class="cm"># Кожне Слово З Великої</span>
+s.capitalize()            <span class="cm"># Тільки перша</span>
+s.swapcase()
+s.expandtabs(tabsize=8)
+
+<span class="cm"># ── РОЗБИТТЯ / ЗЛИТТЯ ─────────────────────────</span>
+s.split(sep=None, maxsplit=-1) <span class="cm"># sep=None → будь-яký whitespace</span>
+s.rsplit(sep, maxsplit)   <span class="cm"># справа</span>
+s.splitlines(keepends=False)   <span class="cm"># по \n, \r\n, \r тощо</span>
+sep.join(iterable)        <span class="cm"># НАЙШВИДШИЙ спосіб збирання</span>
+s.partition(sep)          <span class="cm"># → (before, sep, after)</span>
+s.rpartition(sep)         <span class="cm"># з правого кінця</span>
+
+<span class="cm"># ── ПЕРЕВІРКИ (повертають bool) ───────────────</span>
+s.isdigit()     <span class="cm"># '5²' True, '½' False</span>
+s.isnumeric()   <span class="cm"># '½' True, '-1' False</span>
+s.isdecimal()   <span class="cm"># тільки 0-9, найстрогіший!</span>
+s.isalpha()     <span class="cm"># букви (включно Unicode)</span>
+s.isalnum()     <span class="cm"># букви і цифри</span>
+s.isspace()     <span class="cm"># тільки whitespace</span>
+s.isupper(), s.islower(), s.istitle()
+s.isidentifier()  <span class="cm"># валідне ім'я Python</span>
+s.isprintable()   <span class="cm"># всі символи printable</span>
+
+<span class="cm"># ── КОДУВАННЯ ─────────────────────────────────</span>
+s.encode(<span class="str">'utf-8'</span>)         <span class="cm"># str → bytes</span>
+b.decode(<span class="str">'utf-8'</span>)         <span class="cm"># bytes → str</span>
+s.encode(<span class="str">'ascii'</span>, errors=<span class="str">'replace'</span>)  <span class="cm"># 'ignore','replace','xmlcharrefreplace'</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== COMPREHENSIONS ===== -->
+<div class="section" id="s-comprehensions">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">Всі форми comprehensions</div>
+<pre><span class="cm"># ── LIST ──────────────────────────────────────</span>
+[expr <span class="kw">for</span> x <span class="kw">in</span> iterable <span class="kw">if</span> condition]
+[x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> range(<span class="num">10</span>) <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+
+<span class="cm"># ── DICT ──────────────────────────────────────</span>
+{k: v <span class="kw">for</span> k, v <span class="kw">in</span> pairs.items() <span class="kw">if</span> v}
+
+<span class="cm"># ── SET ───────────────────────────────────────</span>
+{x % <span class="num">3</span> <span class="kw">for</span> x <span class="kw">in</span> range(<span class="num">20</span>)}
+
+<span class="cm"># ── GENERATOR (lazy!) ─────────────────────────</span>
+gen = (x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> range(<span class="num">10</span>**<span class="num">6</span>))  <span class="cm"># O(1) пам'ять!</span>
+<span class="fn">sum</span>(x <span class="kw">for</span> x <span class="kw">in</span> lst)     <span class="cm"># без зайвих дужок!</span>
+<span class="fn">any</span>(x > <span class="num">5</span> <span class="kw">for</span> x <span class="kw">in</span> lst) <span class="cm"># short-circuit!</span></pre>
+
+<h3>Вкладений comprehension</h3>
+<pre><span class="cm"># Порядок = як вкладені for</span>
+[(x, y) <span class="kw">for</span> x <span class="kw">in</span> [<span class="num">1</span>,<span class="num">2</span>] <span class="kw">for</span> y <span class="kw">in</span> [<span class="num">3</span>,<span class="num">4</span>]]
+<span class="cm"># → [(1,3),(1,4),(2,3),(2,4)]</span>
+
+<span class="cm"># Flatten 2D списку</span>
+flat = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]
+
+<span class="cm"># Умова ДО і ПІСЛЯ for — різні речі!</span>
+[x <span class="kw">for</span> x <span class="kw">in</span> range(<span class="num">10</span>) <span class="kw">if</span> x > <span class="num">5</span>]   <span class="cm"># фільтр</span>
+[x <span class="kw">if</span> x > <span class="num">5</span> <span class="kw">else</span> <span class="num">0</span> <span class="kw">for</span> x <span class="kw">in</span> range(<span class="num">10</span>)] <span class="cm"># трансформація</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Generator vs List — коли що?</div>
+<table>
+<tr><th>Критерій</th><th>Generator</th><th>List comprehension</th></tr>
+<tr><td>Пам'ять</td><td>O(1) — lazy</td><td>O(n) — все одразу</td></tr>
+<tr><td>Ітерація</td><td>тільки один раз!</td><td>скільки завгодно</td></tr>
+<tr><td>len()</td><td>не підтримує</td><td>O(1)</td></tr>
+<tr><td>Індексація</td><td>не підтримує</td><td>O(1)</td></tr>
+<tr><td>any/all</td><td>short-circuit!</td><td>будує весь список</td></tr>
+<tr><td>Швидкість</td><td>менший overhead</td><td>швидший якщо потрібен весь</td></tr>
+</table>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Walrus operator := (3.8+)</div>
+<pre><span class="cm"># Присвоєння і вираз одночасно</span>
+<span class="kw">if</span> (n := <span class="fn">len</span>(lst)) > <span class="num">10</span>:
+    print(f<span class="str">"List has {n} elements"</span>)
+
+<span class="cm"># В comprehension — уникаємо подвійного виклику</span>
+results = [clean <span class="kw">for</span> x <span class="kw">in</span> data
+           <span class="kw">if</span> (clean := expensive_clean(x)) <span class="kw">is not None</span>]
+
+<span class="cm"># В while — класичний патерн</span>
+<span class="kw">while</span> chunk := f.read(<span class="num">1024</span>):
+    process(chunk)
+
+<span class="cm"># Кешування проміжного результату</span>
+[y**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> data <span class="kw">if</span> (y := transform(x)) > <span class="num">0</span>]</pre>
+
+<h3>Вбудовані функції з ітераблами</h3>
+<pre><span class="fn">map</span>(func, it)        <span class="cm"># lazy, аналог (func(x) for x in it)</span>
+<span class="fn">filter</span>(pred, it)     <span class="cm"># lazy, аналог (x for x in it if pred(x))</span>
+<span class="fn">zip</span>(*iters)          <span class="cm"># lazy, зупиняється на найкоротшому</span>
+<span class="fn">enumerate</span>(it, start=<span class="num">0</span>)  <span class="cm"># (i, value)</span>
+<span class="fn">reversed</span>(seq)        <span class="cm"># потребує __reversed__ або __len__+__getitem__</span>
+<span class="fn">sorted</span>(it, key, reverse)  <span class="cm"># завжди повертає list</span>
+
+<span class="cm"># map+filter vs comprehension</span>
+<span class="cm"># Comprehension: читабельніший, трохи швидший для простих операцій</span>
+<span class="cm"># map/filter: корисні з готовими функціями (не lambda)</span>
+<span class="fn">list</span>(<span class="fn">map</span>(<span class="fn">str</span>, numbers))  <span class="cm"># швидше ніж [str(x) for x in numbers]</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== ITERTOOLS ===== -->
+<div class="section" id="s-itertools">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">itertools — нескінченні ітератори</div>
+<pre><span class="kw">import</span> itertools <span class="kw">as</span> it
+
+it.count(<span class="num">10</span>, <span class="num">2</span>)        <span class="cm"># 10, 12, 14, ... ∞</span>
+it.cycle([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])     <span class="cm"># 1,2,3,1,2,3, ... ∞</span>
+it.repeat(x, n=<span class="kw">None</span>)  <span class="cm"># x × n разів або ∞</span>
+
+<span class="cm"># Нескінченні ітератори завжди з islice!</span>
+<span class="fn">list</span>(it.islice(it.count(<span class="num">0</span>), <span class="num">5</span>))  <span class="cm"># [0,1,2,3,4]</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Комбінаторика</div>
+<pre>it.product(<span class="str">'AB'</span>, repeat=<span class="num">2</span>)
+<span class="cm"># → AA AB BA BB (декартовий добуток)</span>
+
+it.permutations(<span class="str">'ABC'</span>, r=<span class="num">2</span>)
+<span class="cm"># → AB AC BA BC CA CB (порядок важливий)</span>
+<span class="cm"># k=n! / (n-r)!</span>
+
+it.combinations(<span class="str">'ABC'</span>, r=<span class="num">2</span>)
+<span class="cm"># → AB AC BC (порядок НЕ важливий)</span>
+<span class="cm"># k=C(n,r)=n! / r!(n-r)!</span>
+
+it.combinations_with_replacement(<span class="str">'AB'</span>, <span class="num">2</span>)
+<span class="cm"># → AA AB BB (повторення дозволені)</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">functools</div>
+<pre><span class="kw">from</span> functools <span class="kw">import</span> reduce, partial, lru_cache, cache, wraps
+
+<span class="cm"># reduce — foldl</span>
+reduce(<span class="kw">lambda</span> a,b: a*b, [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>])  <span class="cm"># 24</span>
+reduce(f, lst, initializer)           <span class="cm"># з початковим значенням</span>
+
+<span class="cm"># partial — фіксація аргументів</span>
+add5 = partial(<span class="kw">lambda</span> x, y: x+y, <span class="num">5</span>)
+add5(<span class="num">3</span>)   <span class="cm"># 8</span>
+<span class="cm"># Корисно для сортування, map тощо</span>
+lst.sort(key=partial(some_func, extra_arg))
+
+<span class="cm"># lru_cache — мемоізація з LRU кешем</span>
+<span class="kw">@lru_cache</span>(maxsize=<span class="num">128</span>)   <span class="cm"># None = необмежений</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">return</span> n <span class="kw">if</span> n < <span class="num">2</span> <span class="kw">else</span> fib(n-<span class="num">1</span>) + fib(n-<span class="num">2</span>)
+
+fib.cache_info()    <span class="cm"># CacheInfo(hits=..., misses=..., maxsize=128, currsize=...)</span>
+fib.cache_clear()
+
+<span class="cm"># @cache (3.9+) = @lru_cache(maxsize=None), трохи швидший</span>
+<span class="kw">@cache</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n): ...</pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">itertools — фільтрація та групування</div>
+<pre>it.chain([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>,<span class="num">4</span>])     <span class="cm"># 1,2,3,4 — без копій</span>
+it.chain.from_iterable(lst) <span class="cm"># flatten вкладеного</span>
+
+it.islice(it, start, stop, step)  <span class="cm"># slice для ітератора</span>
+
+it.filterfalse(pred, it)    <span class="cm"># протилежність filter()</span>
+it.takewhile(pred, it)      <span class="cm"># бере поки pred True</span>
+it.dropwhile(pred, it)      <span class="cm"># пропускає поки True</span>
+it.compress([1,2,3,4], [1,0,1,0])  <span class="cm"># → 1, 3 (маска)</span>
+
+<span class="cm"># groupby — ВАЖЛИВО: вхід МАЄ бути відсортований по ключу!</span>
+data = sorted(items, key=<span class="kw">lambda</span> x: x.dept)
+<span class="kw">for</span> dept, group <span class="kw">in</span> it.groupby(data, key=<span class="kw">lambda</span> x: x.dept):
+    print(dept, <span class="fn">list</span>(group))
+
+it.zip_longest([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>], fillvalue=<span class="num">0</span>)
+<span class="cm"># → (1,3),(2,0) — zip обрізав би до (1,3)</span>
+
+it.starmap(<span class="fn">pow</span>, [(<span class="num">2</span>,<span class="num">3</span>), (<span class="num">3</span>,<span class="num">2</span>)])    <span class="cm"># 8, 9</span>
+it.accumulate([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>])            <span class="cm"># 1, 3, 6, 10 (prefix sum)</span>
+it.accumulate([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>], <span class="fn">max</span>)         <span class="cm"># running max</span>
+it.pairwise([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>])              <span class="cm"># (1,2),(2,3),(3,4) — 3.10+</span>
+
+<span class="cm"># tee — розгалуження ітератора</span>
+it1, it2 = it.tee(iterator, <span class="num">2</span>)
+<span class="cm"># ОБЕРЕЖНО: зберігає в пам'яті поки обидва не споживуть</span>
+
+<span class="cm"># batched (3.12+) — ділення на шматки</span>
+it.batched(<span class="str">'ABCDEFG'</span>, <span class="num">3</span>)  <span class="cm"># ABC, DEF, G</span></pre>
+
+<div class="warn">⚠️ groupby() не агрегує! Він групує СУМІЖНІ однакові елементи. Якщо дані не відсортовані — отримаєш множинні групи з однаковим ключем.</div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">zip та enumerate — деталі</div>
+<pre><span class="cm"># enumerate з будь-яким стартом</span>
+<span class="kw">for</span> i, v <span class="kw">in</span> <span class="fn">enumerate</span>(lst, start=<span class="num">1</span>):
+    print(f<span class="str">"{i}. {v}"</span>)
+
+<span class="cm"># zip strict (3.10+) — кидає якщо довжини різні</span>
+<span class="fn">zip</span>([<span class="num">1</span>,<span class="num">2</span>], [<span class="num">3</span>], strict=<span class="kw">True</span>)  <span class="cm"># ValueError!</span>
+
+<span class="cm"># Unzip — транспонування</span>
+pairs = [(<span class="num">1</span>, <span class="str">'a'</span>), (<span class="num">2</span>, <span class="str">'b'</span>), (<span class="num">3</span>, <span class="str">'c'</span>)]
+nums, chars = <span class="fn">zip</span>(*pairs)  <span class="cm"># * = unpack list</span>
+
+<span class="cm"># Транспонування матриці</span>
+matrix = [[<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>],[<span class="num">4</span>,<span class="num">5</span>,<span class="num">6</span>]]
+transposed = [<span class="fn">list</span>(row) <span class="kw">for</span> row <span class="kw">in</span> <span class="fn">zip</span>(*matrix)]</pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== OOP ===== -->
+<div class="section" id="s-oop">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">Dunder методи — повний список</div>
+<pre><span class="cm"># Lifecycle</span>
+__new__(cls, *args)    <span class="cm"># створює екземпляр (до __init__)</span>
+                       <span class="cm"># Singleton, immutable types, metaclass</span>
+__init__(self, *args)  <span class="cm"># ініціалізація (не повертає нічого!)</span>
+__del__(self)          <span class="cm"># КОЛИ GC вирішить, не гарантовано</span>
+
+<span class="cm"># Repr та відображення</span>
+__repr__   <span class="cm"># для розробника. eval(repr(x)) == x — ідеал</span>
+__str__    <span class="cm"># для юзера. fallback до __repr__ якщо нема</span>
+__format__ <span class="cm"># кастомний формат: f"{x:.2f}" → x.__format__('.2f')</span>
+__bytes__  <span class="cm"># bytes(x)</span>
+
+<span class="cm"># Порівняння</span>
+__eq__ __ne__ __lt__ __le__ __gt__ __ge__
+__hash__   <span class="cm"># ВАЖЛИВО: якщо визначив __eq__ — Python обнулює __hash__!</span>
+           <span class="cm"># Потрібно явно: __hash__ = None (unhashable) або свій</span>
+
+<span class="cm"># Арифметика — три форми кожної</span>
+__add__(self, other)    <span class="cm"># self + other</span>
+__radd__(self, other)   <span class="cm"># other + self (якщо other не знає)</span>
+__iadd__(self, other)   <span class="cm"># self += other (in-place)</span>
+<span class="cm"># Аналогічно: mul, sub, truediv, floordiv, mod, pow, matmul</span>
+__neg__ __pos__ __abs__ __invert__  <span class="cm"># унарні</span>
+
+<span class="cm"># Контейнер</span>
+__len__(self)                <span class="cm"># len(x)</span>
+__getitem__(self, key)       <span class="cm"># x[key], x[a:b]</span>
+__setitem__(self, key, val)  <span class="cm"># x[key] = val</span>
+__delitem__(self, key)       <span class="cm"># del x[key]</span>
+__contains__(self, item)     <span class="cm"># item in x (інакше ітерація)</span>
+__iter__(self)               <span class="cm"># iter(x) → iterator</span>
+__next__(self)               <span class="cm"># next(x)</span>
+__reversed__(self)           <span class="cm"># reversed(x)</span>
+__missing__(self, key)       <span class="cm"># dict[unknown_key]</span>
+
+<span class="cm"># Контекст менеджер</span>
+__enter__(self)              <span class="cm"># with x as v: → v = __enter__()</span>
+__exit__(self, exc_type, exc_val, tb)  <span class="cm"># return True → suppress exception</span>
+
+<span class="cm"># Callable</span>
+__call__(self, *a, **kw)     <span class="cm"># x() → x.__call__()</span>
+
+<span class="cm"># Атрибути</span>
+__getattr__(self, name)      <span class="cm"># ТІЛЬКИ якщо звичайний lookup не вдався</span>
+__getattribute__(self, name) <span class="cm"># КОЖНЕ звертання — обережно з рекурсією!</span>
+__setattr__ __delattr__ __dir__
+
+<span class="cm"># Клас/тип</span>
+__class__ __bases__ __mro__ __subclasses__()</pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">MRO, super(), __slots__, метакласи</div>
+<pre><span class="cm"># C3 Linearization — алгоритм MRO</span>
+<span class="kw">class</span> A: <span class="kw">pass</span>
+<span class="kw">class</span> B(A): <span class="kw">pass</span>
+<span class="kw">class</span> C(A): <span class="kw">pass</span>
+<span class="kw">class</span> D(B, C): <span class="kw">pass</span>
+D.__mro__  <span class="cm"># (D, B, C, A, object) — "diamond" вирішено!</span>
+
+<span class="cm"># super() — проксі до наступного в MRO</span>
+<span class="kw">class</span> Child(Parent):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        super().__init__()  <span class="cm"># не super(Child, self)! (3.x)</span>
+<span class="cm"># В cooperative multiple inheritance super() важливий!</span>
+
+<span class="cm"># __slots__ — замість __dict__</span>
+<span class="kw">class</span> Point:
+    __slots__ = (<span class="str">'x'</span>, <span class="str">'y'</span>)  <span class="cm"># tuple швидше list</span>
+<span class="cm"># Переваги: менше RAM, швидший доступ до атрибутів</span>
+<span class="cm"># Недоліки: не можна додати нові атрибути динамічно</span>
+<span class="cm"># З __slots__ не можна мати __weakref__ без явного додавання</span>
+<span class="cm"># Спадкування: дочірні класи без __slots__ знову отримають __dict__</span>
+
+<span class="cm"># Метакласи — клас класу</span>
+<span class="kw">class</span> Meta(type):
+    <span class="kw">def</span> <span class="fn">__new__</span>(mcs, name, bases, namespace):
+        cls = super().__new__(mcs, name, bases, namespace)
+        <span class="cm"># Тут можна модифікувати клас до його створення</span>
+        <span class="kw">return</span> cls
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(cls, name, bases, namespace):
+        super().__init__(name, bases, namespace)
+
+<span class="kw">class</span> MyClass(metaclass=Meta): <span class="kw">pass</span>
+
+<span class="cm"># Популярні метакласи: ABCMeta, EnumMeta</span>
+<span class="cm"># class ABC(metaclass=ABCMeta) — зручний синтаксис</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Дескриптори — як property реально працює</div>
+<pre><span class="cm"># Дескриптор = об'єкт з __get__/__set__/__delete__</span>
+<span class="cm"># Data descriptor: є і __get__ і __set__ → переважає instance dict</span>
+<span class="cm"># Non-data descriptor: тільки __get__ → instance dict переважає</span>
+
+<span class="kw">class</span> TypedAttr:
+    <span class="kw">def</span> <span class="fn">__set_name__</span>(self, owner, name):
+        self.private = <span class="str">'_'</span> + name
+
+    <span class="kw">def</span> <span class="fn">__get__</span>(self, obj, objtype=<span class="kw">None</span>):
+        <span class="kw">if</span> obj <span class="kw">is None</span>: <span class="kw">return</span> self  <span class="cm"># доступ через клас</span>
+        <span class="kw">return</span> getattr(obj, self.private)
+
+    <span class="kw">def</span> <span class="fn">__set__</span>(self, obj, value):
+        setattr(obj, self.private, value)
+
+<span class="kw">class</span> Point:
+    x = TypedAttr()  <span class="cm"># __set_name__ викликається автоматично</span>
+
+<span class="cm"># Порядок пошуку атрибутів:</span>
+<span class="cm"># 1. type(obj).__mro__ → data descriptor</span>
+<span class="cm"># 2. obj.__dict__</span>
+<span class="cm"># 3. type(obj).__mro__ → non-data descriptor / клас-атрибут</span>
+<span class="cm"># 4. __getattr__</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== FUNCTIONS ===== -->
+<div class="section" id="s-funcs">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">Аргументи — всі варіанти</div>
+<pre><span class="kw">def</span> <span class="fn">func</span>(
+    pos_only,          <span class="cm"># позиційний тільки</span>
+    /,                 <span class="cm"># ← роздільник (3.8+)</span>
+    pos_or_kw,         <span class="cm"># позиційний або keyword</span>
+    *args,             <span class="cm"># tuple решти позиційних</span>
+    kw_only,           <span class="cm"># ТІЛЬКИ keyword після *</span>
+    **kwargs           <span class="cm"># dict решти keyword</span>
+):
+
+<span class="cm"># pos_only корисний для:</span>
+<span class="cm"># 1. Уникнення конфлікту імен з kwargs</span>
+<span class="cm"># 2. Свободи перейменування параметрів без breaking change</span>
+
+<span class="kw">def</span> <span class="fn">example</span>(a, b, /, c, *, d):
+    <span class="kw">pass</span>
+
+example(<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, d=<span class="num">4</span>)    <span class="cm"># OK</span>
+example(<span class="num">1</span>, <span class="num">2</span>, c=<span class="num">3</span>, d=<span class="num">4</span>)  <span class="cm"># OK</span>
+example(a=<span class="num">1</span>, b=<span class="num">2</span>, ...)   <span class="cm"># TypeError! a, b — pos_only</span></pre>
+
+<div class="danger">🔴 MUTABLE DEFAULT ARGUMENT — найвідоміша пастка!<br>
+<code>def f(lst=[])</code> — один об'єкт list живе весь час програми!</div>
+<pre><span class="cm"># НЕПРАВИЛЬНО</span>
+<span class="kw">def</span> <span class="fn">bad</span>(lst=[], d={}): lst.append(<span class="num">1</span>); <span class="kw">return</span> lst
+
+<span class="cm"># ПРАВИЛЬНО</span>
+<span class="kw">def</span> <span class="fn">good</span>(lst=<span class="kw">None</span>, d=<span class="kw">None</span>):
+    <span class="kw">if</span> lst <span class="kw">is None</span>: lst = []
+    <span class="kw">if</span> d <span class="kw">is None</span>: d = {}
+
+<span class="cm"># Виняток: sentinel об'єкт як default</span>
+_MISSING = object()
+<span class="kw">def</span> <span class="fn">func</span>(x=_MISSING):
+    <span class="kw">if</span> x <span class="kw">is</span> _MISSING: <span class="kw">pass</span>  <span class="cm"># не передали</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Декоратори — під капотом</div>
+<pre><span class="cm"># @dec ≡ func = dec(func) — просто синтаксичний цукор</span>
+<span class="cm"># Декоратор = callable → callable</span>
+
+<span class="kw">from</span> functools <span class="kw">import</span> wraps
+
+<span class="kw">def</span> <span class="fn">timer</span>(func):
+    <span class="kw">@wraps</span>(func)  <span class="cm"># зберігає __name__, __doc__, __module__ тощо</span>
+    <span class="kw">def</span> <span class="fn">wrapper</span>(*args, **kwargs):
+        <span class="kw">import</span> time
+        start = time.perf_counter()
+        result = func(*args, **kwargs)
+        print(f<span class="str">"{func.__name__}: {time.perf_counter()-start:.4f}s"</span>)
+        <span class="kw">return</span> result
+    <span class="kw">return</span> wrapper
+
+<span class="cm"># Декоратор з параметрами — 3 рівні вкладеності</span>
+<span class="kw">def</span> <span class="fn">retry</span>(times=<span class="num">3</span>, exceptions=(Exception,)):
+    <span class="kw">def</span> <span class="fn">decorator</span>(func):
+        <span class="kw">@wraps</span>(func)
+        <span class="kw">def</span> <span class="fn">wrapper</span>(*a, **kw):
+            <span class="kw">for</span> i <span class="kw">in</span> range(times):
+                <span class="kw">try</span>: <span class="kw">return</span> func(*a, **kw)
+                <span class="kw">except</span> exceptions <span class="kw">as</span> e:
+                    <span class="kw">if</span> i == times-<span class="num">1</span>: <span class="kw">raise</span>
+        <span class="kw">return</span> wrapper
+    <span class="kw">return</span> decorator
+
+<span class="kw">@retry</span>(times=<span class="num">5</span>, exceptions=(IOError, OSError))
+<span class="kw">def</span> <span class="fn">risky_io</span>(): ...</pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Замикання та nonlocal</div>
+<pre><span class="kw">def</span> <span class="fn">counter</span>(start=<span class="num">0</span>):
+    count = start
+    <span class="kw">def</span> <span class="fn">inc</span>(step=<span class="num">1</span>):
+        <span class="kw">nonlocal</span> count  <span class="cm"># без цього → UnboundLocalError!</span>
+        count += step
+        <span class="kw">return</span> count
+    <span class="kw">return</span> inc
+
+c = counter()
+c()   <span class="cm"># 1</span>
+c(<span class="num">5</span>) <span class="cm"># 6</span>
+
+<span class="cm"># __closure__ — клітинки з захопленими змінними</span>
+c.__closure__[<span class="num">0</span>].cell_contents  <span class="cm"># 6</span>
+c.__code__.co_freevars           <span class="cm"># ('count',)</span>
+
+<span class="cm"># ⚠️ Класична пастка lambda + цикл</span>
+funcs = [<span class="kw">lambda</span>: i <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">3</span>)]
+funcs[<span class="num">0</span>]()  <span class="cm"># 2! Всі замкнули ту саму змінну i</span>
+
+<span class="cm"># Виправлення 1: default argument (захоплення по значенню)</span>
+funcs = [<span class="kw">lambda</span> i=i: i <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">3</span>)]
+funcs[<span class="num">0</span>]()  <span class="cm"># 0 ✓</span>
+
+<span class="cm"># Виправлення 2: factory function</span>
+<span class="kw">def</span> <span class="fn">make_func</span>(i):
+    <span class="kw">return lambda</span>: i
+funcs = [make_func(i) <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">3</span>)]</pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Генератори та yield</div>
+<pre><span class="kw">def</span> <span class="fn">gen</span>(n):
+    print(<span class="str">"start"</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> range(n):
+        <span class="kw">yield</span> i * <span class="num">2</span>
+    print(<span class="str">"done"</span>)
+
+g = gen(<span class="num">3</span>)     <span class="cm"># нічого не виконалось!</span>
+<span class="fn">next</span>(g)        <span class="cm"># "start", повертає 0</span>
+<span class="fn">next</span>(g)        <span class="cm"># повертає 2</span>
+<span class="fn">next</span>(g)        <span class="cm"># повертає 4</span>
+<span class="fn">next</span>(g)        <span class="cm"># "done", StopIteration</span>
+
+<span class="cm"># send() — двонаправлений генератор (coroutine)</span>
+<span class="kw">def</span> <span class="fn">accumulator</span>():
+    total = <span class="num">0</span>
+    <span class="kw">while</span> <span class="kw">True</span>:
+        value = (<span class="kw">yield</span> total)  <span class="cm"># yield повертає те що send() надіслав</span>
+        <span class="kw">if</span> value <span class="kw">is None</span>: <span class="kw">break</span>
+        total += value
+
+g = accumulator()
+<span class="fn">next</span>(g)    <span class="cm"># 0 (потрібно "розкрутити" першим next/send(None))</span>
+g.send(<span class="num">10</span>) <span class="cm"># 10</span>
+g.send(<span class="num">5</span>)  <span class="cm"># 15</span>
+
+<span class="cm"># yield from — делегування + pass-through send/throw</span>
+<span class="kw">def</span> <span class="fn">chain</span>(*iters):
+    <span class="kw">for</span> it <span class="kw">in</span> iters:
+        <span class="kw">yield from</span> it  <span class="cm"># прозоро пробрасує send() і throw()</span>
+
+<span class="cm"># Генераторний протокол: throw() та close()</span>
+g.throw(ValueError, <span class="str">"oops"</span>)  <span class="cm"># кидає виключення в генератор</span>
+g.close()                     <span class="cm"># GeneratorExit у генератор</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== MEMORY ===== -->
+<div class="section" id="s-memory">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">CPython — управління пам'яттю</div>
+<p>CPython використовує підрахунок посилань (reference counting) як основний механізм + циклічний GC для виявлення циклів.</p>
+<pre><span class="kw">import</span> sys, gc, ctypes
+
+<span class="cm"># ob_refcnt — лічильник посилань в PyObject</span>
+a = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+sys.getrefcount(a)  <span class="cm"># 2 (a + аргумент getrefcount)</span>
+b = a
+sys.getrefcount(a)  <span class="cm"># 3</span>
+<span class="kw">del</span> b
+sys.getrefcount(a)  <span class="cm"># 2</span>
+
+<span class="cm"># Коли refcount → 0 — об'єкт видаляється НЕГАЙНО</span>
+<span class="cm"># (Тільки для простих об'єктів без циклів)</span>
+
+<span class="cm"># Циклічний GC (покоління 0, 1, 2)</span>
+gc.get_threshold()  <span class="cm"># (700, 10, 10) — тригери</span>
+gc.collect()        <span class="cm"># примусовий збір → кількість зібраних</span>
+gc.disable()        <span class="cm"># вимкнути якщо нема циклів (швидше)</span>
+gc.enable()
+
+<span class="cm"># weakref — не збільшує refcount</span>
+<span class="kw">import</span> weakref
+wr = weakref.ref(obj)
+wr()  <span class="cm"># obj якщо живий, None якщо вже видалений</span>
+weakref.proxy(obj)  <span class="cm"># прокси, не треба wr() дзвонити</span></pre>
+<div class="warn">⚠️ __del__ НЕ є деструктором в класичному сенсі! Не гарантується коли і чи взагалі буде викликаний. Для cleanup → контекст менеджер (__exit__).</div>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">Small int, string interning, None/True/False</div>
+<pre><span class="cm"># CPython кешує int від -5 до 256 включно</span>
+a = <span class="num">256</span>; b = <span class="num">256</span>; a <span class="kw">is</span> b   <span class="cm"># True ← з кешу</span>
+a = <span class="num">257</span>; b = <span class="num">257</span>; a <span class="kw">is</span> b   <span class="cm"># False ← різні об'єкти</span>
+
+<span class="cm"># ЗАВЖДИ: == для порівняння значень!</span>
+<span class="cm"># is тільки для: None, True, False, sentinel objects</span>
+
+<span class="cm"># None, True, False — синглтони</span>
+x <span class="kw">is None</span>   <span class="cm"># ✓ правильно</span>
+x == <span class="kw">None</span>   <span class="cm"># ✗ (може overridden __eq__)</span>
+
+<span class="cm"># String interning</span>
+s1 = <span class="str">'hello'</span>; s2 = <span class="str">'hello'</span>
+s1 <span class="kw">is</span> s2  <span class="cm"># True — короткі ASCII без спецсимволів</span>
+s1 = <span class="str">'hello world'</span>; s2 = <span class="str">'hello world'</span>
+s1 <span class="kw">is</span> s2  <span class="cm"># True або False — CPython-specific</span>
+
+sys.intern(<span class="str">'my_key'</span>)  <span class="cm"># примусовий interning</span>
+<span class="cm"># Корисно для dict ключів що часто порівнюються</span></pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Shallow vs Deep copy</div>
+<pre><span class="kw">import</span> copy
+
+original = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+
+<span class="cm"># Присвоєння — той САМИЙ об'єкт</span>
+ref = original
+ref <span class="kw">is</span> original  <span class="cm"># True</span>
+
+<span class="cm"># Shallow copy — новий контейнер, ті САМІ елементи</span>
+shallow = original.copy()          <span class="cm"># або original[:]</span>
+shallow = copy.copy(original)
+shallow <span class="kw">is</span> original               <span class="cm"># False — нова list</span>
+shallow[<span class="num">0</span>] <span class="kw">is</span> original[<span class="num">0</span>]        <span class="cm"># True — той самий [1,2]!</span>
+shallow[<span class="num">0</span>].append(<span class="num">99</span>)            <span class="cm"># МУТУЄ original[0]!</span>
+
+<span class="cm"># Deep copy — рекурсивне копіювання ВСЬОГО</span>
+deep = copy.deepcopy(original)
+deep[<span class="num">0</span>] <span class="kw">is</span> original[<span class="num">0</span>]           <span class="cm"># False — нова копія</span>
+deep[<span class="num">0</span>].append(<span class="num">99</span>)               <span class="cm"># original не змінений ✓</span>
+
+<span class="cm"># deepcopy обробляє:</span>
+<span class="cm"># - Цикли (obj → obj)</span>
+<span class="cm"># - Спільні об'єкти (зберігає зв'язок)</span>
+<span class="cm"># - Кастомна логіка через __deepcopy__(self, memo)</span></pre>
+</div>
+
+<div class="card" style="margin-top:1rem">
+<div class="card-title">getsizeof — розміри об'єктів</div>
+<pre><span class="kw">import</span> sys
+sys.getsizeof(<span class="num">0</span>)           <span class="cm"># 24 bytes</span>
+sys.getsizeof(<span class="num">10</span>**<span class="num">100</span>)     <span class="cm"># 72 bytes (bignum)</span>
+sys.getsizeof(<span class="kw">True</span>)        <span class="cm"># 28 bytes</span>
+sys.getsizeof(<span class="str">''</span>)          <span class="cm"># 49 bytes</span>
+sys.getsizeof(<span class="str">'a'</span>)         <span class="cm"># 50 bytes</span>
+sys.getsizeof([])           <span class="cm"># 56 bytes</span>
+sys.getsizeof({})           <span class="cm"># 64 bytes</span>
+sys.getsizeof(set())        <span class="cm"># 216 bytes (overhead set більший!)</span>
+sys.getsizeof(())           <span class="cm"># 40 bytes</span>
+sys.getsizeof(<span class="kw">lambda</span>: <span class="kw">None</span>) <span class="cm"># 48 bytes</span>
+
+<span class="cm"># УВАГА: getsizeof НЕ рахує вкладені об'єкти!</span>
+sys.getsizeof([<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>])  <span class="cm"># 88 — тільки список, не елементи</span>
+
+<span class="cm"># GIL та threading</span>
+<span class="cm"># GIL — Global Interpreter Lock: один потік виконує Python bytecode одночасно</span>
+<span class="cm"># threading → корисний для I/O-bound (GIL відпускається при I/O)</span>
+<span class="cm"># multiprocessing → CPU-bound (окремий процес = окремий GIL)</span>
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, ProcessPoolExecutor
+<span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="num">4</span>) <span class="kw">as</span> ex:
+    results = <span class="fn">list</span>(ex.map(io_func, data))  <span class="cm"># I/O</span>
+<span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> ex:
+    results = <span class="fn">list</span>(ex.map(cpu_func, data))  <span class="cm"># CPU</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ===== GOTCHAS ===== -->
+<div class="section" id="s-gotchas">
+<div class="grid">
+<div>
+<div class="card">
+<div class="card-title">Класичні пастки Python</div>
+<pre><span class="cm"># 1. Mutable default argument</span>
+<span class="kw">def</span> <span class="fn">bad</span>(lst=[]): lst.append(<span class="num">1</span>); <span class="kw">return</span> lst
+bad()  <span class="cm"># [1]</span>
+bad()  <span class="cm"># [1, 1] ← той самий list назавжди!</span>
+
+<span class="cm"># 2. Lambda в циклі (пізнє зв'язування)</span>
+funcs = [<span class="kw">lambda</span>: i <span class="kw">for</span> i <span class="kw">in</span> range(<span class="num">3</span>)]
+[f() <span class="kw">for</span> f <span class="kw">in</span> funcs]  <span class="cm"># [2, 2, 2] — всі дивляться на i=2</span>
+
+<span class="cm"># 3. is vs == для чисел поза кешем</span>
+a = <span class="num">1000</span>; b = <span class="num">1000</span>
+a == b  <span class="cm"># True ✓</span>
+a <span class="kw">is</span> b  <span class="cm"># False ← різні об'єкти</span>
+
+<span class="cm"># 4. Float precision</span>
+<span class="num">0.1</span> + <span class="num">0.2</span> == <span class="num">0.3</span>   <span class="cm"># FALSE! (IEEE 754)</span>
+<span class="num">0.1</span> + <span class="num">0.2</span>          <span class="cm"># 0.30000000000000004</span>
+<span class="kw">import</span> math
+math.isclose(<span class="num">0.1</span>+<span class="num">0.2</span>, <span class="num">0.3</span>)  <span class="cm"># True ✓</span>
+<span class="kw">from</span> decimal <span class="kw">import</span> Decimal
+Decimal(<span class="str">'0.1'</span>) + Decimal(<span class="str">'0.2'</span>)  <span class="cm"># Decimal('0.3') ✓</span>
+
+<span class="cm"># 5. Модифікація списку під час ітерації</span>
+lst = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]
+<span class="kw">for</span> x <span class="kw">in</span> lst:
+    <span class="kw">if</span> x % <span class="num">2</span>: lst.remove(x)  <span class="cm"># ПРОПУСКАЄ елементи!</span>
+<span class="cm"># lst → [2, 4] але ітерувалось некоректно</span>
+lst[:] = [x <span class="kw">for</span> x <span class="kw">in</span> lst <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]  <span class="cm"># ✓</span>
+
+<span class="cm"># 6. Bare except ловить все включно KeyboardInterrupt</span>
+<span class="kw">try</span>: ...
+<span class="kw">except</span>:  <span class="cm"># ← поганий стиль!</span>
+    <span class="kw">pass</span>
+<span class="kw">except</span> Exception:  <span class="cm"># ← краще, але не ловить SystemExit і KeyboardInterrupt</span>
+    <span class="kw">pass</span>
+
+<span class="cm"># 7. {} — порожній dict, НЕ set!</span>
+d = {}      <span class="cm"># dict</span>
+s = set()   <span class="cm"># set ← правильно</span>
+
+<span class="cm"># 8. Tuple без коми</span>
+t = (<span class="num">1</span>)    <span class="cm"># int!</span>
+t = (<span class="num">1</span>,)   <span class="cm"># tuple ✓</span>
+
+<span class="cm"># 9. sort() повертає None</span>
+lst = sorted_lst = [<span class="num">3</span>,<span class="num">1</span>,<span class="num">2</span>].sort()  <span class="cm"># None!</span>
+
+<span class="cm"># 10. Shallow copy вкладених структур</span>
+a = [[<span class="num">1</span>, <span class="num">2</span>], [<span class="num">3</span>, <span class="num">4</span>]]
+b = a.copy()         <span class="cm"># shallow!</span>
+b[<span class="num">0</span>].append(<span class="num">99</span>)    <span class="cm"># мутує a[0]!</span></pre>
+</div>
+</div>
+
+<div>
+<div class="card">
+<div class="card-title">Хитрощі та ідіоми Python</div>
+<pre><span class="cm"># any/all — short-circuit з генератором</span>
+<span class="fn">any</span>(expensive(x) <span class="kw">for</span> x <span class="kw">in</span> lst)  <span class="cm"># зупиняється на першому True</span>
+<span class="fn">all</span>(p(x) <span class="kw">for</span> x <span class="kw">in</span> lst)          <span class="cm"># зупиняється на першому False</span>
+
+<span class="cm"># Безпечне перше значення</span>
+first = next(<span class="fn">iter</span>(lst), <span class="kw">None</span>)
+
+<span class="cm"># Ланцюжок .get() для вкладених dict</span>
+val = data.get(<span class="str">'user'</span>, {}).get(<span class="str">'address'</span>, {}).get(<span class="str">'city'</span>, <span class="str">'N/A'</span>)
+
+<span class="cm"># Conditional import (fallback)</span>
+<span class="kw">try</span>:
+    <span class="kw">import</span> ujson <span class="kw">as</span> json   <span class="cm"># швидше</span>
+<span class="kw">except</span> ImportError:
+    <span class="kw">import</span> json             <span class="cm"># fallback</span>
+
+<span class="cm"># Extended unpacking</span>
+head, *tail = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]   <span class="cm"># head=1, tail=[2,3,4]</span>
+*init, last = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]   <span class="cm"># init=[1,2,3], last=4</span>
+a, *_, z   = [<span class="num">1</span>,<span class="num">2</span>,<span class="num">3</span>,<span class="num">4</span>,<span class="num">5</span>]    <span class="cm"># a=1, z=5</span>
+
+<span class="cm"># Chained comparisons</span>
+<span class="num">0</span> < x < <span class="num">10</span> < y  <span class="cm"># ✓ читабельно і правильно</span>
+
+<span class="cm"># for...else — else коли break НЕ спрацював</span>
+<span class="kw">for</span> x <span class="kw">in</span> lst:
+    <span class="kw">if</span> predicate(x): <span class="kw">break</span>
+<span class="kw">else</span>:
+    print(<span class="str">"не знайдено"</span>)  <span class="cm"># виконується якщо break не було</span>
+
+<span class="cm"># while...else — аналогічно</span>
+<span class="kw">while</span> condition:
+    <span class="kw">if</span> found: <span class="kw">break</span>
+<span class="kw">else</span>:
+    print(<span class="str">"цикл завершився природно"</span>)
+
+<span class="cm"># Множинне присвоєння</span>
+a = b = c = <span class="num">0</span>   <span class="cm"># всі вказують на ОДИН об'єкт (0)</span>
+                 <span class="cm"># OK для immutable (int, str)</span>
+                 <span class="cm"># НЕБЕЗПЕЧНО для mutable: a=b=c=[]</span>
+
+<span class="cm"># __all__ — контроль import *</span>
+__all__ = [<span class="str">'PublicClass'</span>, <span class="str">'public_func'</span>]
+
+<span class="cm"># vars() / dir() / help() — introspection</span>
+<span class="fn">vars</span>(obj)    <span class="cm"># obj.__dict__</span>
+<span class="fn">dir</span>(obj)     <span class="cm"># всі атрибути включно спадкові</span>
+<span class="fn">getattr</span>(obj, <span class="str">'attr'</span>, default)
+<span class="fn">hasattr</span>(obj, <span class="str">'attr'</span>)  <span class="cm"># getattr + try/except</span>
+<span class="fn">setattr</span>(obj, <span class="str">'attr'</span>, val)
+<span class="fn">callable</span>(obj)  <span class="cm"># чи є __call__</span>
+<span class="fn">isinstance</span>(obj, (ClassA, ClassB))  <span class="cm"># tuple типів!</span>
+<span class="fn">issubclass</span>(Child, (A, B))  <span class="cm"># теж tuple</span></pre>
+</div>
+</div>
+</div>
+</div>
+
+</main>
+
+<script>
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('s-' + id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
