@@ -1,0 +1,836 @@
+
+<style>
+:root {
+  --c-bg: var(--color-background-primary);
+  --c-surface: var(--color-background-secondary);
+  --c-border: var(--color-border-tertiary);
+  --c-text: var(--color-text-primary);
+  --c-muted: var(--color-text-secondary);
+  --c-mono: var(--font-mono);
+  --teal50: #E1F5EE; --teal600: #0F6E56; --teal800: #085041;
+  --purple50: #EEEDFE; --purple600: #534AB7; --purple800: #3C3489;
+  --amber50: #FAEEDA; --amber600: #854F0B; --amber800: #633806;
+  --blue50: #E6F1FB; --blue600: #185FA5; --blue800: #0C447C;
+  --coral50: #FAECE7; --coral600: #993C1D; --coral800: #712B13;
+  --green50: #EAF3DE; --green600: #3B6D11; --green800: #27500A;
+  --red50: #FCEBEB; --red600: #A32D2D; --red800: #791F1F;
+  --gray50: #F1EFE8; --gray600: #5F5E5A; --gray800: #444441;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); color: var(--c-text); }
+h2.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); }
+
+.sheet { padding: 1.5rem 0; }
+.nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 1.5rem; }
+.nav-btn {
+  font-size: 12px; font-weight: 500; padding: 5px 12px;
+  border: 0.5px solid var(--c-border); border-radius: var(--border-radius-md);
+  background: var(--c-bg); color: var(--c-muted); cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.nav-btn:hover { background: var(--c-surface); color: var(--c-text); }
+.nav-btn.active { background: var(--purple50); color: var(--purple800); border-color: var(--purple600); }
+
+.section { display: none; }
+.section.active { display: block; }
+
+.section-header {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 1.25rem;
+}
+.section-badge {
+  font-size: 11px; font-weight: 500; padding: 3px 10px;
+  border-radius: 99px; white-space: nowrap;
+}
+
+.card {
+  background: var(--c-bg);
+  border: 0.5px solid var(--c-border);
+  border-radius: var(--border-radius-lg);
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.card-title {
+  font-size: 13px; font-weight: 500; color: var(--c-muted);
+  text-transform: uppercase; letter-spacing: 0.06em;
+  margin-bottom: 0.75rem;
+}
+.card-desc { font-size: 14px; color: var(--c-muted); line-height: 1.6; margin-bottom: 0.75rem; }
+
+.grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+
+code, .code-block {
+  font-family: var(--c-mono, monospace);
+  font-size: 12.5px;
+  background: var(--c-surface);
+  border-radius: var(--border-radius-md);
+  border: 0.5px solid var(--c-border);
+}
+code { padding: 1px 6px; font-size: 12px; }
+
+.code-block {
+  display: block; padding: 1rem 1.25rem;
+  white-space: pre; overflow-x: auto;
+  line-height: 1.65; margin: 0.5rem 0;
+  color: var(--c-text);
+}
+.code-block .kw { color: var(--purple600); }
+.code-block .fn { color: var(--blue600); }
+.code-block .cm { color: var(--c-muted); font-style: italic; }
+.code-block .st { color: var(--teal600); }
+.code-block .nu { color: var(--amber600); }
+.code-block .de { color: var(--coral600); }
+
+.tag {
+  display: inline-block; font-size: 11px; font-weight: 500;
+  padding: 2px 8px; border-radius: 99px; margin-right: 4px; margin-bottom: 4px;
+}
+.tag-purple { background: var(--purple50); color: var(--purple800); }
+.tag-teal   { background: var(--teal50);   color: var(--teal800);   }
+.tag-amber  { background: var(--amber50);  color: var(--amber800);  }
+.tag-blue   { background: var(--blue50);   color: var(--blue800);   }
+.tag-coral  { background: var(--coral50);  color: var(--coral800);  }
+.tag-green  { background: var(--green50);  color: var(--green800);  }
+.tag-red    { background: var(--red50);    color: var(--red800);    }
+.tag-gray   { background: var(--gray50);   color: var(--gray800);   }
+
+.warn-box {
+  background: var(--amber50); border: 0.5px solid var(--amber600);
+  border-radius: var(--border-radius-md); padding: 0.75rem 1rem;
+  font-size: 13px; color: var(--amber800); margin: 0.5rem 0;
+}
+.tip-box {
+  background: var(--teal50); border: 0.5px solid var(--teal600);
+  border-radius: var(--border-radius-md); padding: 0.75rem 1rem;
+  font-size: 13px; color: var(--teal800); margin: 0.5rem 0;
+}
+.danger-box {
+  background: var(--red50); border: 0.5px solid var(--red600);
+  border-radius: var(--border-radius-md); padding: 0.75rem 1rem;
+  font-size: 13px; color: var(--red800); margin: 0.5rem 0;
+}
+
+.table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.table th {
+  text-align: left; padding: 6px 10px;
+  background: var(--c-surface); font-weight: 500; color: var(--c-muted);
+  border-bottom: 0.5px solid var(--c-border);
+}
+.table td { padding: 7px 10px; border-bottom: 0.5px solid var(--c-border); vertical-align: top; }
+.table tr:last-child td { border-bottom: none; }
+
+.flow {
+  display: flex; align-items: stretch; gap: 0; margin: 0.75rem 0;
+  border-radius: var(--border-radius-lg); overflow: hidden;
+  border: 0.5px solid var(--c-border);
+}
+.flow-step {
+  flex: 1; padding: 0.6rem 0.8rem; font-size: 12px; font-weight: 500;
+  text-align: center; border-right: 0.5px solid var(--c-border);
+  background: var(--c-bg);
+}
+.flow-step:last-child { border-right: none; }
+.flow-step small { display: block; font-weight: 400; color: var(--c-muted); font-size: 11px; margin-top: 2px; }
+
+.compare { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin: 0.5rem 0; }
+.compare-col { }
+.compare-label { font-size: 12px; font-weight: 500; margin-bottom: 0.5rem; }
+
+.prop-list { list-style: none; font-size: 13px; }
+.prop-list li { padding: 5px 0; border-bottom: 0.5px solid var(--c-border); display: flex; align-items: baseline; gap: 8px; }
+.prop-list li:last-child { border-bottom: none; }
+.prop-key { font-weight: 500; min-width: 130px; flex-shrink: 0; }
+
+.ask-btn {
+  margin-top: 1rem; font-size: 13px; padding: 6px 14px;
+  border: 0.5px solid var(--c-border); border-radius: var(--border-radius-md);
+  background: var(--c-bg); color: var(--c-muted); cursor: pointer;
+}
+.ask-btn:hover { background: var(--c-surface); color: var(--c-text); }
+</style>
+
+<h2 class="sr-only">Шпаргалка по Python asyncio — повний довідник для просунутих</h2>
+
+<div class="sheet">
+  <nav class="nav" id="nav"></nav>
+  <div id="content"></div>
+</div>
+
+<script>
+const sections = [
+{
+  id: 'basics',
+  label: '1. Основи',
+  badge: 'Фундамент', badgeColor: 'purple',
+  cards: [
+    {
+      title: 'Що таке asyncio?',
+      desc: 'asyncio — це бібліотека Python для написання конкурентного коду з використанням синтаксису async/await. Вона базується на одному потоці та event loop (циклі подій), який перемикається між задачами під час I/O операцій.',
+      code: `<span class="cm"># Базова структура asyncio програми</span>
+<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># async def → coroutine function</span>
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">1</span>)  <span class="cm"># yield control back to event loop</span>
+    <span class="fn">print</span>(<span class="st">"Hello, asyncio!"</span>)
+
+<span class="cm"># Точка входу — запуск event loop</span>
+asyncio.<span class="fn">run</span>(main())  <span class="cm"># Python 3.7+</span>`,
+      tags: ['coroutine', 'event loop', 'async/await']
+    },
+    {
+      title: 'Ключові концепції',
+      noCode: true,
+      table: {
+        cols: ['Концепція', 'Що це', 'Коли використовувати'],
+        rows: [
+          ['coroutine', 'Функція з async def — об\'єкт, який можна призупинити', 'Основна одиниця asyncio коду'],
+          ['Task', 'Обгортка над coroutine, що виконується паралельно', 'Коли треба запустити без await'],
+          ['Future', 'Placeholder для результату, який ще не готовий', 'Низькорівнева примітива'],
+          ['Event Loop', 'Серце asyncio — планує та запускає задачі', 'Управляє всім виконанням'],
+          ['awaitable', 'Все, що можна await: coroutine, Task, Future', 'Інтерфейс для await'],
+        ]
+      }
+    }
+  ]
+},
+{
+  id: 'coroutines',
+  label: '2. Coroutines',
+  badge: 'Ядро', badgeColor: 'teal',
+  cards: [
+    {
+      title: 'Coroutine vs звичайна функція',
+      desc: 'Coroutine не виконується при виклику — вона повертає coroutine object. Виконання починається лише коли ти await або загортаєш в Task.',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">fetch_data</span>(url: str) -> str:
+    <span class="fn">print</span>(<span class="st">f"Start fetching </span>{url}<span class="st">"</span>)
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">1</span>)   <span class="cm"># симулюємо I/O</span>
+    <span class="fn">print</span>(<span class="st">f"Done: </span>{url}<span class="st">"</span>)
+    <span class="kw">return</span> <span class="st">f"data from </span>{url}<span class="st">"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># НЕПРАВИЛЬНО — просто створює об'єкт, не виконує</span>
+    coro = <span class="fn">fetch_data</span>(<span class="st">"https://api.example.com"</span>)
+    <span class="fn">print</span>(<span class="fn">type</span>(coro))  <span class="cm"># &lt;class 'coroutine'&gt;</span>
+
+    <span class="cm"># ПРАВИЛЬНО — виконує coroutine</span>
+    result = <span class="kw">await</span> <span class="fn">fetch_data</span>(<span class="st">"https://api.example.com"</span>)
+    <span class="fn">print</span>(result)`,
+      tags: ['async def', 'await', 'coroutine object']
+    },
+    {
+      title: 'Ланцюжки та вкладені await',
+      desc: 'Coroutines можна вкладати одна в одну — await передає управління вгору по ланцюжку до event loop.',
+      code: `<span class="kw">async def</span> <span class="fn">step1</span>():
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">0.1</span>)
+    <span class="kw">return</span> <span class="st">"step1 done"</span>
+
+<span class="kw">async def</span> <span class="fn">step2</span>():
+    r = <span class="kw">await</span> <span class="fn">step1</span>()     <span class="cm"># чекаємо step1</span>
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">0.1</span>)
+    <span class="kw">return</span> <span class="st">f"</span>{r}<span class="st"> → step2 done"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    result = <span class="kw">await</span> <span class="fn">step2</span>()  <span class="cm"># виконання строго послідовне</span>
+    <span class="fn">print</span>(result)          <span class="cm"># step1 done → step2 done</span>
+
+<span class="cm"># Загальний час: 0.2s (послідовно)</span>`,
+      tags: ['chain', 'sequential', 'nested await']
+    }
+  ]
+},
+{
+  id: 'tasks',
+  label: '3. Tasks',
+  badge: 'Паралельність', badgeColor: 'blue',
+  cards: [
+    {
+      title: 'create_task — запуск паралельно',
+      desc: 'create_task загортає coroutine в Task і відразу планує її в event loop. Задачі виконуються "одночасно" (конкурентно) в одному потоці.',
+      code: `<span class="kw">async def</span> <span class="fn">worker</span>(name: str, delay: <span class="fn">float</span>):
+    <span class="fn">print</span>(<span class="st">f"</span>{name}<span class="st"> started"</span>)
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(delay)
+    <span class="fn">print</span>(<span class="st">f"</span>{name}<span class="st"> done"</span>)
+    <span class="kw">return</span> <span class="st">f"</span>{name}<span class="st"> result"</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># Запускаємо 3 задачі паралельно</span>
+    t1 = asyncio.<span class="fn">create_task</span>(<span class="fn">worker</span>(<span class="st">"A"</span>, <span class="nu">1.0</span>))
+    t2 = asyncio.<span class="fn">create_task</span>(<span class="fn">worker</span>(<span class="st">"B"</span>, <span class="nu">0.5</span>))
+    t3 = asyncio.<span class="fn">create_task</span>(<span class="fn">worker</span>(<span class="st">"C"</span>, <span class="nu">1.5</span>))
+
+    <span class="cm"># Чекаємо всі результати</span>
+    r1, r2, r3 = <span class="kw">await</span> t1, <span class="kw">await</span> t2, <span class="kw">await</span> t3
+    <span class="cm"># B done (0.5s) → A done (1.0s) → C done (1.5s)</span>
+    <span class="cm"># Загальний час: 1.5s (не 3.0s!)</span>`,
+      warn: 'Увага: Task починає виконання НЕ одразу при create_task, а лише коли поточна coroutine досягне точки await і поверне управління event loop.'
+    },
+    {
+      title: 'asyncio.gather — масовий запуск',
+      desc: 'Найпопулярніший спосіб запустити кілька coroutines паралельно та зібрати результати.',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">fetch</span>(n: int):
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(n * <span class="nu">0.1</span>)
+    <span class="kw">return</span> n ** <span class="nu">2</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># Варіант 1: розпакувати список</span>
+    coros = [<span class="fn">fetch</span>(i) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>)]
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*coros)
+    <span class="fn">print</span>(results)  <span class="cm"># [0, 1, 4, 9, 16]</span>
+
+    <span class="cm"># Варіант 2: зловити виключення замість propagate</span>
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+        <span class="fn">fetch</span>(<span class="nu">1</span>), <span class="fn">fetch</span>(<span class="nu">2</span>), <span class="fn">fetch</span>(<span class="nu">3</span>),
+        return_exceptions=<span class="kw">True</span>  <span class="cm"># помилки → елементи списку</span>
+    )
+    <span class="kw">for</span> r <span class="kw">in</span> results:
+        <span class="kw">if</span> <span class="fn">isinstance</span>(r, Exception):
+            <span class="fn">print</span>(<span class="st">f"Error: </span>{r}<span class="st">"</span>)`,
+      tags: ['gather', 'parallel', 'return_exceptions']
+    },
+    {
+      title: 'TaskGroup (Python 3.11+) / ручне управління',
+      desc: 'TaskGroup — структурований конкурентний підхід. В Python 3.9 використовуй create_task + gather.',
+      code: `<span class="cm"># Python 3.9 — через create_task і gather</span>
+<span class="kw">async def</span> <span class="fn">main_39</span>():
+    tasks = [asyncio.<span class="fn">create_task</span>(<span class="fn">fetch</span>(i)) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>)]
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*tasks)
+    <span class="kw">return</span> results
+
+<span class="cm"># Скасування Task</span>
+<span class="kw">async def</span> <span class="fn">cancel_demo</span>():
+    task = asyncio.<span class="fn">create_task</span>(<span class="fn">long_running</span>())
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">0.5</span>)
+    task.<span class="fn">cancel</span>()             <span class="cm"># посилаємо CancelledError</span>
+    <span class="kw">try</span>:
+        <span class="kw">await</span> task
+    <span class="kw">except</span> asyncio.CancelledError:
+        <span class="fn">print</span>(<span class="st">"Task cancelled!"</span>)   <span class="cm"># очікуємо це</span>`,
+      tags: ['create_task', 'cancel', 'CancelledError']
+    }
+  ]
+},
+{
+  id: 'gather_vs',
+  label: '4. gather/wait/as_completed',
+  badge: 'Паттерни', badgeColor: 'coral',
+  cards: [
+    {
+      title: 'Три способи чекати кілька задач',
+      noCode: true,
+      table: {
+        cols: ['Функція', 'Поведінка', 'Коли використовувати'],
+        rows: [
+          ['gather(*coros)', 'Чекає всі, порядок результатів відповідає порядку аргументів', 'Коли потрібні всі результати'],
+          ['wait(tasks, ...)', 'Повертає (done, pending) set\'и, більше контролю', 'Коли треба partial results або timeout'],
+          ['as_completed(coros)', 'Ітератор, повертає результати в порядку завершення', 'Коли хочеш обробляти по-мірі готовності'],
+        ]
+      }
+    },
+    {
+      title: 'asyncio.wait — гнучкий контроль',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    tasks = {asyncio.<span class="fn">create_task</span>(<span class="fn">fetch</span>(i)) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>)}
+
+    <span class="cm"># FIRST_COMPLETED — повернути як тільки одна завершилась</span>
+    done, pending = <span class="kw">await</span> asyncio.<span class="fn">wait</span>(
+        tasks, return_when=asyncio.FIRST_COMPLETED
+    )
+    <span class="fn">print</span>(<span class="st">f"First done: </span>{[t.<span class="fn">result</span>() <span class="kw">for</span> t <span class="kw">in</span> done]}<span class="st">"</span>)
+
+    <span class="cm"># Скасовуємо решту</span>
+    <span class="kw">for</span> t <span class="kw">in</span> pending:
+        t.<span class="fn">cancel</span>()
+
+    <span class="cm"># FIRST_EXCEPTION — зупинити при першій помилці</span>
+    <span class="cm"># ALL_COMPLETED — чекати всіх (default)</span>`,
+      tags: ['wait', 'FIRST_COMPLETED', 'pending']
+    },
+    {
+      title: 'asyncio.as_completed — обробка в порядку завершення',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    coros = [<span class="fn">fetch_url</span>(url) <span class="kw">for</span> url <span class="kw">in</span> urls]
+
+    <span class="cm"># Обробляємо кожен результат одразу як готовий</span>
+    <span class="kw">async for</span> coro <span class="kw">in</span> asyncio.<span class="fn">as_completed</span>(coros):
+        result = <span class="kw">await</span> coro
+        <span class="fn">print</span>(<span class="st">f"Got result: </span>{result}<span class="st">"</span>)
+
+    <span class="cm"># З timeout (аргумент є тут!)</span>
+    <span class="kw">for</span> coro <span class="kw">in</span> asyncio.<span class="fn">as_completed</span>(coros, timeout=<span class="nu">5.0</span>):
+        <span class="kw">try</span>:
+            result = <span class="kw">await</span> coro
+        <span class="kw">except</span> asyncio.TimeoutError:
+            <span class="fn">print</span>(<span class="st">"Timeout!"</span>)`,
+      tags: ['as_completed', 'streaming', 'timeout']
+    }
+  ]
+},
+{
+  id: 'sync_primitives',
+  label: '5. Синхронізація',
+  badge: 'Thread-safe', badgeColor: 'amber',
+  cards: [
+    {
+      title: 'Lock — взаємне виключення',
+      desc: 'asyncio.Lock запобігає одночасному доступу до ресурсу. Не плутай з threading.Lock!',
+      code: `<span class="kw">import</span> asyncio
+
+lock = asyncio.<span class="fn">Lock</span>()
+counter = <span class="nu">0</span>
+
+<span class="kw">async def</span> <span class="fn">increment</span>():
+    <span class="kw">global</span> counter
+    <span class="kw">async with</span> lock:     <span class="cm"># контекстний менеджер</span>
+        val = counter
+        <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">0</span>)  <span class="cm"># імітуємо I/O між read і write</span>
+        counter = val + <span class="nu">1</span>    <span class="cm"># race condition без lock!</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*[<span class="fn">increment</span>() <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">100</span>)])
+    <span class="fn">print</span>(counter)  <span class="cm"># 100 (без lock могло б бути менше)</span>`,
+      tags: ['Lock', 'async with', 'race condition']
+    },
+    {
+      title: 'Semaphore — обмеження конкурентності',
+      desc: 'Найважливіший паттерн для rate limiting та обмеження кількості одночасних запитів.',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="cm"># Обмежуємо до 5 одночасних HTTP запитів</span>
+sem = asyncio.<span class="fn">Semaphore</span>(<span class="nu">5</span>)
+
+<span class="kw">async def</span> <span class="fn">fetch_limited</span>(url: str) -> str:
+    <span class="kw">async with</span> sem:           <span class="cm"># займаємо слот</span>
+        result = <span class="kw">await</span> <span class="fn">do_request</span>(url)
+    <span class="kw">return</span> result            <span class="cm"># звільняємо слот після виходу</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    urls = [<span class="st">f"https://api.com/item/</span>{i}<span class="st">"</span> <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">100</span>)]
+    <span class="cm"># Усі 100 задач створено, але max 5 працюють одночасно</span>
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*[<span class="fn">fetch_limited</span>(u) <span class="kw">for</span> u <span class="kw">in</span> urls])`,
+      tip: 'Semaphore — найкращий спосіб уникнути перевантаження API або бази даних.',
+      tags: ['Semaphore', 'rate limiting', 'concurrency control']
+    },
+    {
+      title: 'Event, Condition, Queue',
+      code: `<span class="cm"># asyncio.Event — одноразовий сигнал</span>
+event = asyncio.<span class="fn">Event</span>()
+
+<span class="kw">async def</span> <span class="fn">waiter</span>():
+    <span class="fn">print</span>(<span class="st">"Waiting..."</span>)
+    <span class="kw">await</span> event.<span class="fn">wait</span>()   <span class="cm"># блокує поки не set()</span>
+    <span class="fn">print</span>(<span class="st">"Event fired!"</span>)
+
+<span class="kw">async def</span> <span class="fn">setter</span>():
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">1</span>)
+    event.<span class="fn">set</span>()          <span class="cm"># розблоковує всіх waiter</span>
+
+<span class="cm"># asyncio.Queue — producer-consumer</span>
+queue = asyncio.<span class="fn">Queue</span>(maxsize=<span class="nu">10</span>)
+
+<span class="kw">async def</span> <span class="fn">producer</span>():
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">20</span>):
+        <span class="kw">await</span> queue.<span class="fn">put</span>(i)    <span class="cm"># блокує якщо черга повна</span>
+
+<span class="kw">async def</span> <span class="fn">consumer</span>():
+    <span class="kw">while True</span>:
+        item = <span class="kw">await</span> queue.<span class="fn">get</span>()  <span class="cm"># блокує якщо порожня</span>
+        <span class="fn">print</span>(<span class="st">f"Processing: </span>{item}<span class="st">"</span>)
+        queue.<span class="fn">task_done</span>()    <span class="cm"># обов'язково!</span>
+
+<span class="kw">await</span> queue.<span class="fn">join</span>()  <span class="cm"># чекати поки всі task_done</span>`,
+      tags: ['Event', 'Queue', 'Condition', 'producer-consumer']
+    }
+  ]
+},
+{
+  id: 'errors',
+  label: '6. Помилки та timeout',
+  badge: 'Reliability', badgeColor: 'red',
+  cards: [
+    {
+      title: 'asyncio.timeout (3.11) та wait_for (3.9)',
+      desc: 'В Python 3.9 для таймаутів використовуй asyncio.wait_for. В 3.11 з\'явився зручніший asyncio.timeout.',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="cm"># Python 3.9 — wait_for</span>
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">try</span>:
+        result = <span class="kw">await</span> asyncio.<span class="fn">wait_for</span>(
+            <span class="fn">slow_operation</span>(),
+            timeout=<span class="nu">5.0</span>          <span class="cm"># секунди</span>
+        )
+    <span class="kw">except</span> asyncio.TimeoutError:
+        <span class="fn">print</span>(<span class="st">"Operation timed out!"</span>)
+    <span class="cm"># Задача автоматично скасовується при timeout</span>
+
+<span class="cm"># Retry паттерн з timeout</span>
+<span class="kw">async def</span> <span class="fn">fetch_with_retry</span>(url, retries=<span class="nu">3</span>):
+    <span class="kw">for</span> attempt <span class="kw">in</span> <span class="fn">range</span>(retries):
+        <span class="kw">try</span>:
+            <span class="kw">return await</span> asyncio.<span class="fn">wait_for</span>(<span class="fn">fetch</span>(url), <span class="nu">10.0</span>)
+        <span class="kw">except</span> (asyncio.TimeoutError, ConnectionError) <span class="kw">as</span> e:
+            <span class="kw">if</span> attempt == retries - <span class="nu">1</span>:
+                <span class="kw">raise</span>
+            <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">2</span> ** attempt)  <span class="cm"># exponential backoff</span>`,
+      tags: ['wait_for', 'TimeoutError', 'retry']
+    },
+    {
+      title: 'Обробка помилок у gather',
+      desc: 'За замовчуванням gather пропагує першу помилку і скасовує решту. Зміни поведінку через return_exceptions.',
+      code: `<span class="kw">async def</span> <span class="fn">risky</span>(n):
+    <span class="kw">if</span> n == <span class="nu">2</span>: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">f"Bad n=</span>{n}<span class="st">"</span>)
+    <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(<span class="nu">0.1</span>)
+    <span class="kw">return</span> n * <span class="nu">10</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># return_exceptions=True — не кидає, повертає як елементи</span>
+    results = <span class="kw">await</span> asyncio.<span class="fn">gather</span>(
+        *[<span class="fn">risky</span>(i) <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nu">5</span>)],
+        return_exceptions=<span class="kw">True</span>
+    )
+    <span class="cm"># [0, 10, ValueError('Bad n=2'), 30, 40]</span>
+
+    <span class="kw">for</span> i, r <span class="kw">in</span> <span class="fn">enumerate</span>(results):
+        <span class="kw">if</span> <span class="fn">isinstance</span>(r, BaseException):
+            <span class="fn">print</span>(<span class="st">f"Task </span>{i}<span class="st"> failed: </span>{r}<span class="st">"</span>)
+        <span class="kw">else</span>:
+            <span class="fn">print</span>(<span class="st">f"Task </span>{i}<span class="st">: </span>{r}<span class="st">"</span>)`,
+      danger: 'CancelledError успадковується від BaseException, а не Exception! Завжди ловиш BaseException або CancelledError окремо, якщо хочеш обробити скасування.'
+    }
+  ]
+},
+{
+  id: 'context',
+  label: '7. Context / Streams',
+  badge: 'Просунуто', badgeColor: 'green',
+  cards: [
+    {
+      title: 'asynccontextmanager',
+      desc: 'Декоратор для створення async context manager без написання класу з __aenter__/__aexit__.',
+      code: `<span class="kw">from</span> contextlib <span class="kw">import</span> asynccontextmanager
+<span class="kw">import</span> asyncio
+
+<span class="de">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">managed_connection</span>(host: str):
+    <span class="cm"># __aenter__ — все до yield</span>
+    conn = <span class="kw">await</span> <span class="fn">create_connection</span>(host)
+    <span class="fn">print</span>(<span class="st">f"Connected to </span>{host}<span class="st">"</span>)
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> conn          <span class="cm"># що повертає "as"</span>
+    <span class="kw">finally</span>:                <span class="cm"># __aexit__ — виконується ЗАВЖДИ</span>
+        <span class="kw">await</span> conn.<span class="fn">close</span>()
+        <span class="fn">print</span>(<span class="st">"Connection closed"</span>)
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> <span class="fn">managed_connection</span>(<span class="st">"localhost"</span>) <span class="kw">as</span> conn:
+        <span class="kw">await</span> conn.<span class="fn">execute</span>(<span class="st">"SELECT 1"</span>)
+    <span class="cm"># conn.close() викликано автоматично</span>`,
+      tags: ['asynccontextmanager', 'async with', 'resource management']
+    },
+    {
+      title: 'asyncio Streams — TCP сервер/клієнт',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="cm"># Async TCP сервер</span>
+<span class="kw">async def</span> <span class="fn">handle_client</span>(reader, writer):
+    addr = writer.<span class="fn">get_extra_info</span>(<span class="st">'peername'</span>)
+    data = <span class="kw">await</span> reader.<span class="fn">read</span>(<span class="nu">100</span>)
+    message = data.<span class="fn">decode</span>()
+    <span class="fn">print</span>(<span class="st">f"Received: </span>{message!r}<span class="st"> from </span>{addr}<span class="st">"</span>)
+
+    writer.<span class="fn">write</span>(data)         <span class="cm"># echo back</span>
+    <span class="kw">await</span> writer.<span class="fn">drain</span>()      <span class="cm"># flush buffer</span>
+    writer.<span class="fn">close</span>()
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    server = <span class="kw">await</span> asyncio.<span class="fn">start_server</span>(
+        <span class="fn">handle_client</span>, <span class="st">'127.0.0.1'</span>, <span class="nu">8888</span>
+    )
+    <span class="kw">async with</span> server:
+        <span class="kw">await</span> server.<span class="fn">serve_forever</span>()`,
+      tags: ['StreamReader', 'StreamWriter', 'TCP', 'server']
+    },
+    {
+      title: 'async for / async generators',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="cm"># Async generator</span>
+<span class="kw">async def</span> <span class="fn">async_range</span>(start: int, stop: int, delay=<span class="nu">0.1</span>):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(start, stop):
+        <span class="kw">await</span> asyncio.<span class="fn">sleep</span>(delay)  <span class="cm"># I/O між елементами</span>
+        <span class="kw">yield</span> i
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="cm"># async for — для ітерації по async generator</span>
+    <span class="kw">async for</span> value <span class="kw">in</span> <span class="fn">async_range</span>(<span class="nu">0</span>, <span class="nu">5</span>):
+        <span class="fn">print</span>(value)   <span class="cm"># 0, 1, 2, 3, 4 з паузами</span>
+
+    <span class="cm"># Async comprehension</span>
+    values = [v <span class="kw">async for</span> v <span class="kw">in</span> <span class="fn">async_range</span>(<span class="nu">0</span>, <span class="nu">5</span>)]
+    <span class="fn">print</span>(values)  <span class="cm"># [0, 1, 2, 3, 4]</span>
+
+    <span class="cm"># Async generator з aiter/anext вручну</span>
+    gen = <span class="fn">async_range</span>(<span class="nu">0</span>, <span class="nu">3</span>)
+    <span class="fn">print</span>(<span class="kw">await</span> gen.<span class="fn">__anext__</span>())  <span class="cm"># 0</span>`,
+      tags: ['async for', 'async generator', 'yield', '__aiter__']
+    }
+  ]
+},
+{
+  id: 'eventloop',
+  label: '8. Event Loop',
+  badge: 'Низький рівень', badgeColor: 'gray',
+  cards: [
+    {
+      title: 'Event loop зсередини',
+      desc: 'Event loop — це нескінченний цикл, який: перевіряє готові callback\'и, виконує їх, перевіряє I/O через selectors, планує майбутні callback\'и.',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="cm"># Отримати поточний event loop</span>
+<span class="kw">async def</span> <span class="fn">inspect_loop</span>():
+    loop = asyncio.<span class="fn">get_event_loop</span>()         <span class="cm"># deprecated style</span>
+    loop = asyncio.<span class="fn">get_running_loop</span>()       <span class="cm"># правильно!</span>
+    <span class="fn">print</span>(loop)  <span class="cm"># &lt;_UnixSelectorEventLoop&gt;</span>
+
+    <span class="cm"># Запустити IO-bound у thread pool (не блокує loop!)</span>
+    result = <span class="kw">await</span> loop.<span class="fn">run_in_executor</span>(
+        <span class="kw">None</span>,           <span class="cm"># None = default ThreadPoolExecutor</span>
+        blocking_function, arg1, arg2
+    )
+    <span class="kw">return</span> result
+
+<span class="cm"># Власний event loop (рідко треба)</span>
+loop = asyncio.<span class="fn">new_event_loop</span>()
+asyncio.<span class="fn">set_event_loop</span>(loop)
+<span class="kw">try</span>:
+    loop.<span class="fn">run_until_complete</span>(<span class="fn">main</span>())
+<span class="kw">finally</span>:
+    loop.<span class="fn">close</span>()`,
+      warn: 'get_event_loop() у Python 3.10+ генерує DeprecationWarning якщо немає запущеного loop. Завжди використовуй get_running_loop() всередині async функцій.'
+    },
+    {
+      title: 'run_in_executor — блокуючий код в asyncio',
+      desc: 'Найважливіший паттерн для інтеграції синхронного коду (requests, PIL, важкі обчислення) з asyncio.',
+      code: `<span class="kw">import</span> asyncio
+<span class="kw">from</span> concurrent.futures <span class="kw">import</span> ThreadPoolExecutor, ProcessPoolExecutor
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    loop = asyncio.<span class="fn">get_running_loop</span>()
+
+    <span class="cm"># Thread pool — для I/O блокуючого (requests, sqlite, etc.)</span>
+    <span class="kw">with</span> ThreadPoolExecutor(max_workers=<span class="nu">4</span>) <span class="kw">as</span> pool:
+        result = <span class="kw">await</span> loop.<span class="fn">run_in_executor</span>(pool, requests.get, url)
+
+    <span class="cm"># Process pool — для CPU-bound (PIL, numpy, pandas)</span>
+    <span class="kw">with</span> ProcessPoolExecutor() <span class="kw">as</span> pool:
+        result = <span class="kw">await</span> loop.<span class="fn">run_in_executor</span>(
+            pool, cpu_heavy_function, data
+        )
+
+    <span class="cm"># asyncio.to_thread — зручний wrapper (Python 3.9+)</span>
+    result = <span class="kw">await</span> asyncio.<span class="fn">to_thread</span>(blocking_func, arg)`,
+      tip: 'asyncio.to_thread() — найзручніший спосіб запустити блокуючу функцію в Python 3.9+.',
+      tags: ['run_in_executor', 'to_thread', 'ThreadPoolExecutor']
+    }
+  ]
+},
+{
+  id: 'patterns',
+  label: '9. Паттерни',
+  badge: 'Best Practices', badgeColor: 'teal',
+  cards: [
+    {
+      title: 'Worker pool паттерн',
+      desc: 'Класичний спосіб обробити велику кількість завдань з обмеженою кількістю воркерів.',
+      code: `<span class="kw">import</span> asyncio
+
+<span class="kw">async def</span> <span class="fn">worker</span>(worker_id: int, queue: asyncio.Queue):
+    <span class="kw">while True</span>:
+        job = <span class="kw">await</span> queue.<span class="fn">get</span>()
+        <span class="kw">if</span> job <span class="kw">is None</span>:       <span class="cm"># sentinel для завершення</span>
+            queue.<span class="fn">task_done</span>()
+            <span class="kw">break</span>
+        <span class="kw">try</span>:
+            result = <span class="kw">await</span> <span class="fn">process_job</span>(job)
+            <span class="fn">print</span>(<span class="st">f"Worker </span>{worker_id}<span class="st">: done </span>{job}<span class="st">"</span>)
+        <span class="kw">except</span> Exception <span class="kw">as</span> e:
+            <span class="fn">print</span>(<span class="st">f"Error in job </span>{job}<span class="st">: </span>{e}<span class="st">"</span>)
+        <span class="kw">finally</span>:
+            queue.<span class="fn">task_done</span>()   <span class="cm"># ЗАВЖДИ!</span>
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    queue = asyncio.<span class="fn">Queue</span>()
+    NUM_WORKERS = <span class="nu">5</span>
+
+    <span class="cm"># Заповнюємо чергу</span>
+    <span class="kw">for</span> job <span class="kw">in</span> jobs:
+        <span class="kw">await</span> queue.<span class="fn">put</span>(job)
+
+    <span class="cm"># Sentinel для кожного воркера</span>
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(NUM_WORKERS):
+        <span class="kw">await</span> queue.<span class="fn">put</span>(<span class="kw">None</span>)
+
+    workers = [asyncio.<span class="fn">create_task</span>(<span class="fn">worker</span>(i, queue))
+               <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(NUM_WORKERS)]
+    <span class="kw">await</span> asyncio.<span class="fn">gather</span>(*workers)`,
+      tags: ['worker pool', 'Queue', 'sentinel pattern']
+    },
+    {
+      title: 'Топ антипаттернів',
+      noCode: true,
+      antipatterns: [
+        { bad: 'time.sleep(n)', good: 'await asyncio.sleep(n)', why: 'Блокує весь event loop' },
+        { bad: 'requests.get(url)', good: 'await aiohttp session.get(url) або asyncio.to_thread()', why: 'Синхронні HTTP блокують loop' },
+        { bad: 'open(file).read()', good: 'aiofiles або asyncio.to_thread()', why: 'Файловий I/O блокує loop' },
+        { bad: 'asyncio.get_event_loop()', good: 'asyncio.get_running_loop()', why: 'Deprecated у 3.10+' },
+        { bad: 'for task in tasks: await task', good: 'await asyncio.gather(*tasks)', why: 'Послідовно, не паралельно!' },
+      ]
+    }
+  ]
+},
+{
+  id: 'debug',
+  label: '10. Debug',
+  badge: 'Tools', badgeColor: 'purple',
+  cards: [
+    {
+      title: 'Debug mode та моніторинг',
+      code: `<span class="kw">import</span> asyncio
+<span class="kw">import</span> logging
+<span class="kw">import</span> os
+
+<span class="cm"># Спосіб 1: через змінну оточення</span>
+<span class="cm"># PYTHONASYNCIODEBUG=1 python my_script.py</span>
+
+<span class="cm"># Спосіб 2: програмно</span>
+asyncio.<span class="fn">run</span>(<span class="fn">main</span>(), debug=<span class="kw">True</span>)
+
+<span class="cm"># Debug mode вмикає:</span>
+<span class="cm"># - slow coroutine warning (&gt;0.1s без await)</span>
+<span class="cm"># - logging.DEBUG рівень для asyncio</span>
+<span class="cm"># - resource warnings для незакритих coro</span>
+
+<span class="cm"># Список всіх поточних задач</span>
+<span class="kw">async def</span> <span class="fn">show_tasks</span>():
+    tasks = asyncio.<span class="fn">all_tasks</span>()
+    <span class="kw">for</span> task <span class="kw">in</span> tasks:
+        <span class="fn">print</span>(<span class="st">f"Task: </span>{task.<span class="fn">get_name</span>()}<span class="st"> state=</span>{task._state}<span class="st">"</span>)
+        task.<span class="fn">print_stack</span>()   <span class="cm"># де зараз завис?</span>
+
+<span class="cm"># Власне ім'я для задачі (зручно для debug)</span>
+task = asyncio.<span class="fn">create_task</span>(<span class="fn">coro</span>(), name=<span class="st">"my-important-task"</span>)`,
+      tags: ['debug mode', 'all_tasks', 'logging']
+    },
+    {
+      title: 'Типові помилки та як їх знайти',
+      noCode: true,
+      table: {
+        cols: ['Симптом', 'Причина', 'Рішення'],
+        rows: [
+          ['RuntimeWarning: coroutine was never awaited', 'Викликав async def без await', 'Додай await або asyncio.create_task()'],
+          ['Event loop is closed', 'asyncio.run() вже завершився', 'Весь async код всередині run()'],
+          ['RuntimeError: no running event loop', 'Викликаєш async з sync коду', 'asyncio.run() або loop.run_until_complete()'],
+          ['Task got Future attached to different loop', 'Мікс кількох loops', 'Один loop на програму!'],
+          ['Deadlock / задача не завершується', 'Queue.get() без task_done()', 'Завжди task_done() після обробки'],
+        ]
+      }
+    }
+  ]
+}
+];
+
+function renderCode(html) {
+  return `<div class="code-block">${html}</div>`;
+}
+
+function renderCard(card) {
+  let html = `<div class="card">`;
+  html += `<div class="card-title">${card.title}</div>`;
+  if (card.desc) html += `<div class="card-desc">${card.desc}</div>`;
+
+  if (card.tags) {
+    const colors = ['tag-purple','tag-teal','tag-blue','tag-amber','tag-coral','tag-green'];
+    html += `<div style="margin-bottom:0.75rem">` + card.tags.map((t,i) => `<span class="tag ${colors[i%colors.length]}">${t}</span>`).join('') + `</div>`;
+  }
+  if (card.code) html += renderCode(card.code);
+  if (card.warn) html += `<div class="warn-box">⚠ ${card.warn}</div>`;
+  if (card.tip) html += `<div class="tip-box">✓ ${card.tip}</div>`;
+  if (card.danger) html += `<div class="danger-box">✕ ${card.danger}</div>`;
+
+  if (card.table) {
+    html += `<table class="table"><thead><tr>`;
+    card.table.cols.forEach(c => html += `<th>${c}</th>`);
+    html += `</tr></thead><tbody>`;
+    card.table.rows.forEach(row => {
+      html += `<tr>`;
+      row.forEach(cell => html += `<td>${cell}</td>`);
+      html += `</tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  if (card.antipatterns) {
+    html += `<table class="table"><thead><tr><th>Не роби</th><th>Роби так</th><th>Чому</th></tr></thead><tbody>`;
+    card.antipatterns.forEach(ap => {
+      html += `<tr>
+        <td><code style="color:var(--red600);background:var(--red50)">${ap.bad}</code></td>
+        <td><code style="color:var(--teal600);background:var(--teal50)">${ap.good}</code></td>
+        <td style="color:var(--c-muted);font-size:12px">${ap.why}</td>
+      </tr>`;
+    });
+    html += `</tbody></table>`;
+  }
+
+  html += `</div>`;
+  return html;
+}
+
+const badgeColorMap = {
+  purple: 'tag-purple', teal: 'tag-teal', amber: 'tag-amber', blue: 'tag-blue',
+  coral: 'tag-coral', green: 'tag-green', red: 'tag-red', gray: 'tag-gray'
+};
+
+function renderSection(sec) {
+  let html = `<div class="section-header">`;
+  html += `<span style="font-size:18px;font-weight:500">${sec.label}</span>`;
+  html += `<span class="tag ${badgeColorMap[sec.badgeColor]||'tag-gray'}">${sec.badge}</span>`;
+  html += `</div>`;
+  html += `<div class="grid2">`;
+  sec.cards.forEach(c => html += renderCard(c));
+  html += `</div>`;
+  const topic = sec.label.replace(/^\d+\.\s*/, '');
+  html += `<button class="ask-btn" onclick="sendPrompt('Поясни детальніше: ${topic} в asyncio Python 3.9')">Запитати про ${topic} ↗</button>`;
+  return html;
+}
+
+const nav = document.getElementById('nav');
+const content = document.getElementById('content');
+
+sections.forEach((sec, i) => {
+  const btn = document.createElement('button');
+  btn.className = 'nav-btn' + (i === 0 ? ' active' : '');
+  btn.textContent = sec.label;
+  btn.onclick = () => {
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('sec-' + sec.id).classList.add('active');
+  };
+  nav.appendChild(btn);
+
+  const div = document.createElement('div');
+  div.className = 'section' + (i === 0 ? ' active' : '');
+  div.id = 'sec-' + sec.id;
+  div.innerHTML = renderSection(sec);
+  content.appendChild(div);
+});
+</script>
