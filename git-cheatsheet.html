@@ -1,0 +1,761 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Git — Шпаргалка команд</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Unbounded:wght@700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0a14;
+    --surface: #16101e;
+    --surface2: #1e1628;
+    --border: #2a2038;
+    --accent: #f05033;
+    --accent2: #ff9a3c;
+    --accent3: #a855f7;
+    --text: #e2e0f0;
+    --text-dim: #7a7099;
+    --text-mono: #d4b8f0;
+    --tag-bg: #2a1020;
+    --tag-text: #f05033;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(240,80,51,0.012) 2px,
+      rgba(240,80,51,0.012) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  /* Background decoration */
+  body::after {
+    content: '';
+    position: fixed;
+    top: -200px;
+    right: -200px;
+    width: 600px; height: 600px;
+    background: radial-gradient(circle, rgba(168,85,247,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .git-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, #f05033 0%, #ff9a3c 100%);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 38px;
+    flex-shrink: 0;
+    box-shadow: 0 0 40px rgba(240,80,51,0.3);
+    animation: pulse-orange 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-orange {
+    0%, 100% { box-shadow: 0 0 40px rgba(240,80,51,0.3); }
+    50% { box-shadow: 0 0 60px rgba(240,80,51,0.5); }
+  }
+
+  .header-text h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(90deg, #f05033, #ff9a3c, #a855f7);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
+
+  .header-text p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: var(--tag-bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    align-self: flex-start;
+  }
+
+  .section {
+    margin-bottom: 48px;
+    animation: fadeInUp 0.5s ease both;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.3s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-icon { font-size: 20px; }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card:hover {
+    border-color: rgba(240,80,51,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  /* Danger card */
+  .card.danger {
+    border-color: rgba(240,80,51,0.2);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(240,80,51,0.04) 100%);
+  }
+
+  .card.danger::before { opacity: 0.5; }
+
+  .danger-badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    background: rgba(240,80,51,0.15);
+    border: 1px solid rgba(240,80,51,0.3);
+    color: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
+  }
+
+  .cmd-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .cmd-prompt {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--surface2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .cmd-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .examples {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .example-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ex-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .ex-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-mono);
+    line-height: 1.5;
+  }
+
+  .ex-note {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  .flags {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .flag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(168,85,247,0.08);
+    border: 1px solid rgba(168,85,247,0.2);
+    color: var(--accent3);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .flag span {
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+
+  /* Flow diagram */
+  .flow {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-bottom: 12px;
+  }
+
+  .flow-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    letter-spacing: 1px;
+    margin-bottom: 16px;
+    text-transform: uppercase;
+  }
+
+  .flow-steps {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .flow-step {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    text-align: center;
+  }
+
+  .flow-step .zone {
+    font-size: 10px;
+    color: var(--text-dim);
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .flow-step .name {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--text);
+  }
+
+  .flow-arrow {
+    color: var(--accent);
+    font-size: 18px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .flow-cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent2);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .flow-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .footer {
+    margin-top: 64px;
+    text-align: center;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+    .header-text h1 { font-size: 28px; }
+    body { padding: 24px 16px 60px; }
+    .flow-steps { flex-direction: column; align-items: flex-start; }
+    .flow-arrow { transform: rotate(90deg); }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="git-icon">⎇</div>
+    <div class="header-text">
+      <h1>GIT</h1>
+      <p>// шпаргалка системи контролю версій</p>
+    </div>
+    <div class="badge">v2.x</div>
+  </header>
+
+  <!-- FLOW DIAGRAM -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🗺️</span>
+      <span class="section-title">Як працює Git</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="flow">
+      <div class="flow-title">// зони зберігання змін</div>
+      <div class="flow-steps">
+        <div class="flow-block">
+          <div class="flow-step">
+            <div class="zone">РОБОЧА</div>
+            <div class="name">Working Dir</div>
+          </div>
+          <div class="flow-cmd">зміни у файлах</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-block">
+          <div class="flow-step">
+            <div class="zone">ІНДЕКС</div>
+            <div class="name">Staging Area</div>
+          </div>
+          <div class="flow-cmd">git add</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-block">
+          <div class="flow-step">
+            <div class="zone">ЛОКАЛЬНИЙ</div>
+            <div class="name">Local Repo</div>
+          </div>
+          <div class="flow-cmd">git commit</div>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-block">
+          <div class="flow-step">
+            <div class="zone">ВІДДАЛЕНИЙ</div>
+            <div class="name">Remote Repo</div>
+          </div>
+          <div class="flow-cmd">git push</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ІНІЦІАЛІЗАЦІЯ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🚀</span>
+      <span class="section-title">Початок роботи</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git init</span></div>
+        <div class="cmd-desc">Ініціалізує новий Git-репозиторій у поточній папці. Створює прихований каталог .git.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">git init</span></div>
+          <div class="example-row"><span class="ex-label">З НАЗВОЮ</span><span class="ex-code">git init my-project</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git clone</span></div>
+        <div class="cmd-desc">Клонує існуючий репозиторій з віддаленого сервера на локальну машину.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">HTTPS</span><span class="ex-code">git clone https://github.com/user/repo.git</span></div>
+          <div class="example-row"><span class="ex-label">SSH</span><span class="ex-code">git clone git@github.com:user/repo.git</span></div>
+          <div class="example-row"><span class="ex-label">ПАПКА</span><span class="ex-code">git clone URL my-folder</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git config</span></div>
+        <div class="cmd-desc">Налаштування імені та пошти автора. Записується у кожен коміт.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ІМ'Я</span><span class="ex-code">git config --global user.name "Іван"</span></div>
+          <div class="example-row"><span class="ex-label">ПОШТА</span><span class="ex-code">git config --global user.email "i@mail.com"</span></div>
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">git config --list</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- БАЗОВІ ЗМІНИ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📝</span>
+      <span class="section-title">Базові зміни</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git status</span></div>
+        <div class="cmd-desc">Показує поточний стан: змінені, нові та непроіндексовані файли.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">git status</span></div>
+          <div class="example-row"><span class="ex-label">КОРОТКО</span><span class="ex-code">git status -s</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git add</span></div>
+        <div class="cmd-desc">Додає файли до індексу (staging area) для наступного коміту.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ОДИН ФАЙЛ</span><span class="ex-code">git add index.html</span></div>
+          <div class="example-row"><span class="ex-label">ВСІ</span><span class="ex-code">git add .</span></div>
+          <div class="example-row"><span class="ex-label">ТИП</span><span class="ex-code">git add *.js</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git commit</span></div>
+        <div class="cmd-desc">Зберігає проіндексовані зміни як новий знімок (snapshot) у історії.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">З ПОВІД.</span><span class="ex-code">git commit -m "feat: додати форму входу"</span></div>
+          <div class="example-row"><span class="ex-label">ADD + COMMIT</span><span class="ex-code">git commit -am "fix: виправити баг"</span></div>
+          <div class="example-row"><span class="ex-label">ВИПРАВИТИ</span><span class="ex-code">git commit --amend -m "нове повідомлення"</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git diff</span></div>
+        <div class="cmd-desc">Показує різницю між версіями файлів.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">НЕЗАІНДЕКС.</span><span class="ex-code">git diff</span></div>
+          <div class="example-row"><span class="ex-label">ЗАІНДЕКС.</span><span class="ex-code">git diff --staged</span></div>
+          <div class="example-row"><span class="ex-label">ГІЛКИ</span><span class="ex-code">git diff main..feature</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git log</span></div>
+        <div class="cmd-desc">Виводить історію комітів з автором, датою та повідомленням.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">БАЗОВО</span><span class="ex-code">git log</span></div>
+          <div class="example-row"><span class="ex-label">КОМПАКТНО</span><span class="ex-code">git log --oneline</span></div>
+          <div class="example-row"><span class="ex-label">ГРАФ</span><span class="ex-code">git log --oneline --graph --all</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git stash</span></div>
+        <div class="cmd-desc">Тимчасово ховає поточні зміни, щоб переключитися на іншу задачу.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ЗБЕРЕГТИ</span><span class="ex-code">git stash</span></div>
+          <div class="example-row"><span class="ex-label">ДІСТАТИ</span><span class="ex-code">git stash pop</span></div>
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">git stash list</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ГІЛКИ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌿</span>
+      <span class="section-title">Гілки (Branches)</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git branch</span></div>
+        <div class="cmd-desc">Управління гілками: список, створення, видалення.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">git branch</span></div>
+          <div class="example-row"><span class="ex-label">СТВОРИТИ</span><span class="ex-code">git branch feature/login</span></div>
+          <div class="example-row"><span class="ex-label">ВИДАЛИТИ</span><span class="ex-code">git branch -d feature/login</span></div>
+          <div class="example-row"><span class="ex-label">ВСІ</span><span class="ex-code">git branch -a</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git switch / checkout</span></div>
+        <div class="cmd-desc">Переключення між гілками. switch — новий спосіб (рекомендовано).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">НА ГІЛКУ</span><span class="ex-code">git switch main</span></div>
+          <div class="example-row"><span class="ex-label">НОВА+ПЕРЕЙТИ</span><span class="ex-code">git switch -c feature/auth</span></div>
+          <div class="example-row"><span class="ex-label">СТАРИЙ</span><span class="ex-code">git checkout -b feature/auth</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git merge</span></div>
+        <div class="cmd-desc">Зливає зміни з іншої гілки в поточну. Об'єднує історію комітів.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">git merge feature/login</span></div>
+          <div class="example-row"><span class="ex-label">БЕЗ FF</span><span class="ex-code">git merge --no-ff feature/login</span></div>
+          <div class="example-row"><span class="ex-note">--no-ff зберігає запис про злиття гілки</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git rebase</span></div>
+        <div class="cmd-desc">Переносить коміти поточної гілки на вершину іншої. Дає лінійну історію.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">git rebase main</span></div>
+          <div class="example-row"><span class="ex-label">ІНТЕРАКТ.</span><span class="ex-code">git rebase -i HEAD~3</span></div>
+          <div class="example-row"><span class="ex-note">-i дозволяє редагувати, squash, drop коміти</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- REMOTE -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">☁️</span>
+      <span class="section-title">Робота з Remote</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git remote</span></div>
+        <div class="cmd-desc">Управління віддаленими репозиторіями.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">git remote -v</span></div>
+          <div class="example-row"><span class="ex-label">ДОДАТИ</span><span class="ex-code">git remote add origin URL</span></div>
+          <div class="example-row"><span class="ex-label">ЗМІНИТИ</span><span class="ex-code">git remote set-url origin NEW_URL</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git fetch / pull</span></div>
+        <div class="cmd-desc">Отримання змін з remote. fetch — тільки завантажує, pull — завантажує і зливає.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">FETCH</span><span class="ex-code">git fetch origin</span></div>
+          <div class="example-row"><span class="ex-label">PULL</span><span class="ex-code">git pull origin main</span></div>
+          <div class="example-row"><span class="ex-label">REBASE</span><span class="ex-code">git pull --rebase origin main</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git push</span></div>
+        <div class="cmd-desc">Відправляє локальні коміти на віддалений репозиторій.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">БАЗОВО</span><span class="ex-code">git push origin main</span></div>
+          <div class="example-row"><span class="ex-label">НОВА ГІЛКА</span><span class="ex-code">git push -u origin feature/ui</span></div>
+          <div class="example-row"><span class="ex-label">ТЕГИ</span><span class="ex-code">git push --tags</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- СКАСУВАННЯ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">↩️</span>
+      <span class="section-title">Скасування змін</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git restore</span></div>
+        <div class="cmd-desc">Скасовує зміни у файлах або видаляє їх зі staging area (замінює частину checkout).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ФАЙЛ</span><span class="ex-code">git restore index.html</span></div>
+          <div class="example-row"><span class="ex-label">З ІНДЕКСУ</span><span class="ex-code">git restore --staged index.html</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git revert</span></div>
+        <div class="cmd-desc">Створює новий коміт, який скасовує зміни попереднього. Безпечно для shared-гілок.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">git revert abc1234</span></div>
+          <div class="example-row"><span class="ex-label">ОСТАННІЙ</span><span class="ex-code">git revert HEAD</span></div>
+        </div>
+      </div>
+
+      <div class="card danger">
+        <div class="danger-badge">⚠️ НЕБЕЗПЕЧНО — ЗМІНЮЄ ІСТОРІЮ</div>
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git reset</span></div>
+        <div class="cmd-desc">Скасовує коміти, переміщуючи HEAD назад. Ніколи не використовуй на публічних гілках!</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">SOFT</span><span class="ex-code">git reset --soft HEAD~1</span></div>
+          <div class="example-row"><span class="ex-note">— скасує коміт, зміни залишаться в індексі</span></div>
+          <div class="example-row"><span class="ex-label">HARD</span><span class="ex-code">git reset --hard HEAD~1</span></div>
+          <div class="example-row"><span class="ex-note">— ВИДАЛИТЬ зміни повністю без повернення</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ТЕГИ ТА КОРИСНЕ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🏷️</span>
+      <span class="section-title">Теги та корисні команди</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git tag</span></div>
+        <div class="cmd-desc">Мітить конкретний коміт — зазвичай для релізів (v1.0.0).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">git tag</span></div>
+          <div class="example-row"><span class="ex-label">ANNOTATED</span><span class="ex-code">git tag -a v1.0.0 -m "Release 1.0"</span></div>
+          <div class="example-row"><span class="ex-label">ВІДПРАВИТИ</span><span class="ex-code">git push origin v1.0.0</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git cherry-pick</span></div>
+        <div class="cmd-desc">Переносить конкретний коміт з іншої гілки в поточну.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">git cherry-pick abc1234</span></div>
+          <div class="example-row"><span class="ex-note">Корисно для хотфіксів між гілками</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">git bisect</span></div>
+        <div class="cmd-desc">Бінарний пошук коміту, який вніс баг. Дуже потужний інструмент дебагінгу.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">СТАРТ</span><span class="ex-code">git bisect start</span></div>
+          <div class="example-row"><span class="ex-label">ПОГАНИЙ</span><span class="ex-code">git bisect bad</span></div>
+          <div class="example-row"><span class="ex-label">ХОРОШИЙ</span><span class="ex-code">git bisect good v1.0</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">.gitignore</span></div>
+        <div class="cmd-desc">Файл зі списком патернів файлів, які Git має ігнорувати.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ВМІСТ</span><span class="ex-code">node_modules/</span></div>
+          <div class="example-row"><span class="ex-label">ВМІСТ</span><span class="ex-code">*.env</span></div>
+          <div class="example-row"><span class="ex-label">ВМІСТ</span><span class="ex-code">dist/ .DS_Store</span></div>
+          <div class="example-row"><span class="ex-note">gitignore.io — генератор для будь-якого стеку</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    ⎇ GIT CHEATSHEET &nbsp;|&nbsp; HEAD — поточний коміт &nbsp;|&nbsp; origin — remote за замовчуванням &nbsp;|&nbsp; ~ повернутись на N комітів назад
+  </div>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python Guru Cheatsheet</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #0f0f13;
+    --bg2: #16161d;
+    --bg3: #1e1e28;
+    --border: rgba(255,255,255,0.08);
+    --border2: rgba(255,255,255,0.15);
+    --text: #e8e6f0;
+    --text2: #9994b0;
+    --text3: #5c5875;
+    --accent: #7c6dfa;
+    --accent2: #a78bfa;
+    --green: #34d399;
+    --amber: #fbbf24;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --teal: #2dd4bf;
+    --pink: #f472b6;
+    --mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+    --sans: 'Inter', system-ui, sans-serif;
+  }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 14px;
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+  header {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(135deg, #0f0f13 0%, #13101e 100%);
+  }
+  header h1 {
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--accent2);
+    letter-spacing: -0.03em;
+  }
+  header p { color: var(--text2); margin-top: 0.25rem; font-size: 13px; }
+
+  .nav {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    padding: 1rem 2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg2);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .nav-btn {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 5px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text2);
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .nav-btn:hover { border-color: var(--border2); color: var(--text); background: var(--bg3); }
+  .nav-btn.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+
+  .content { padding: 1.5rem 2rem 3rem; max-width: 1400px; margin: 0 auto; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 14px; margin-bottom: 14px; }
+  .grid-3 { grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
+
+  .card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    transition: border-color 0.15s;
+  }
+  .card:hover { border-color: var(--border2); }
+
+  .card-title {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--text3);
+    margin-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  pre, code {
+    font-family: var(--mono);
+    font-size: 12px;
+  }
+  pre {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 12px;
+    margin: 8px 0;
+    overflow-x: auto;
+    line-height: 1.65;
+    color: #d4cfee;
+  }
+  code {
+    background: var(--bg);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: var(--accent2);
+  }
+
+  /* Syntax highlight colors */
+  .c { color: var(--text3); font-style: italic; }   /* comment */
+  .kw { color: var(--pink); }                        /* keyword */
+  .fn { color: var(--blue); }                        /* function */
+  .st { color: var(--green); }                       /* string */
+  .nm { color: var(--amber); }                       /* number */
+  .cl { color: var(--teal); }                        /* class */
+
+  p { color: var(--text2); font-size: 13px; line-height: 1.65; margin: 4px 0 8px; }
+
+  .tip {
+    background: rgba(96, 165, 250, 0.08);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    color: #93c5fd;
+    margin-top: 8px;
+    line-height: 1.55;
+  }
+  .warn {
+    background: rgba(251, 191, 36, 0.08);
+    border-left: 3px solid var(--amber);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    color: #fcd34d;
+    margin-top: 8px;
+    line-height: 1.55;
+  }
+  .danger {
+    background: rgba(248, 113, 113, 0.08);
+    border-left: 3px solid var(--red);
+    border-radius: 0 6px 6px 0;
+    padding: 8px 12px;
+    font-size: 12.5px;
+    color: #fca5a5;
+    margin-top: 8px;
+    line-height: 1.55;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  tr { border-bottom: 1px solid var(--border); }
+  tr:last-child { border-bottom: none; }
+  td { padding: 5px 4px; font-size: 12.5px; vertical-align: top; }
+  td:first-child { font-family: var(--mono); font-size: 12px; color: var(--accent2); min-width: 180px; }
+  td:last-child { color: var(--text2); }
+
+  .badge {
+    display: inline-block;
+    font-size: 10px;
+    font-family: var(--mono);
+    padding: 1px 6px;
+    border-radius: 4px;
+    margin-left: 4px;
+    font-weight: 600;
+    vertical-align: middle;
+  }
+  .o1 { background: rgba(52,211,153,0.15); color: #34d399; }
+  .on { background: rgba(251,191,36,0.15); color: #fbbf24; }
+  .on2 { background: rgba(248,113,113,0.15); color: #f87171; }
+  .olog { background: rgba(96,165,250,0.15); color: #60a5fa; }
+  .ok { background: rgba(167,139,250,0.15); color: #a78bfa; }
+
+  h3 { font-size: 13px; font-weight: 600; color: var(--text); margin: 12px 0 6px; }
+  .section-head {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--bg3); border-radius: 3px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>🐍 Python Guru Cheatsheet</h1>
+  <p>Все що потрібно знати про структури даних Python — під капотом, складності, паттерни</p>
+</header>
+
+<nav class="nav" id="nav">
+  <button class="nav-btn active" data-tab="list">list</button>
+  <button class="nav-btn" data-tab="dict">dict</button>
+  <button class="nav-btn" data-tab="set">set</button>
+  <button class="nav-btn" data-tab="tuple">tuple</button>
+  <button class="nav-btn" data-tab="str">str</button>
+  <button class="nav-btn" data-tab="deque">deque</button>
+  <button class="nav-btn" data-tab="heap">heapq</button>
+  <button class="nav-btn" data-tab="generators">generators</button>
+  <button class="nav-btn" data-tab="itertools">itertools</button>
+  <button class="nav-btn" data-tab="gc">GC / memory</button>
+  <button class="nav-btn" data-tab="gil">GIL / async</button>
+  <button class="nav-btn" data-tab="tricks">🔥 tricks</button>
+</nav>
+
+<div class="content">
+
+<!-- ══════════════════ LIST ══════════════════ -->
+<div class="section active" id="tab-list">
+  <div class="section-head">list — динамічний масив</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом</div>
+      <p>list — це <strong>dynamic array</strong> поверх C-масиву покажчиків (PyObject*). CPython зберігає масив покажчиків на об'єкти, не самі об'єкти. Кожен елемент — 8 байт (покажчик на 64-bit системі).</p>
+      <p>При переповненні capacity зростає за формулою over-allocation: <code>new_cap ≈ n + n>>3 + (3 або 6)</code></p>
+      <pre>Послідовність росту: 0 → 4 → 8 → 16 → 25 → 35 → 46 → 58...
+Коефіцієнт ~1.125x, а не 2x як у більшості мов!</pre>
+      <div class="tip">sys.getsizeof([]) = 56 байт (заголовок). Кожен слот = 8 байт. list з 1000 int-ів займає ~8 КБ покажчиків, але int-объекти займають окрему пам'ять.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Складність операцій</div>
+      <table>
+        <tr><td>l[i]</td><td>O(1) — прямий зсув у C-масиві</td></tr>
+        <tr><td>l.append(x)</td><td>O(1) amortized, O(n) при resize</td></tr>
+        <tr><td>l.pop()</td><td>O(1) — декрементуємо size</td></tr>
+        <tr><td>l.pop(i)</td><td>O(n) — зсув всіх елементів вліво</td></tr>
+        <tr><td>l.insert(i, x)</td><td>O(n) — зсув вправо від i</td></tr>
+        <tr><td>l.remove(x)</td><td>O(n) — лінійний пошук + зсув</td></tr>
+        <tr><td>x in l</td><td>O(n) — sequential scan</td></tr>
+        <tr><td>l.sort()</td><td>O(n log n) — Timsort</td></tr>
+        <tr><td>l.reverse()</td><td>O(n) — swap покажчиків in-place</td></tr>
+        <tr><td>l.extend(it)</td><td>O(k) де k = len(it)</td></tr>
+        <tr><td>l[a:b]</td><td>O(k) — копіює k=b-a покажчиків</td></tr>
+        <tr><td>l * n</td><td>O(n·k) — shallow copy!</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Timsort — чому він геніальний</div>
+      <p>Timsort (Tim Peters, 2002) = merge sort + insertion sort. Шукає вже відсортовані "runs" у реальних даних. Insertion sort для runs менше 64 елементів. Гарантований O(n log n), але O(n) для вже впорядкованих.</p>
+      <pre>
+# Два sort = стабільна multi-key сортировка
+# (Schwartzian transform)
+data.sort(key=lambda x: x[0])  # secondary
+data.sort(key=lambda x: x[1])  # primary зберігається!
+
+# key= використовується один раз per element
+# (не перевиклика при кожному порівнянні)
+data.sort(key=lambda x: x[1])  # O(n) key calls + O(n log n) compares</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Типові пастки</div>
+      <pre>
+# ПАСТКА 1: shallow copy при множенні
+a = [[1, 2], [3, 4]]
+b = a * 2        # 4 посилання на 2 об'єкти!
+b[0].append(99)  # змінює b[2] теж!!
+
+# ПРАВИЛЬНО:
+import copy
+b = copy.deepcopy(a)
+
+# ПАСТКА 2: mutable default argument
+def bad(x, lst=[]):
+    lst.append(x)  # один об'єкт для ВСІХ викликів!
+    return lst
+
+# ПРАВИЛЬНО:
+def good(x, lst=None):
+    if lst is None: lst = []
+    lst.append(x)
+    return lst</pre>
+      <div class="danger">Mutable default arguments — найчастіша помилка Python-джунів. Список створюється ОДИН РАЗ при визначенні функції!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">List comprehension vs alternatives</div>
+      <pre>
+# listcomp компілюється в LIST_APPEND bytecode
+# = швидше за explicit .append() в циклі
+squares = [x*x for x in range(1000)]
+
+# map() — lazy iterator, не list!
+gen = map(lambda x: x*x, range(10**6))  # ~200 bytes
+
+# Walrus operator := (Python 3.8+)
+results = [y for x in data if (y := f(x)) > 0]
+
+# Nested comprehension (читай справа-наліво):
+flat = [x for row in matrix for x in row]
+
+# Conditional expression:
+labels = ["pos" if x > 0 else "neg" for x in data]</pre>
+      <div class="tip">list comprehension приблизно на 35% швидший за explicit loop з .append() через оптимізований LIST_APPEND bytecode.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Корисні паттерни</div>
+      <pre>
+# Rotate list O(n)
+def rotate(lst, k):
+    k %= len(lst)
+    return lst[-k:] + lst[:-k]
+
+# Chunking — розбити на групи
+def chunks(lst, n):
+    yield from (lst[i:i+n] for i in range(0, len(lst), n))
+
+# Flatten O(n) — не O(n^2)!
+import itertools
+flat = list(itertools.chain.from_iterable(nested))
+# НЕ: sum(nested, []) — це O(n^2)!
+
+# Дедублікація зі збереженням порядку O(n)
+seen = set()
+unique = [x for x in lst if not (x in seen or seen.add(x))]
+
+# Transpose matrix
+T = list(zip(*matrix))
+
+# Flatten з будь-якою глибиною
+def deep_flatten(lst):
+    for item in lst:
+        if isinstance(item, list):
+            yield from deep_flatten(item)
+        else:
+            yield item</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ DICT ══════════════════ -->
+<div class="section" id="tab-dict">
+  <div class="section-head">dict — hash table</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом — open addressing</div>
+      <p>dict — відкрита адресація (open addressing) з псевдовипадковим зондуванням. CPython 3.6+ зберігає insertion order через компактну таблицю індексів + окремий масив записів.</p>
+      <pre>
+# Probe sequence при колізії:
+probe = (5 * probe + 1 + perturb) % size
+# де perturb >>= 5 на кожній ітерації
+
+# Load factor <= 2/3
+# При заповненні: resize × 4 (малі) або × 2 (великі)
+# Мінімальний розмір = 8 слотів</pre>
+      <div class="tip">З CPython 3.6 dict зберігає insertion order як implementation detail. З 3.7 — частина специфікації мови!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Складність операцій</div>
+      <table>
+        <tr><td>d[key]</td><td>O(1) avg, O(n) worst (всі колізії)</td></tr>
+        <tr><td>d[key] = val</td><td>O(1) avg</td></tr>
+        <tr><td>del d[key]</td><td>O(1) avg — ставить "dummy" слот</td></tr>
+        <tr><td>key in d</td><td>O(1) avg — тільки hash lookup</td></tr>
+        <tr><td>d.get(k, default)</td><td>O(1) avg</td></tr>
+        <tr><td>d.keys()</td><td>O(1) — повертає view object!</td></tr>
+        <tr><td>d.values()</td><td>O(1) — view object</td></tr>
+        <tr><td>d.items()</td><td>O(1) — view object</td></tr>
+        <tr><td>d.update(d2)</td><td>O(len(d2))</td></tr>
+        <tr><td>d.pop(k)</td><td>O(1) avg</td></tr>
+        <tr><td>d | d2 (3.9+)</td><td>O(len(d)+len(d2))</td></tr>
+        <tr><td>d.copy()</td><td>O(n) — shallow copy</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Hashability — що можна як ключ</div>
+      <pre>
+# Хешовані (immutable або визначають __hash__):
+d[42] = "int"           # OK
+d[(1, 2)] = "tuple"     # OK
+d["str"] = "string"     # OK
+d[frozenset({1,2})] = "frozenset"  # OK
+
+# НЕ хешовані (mutable):
+# d[[1,2]] = ...    TypeError!
+# d[{1,2}] = ...    TypeError!
+# d[{"a":1}] = ...  TypeError!
+
+# Кастомний хеш:
+class Point:
+    def __init__(self, x, y): self.x, self.y = x, y
+    def __hash__(self): return hash((self.x, self.y))
+    def __eq__(self, o): return (self.x,self.y)==(o.x,o.y)
+
+# ПРАВИЛО: якщо a == b, то hash(a) == hash(b) ЗАВЖДИ!</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">collections — розширені dict</div>
+      <pre>
+from collections import defaultdict, Counter, OrderedDict
+
+# defaultdict — уникає KeyError
+graph = defaultdict(list)
+graph['A'].append('B')  # не потрібен setdefault
+
+word_count = defaultdict(int)
+for w in words: word_count[w] += 1
+
+# Counter — підрахунок + арифметика
+c = Counter("abracadabra")
+c.most_common(3)  # [('a', 5), ('b', 2), ('r', 2)]
+c + Counter("abc")  # сума частот
+c - Counter("ab")   # різниця (тільки позитивні)
+c & Counter("ab")   # мінімум
+c | Counter("xyz")  # максимум
+
+# dict comprehension
+inv = {v: k for k, v in d.items()}
+
+# Merge (Python 3.9+)
+merged = d1 | d2    # d2 виграє при колізії
+d1 |= d2            # in-place</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Dispatch table — dict замість if-elif</div>
+      <pre>
+# O(1) замість O(n) if-elif
+ops = {
+    '+': lambda a, b: a + b,
+    '-': lambda a, b: a - b,
+    '*': lambda a, b: a * b,
+    '/': lambda a, b: a / b,
+}
+result = ops[operator](x, y)
+
+# __missing__ — lazy default (краще ніж defaultdict для складних)
+class LazyDict(dict):
+    def __missing__(self, key):
+        self[key] = expensive_compute(key)
+        return self[key]
+
+# ChainMap — ієрархія словників
+from collections import ChainMap
+defaults = {'color': 'blue', 'size': 10}
+user = {'color': 'red'}
+cfg = ChainMap(user, defaults)
+cfg['color']  # 'red' — шукає в user першим
+cfg['size']   # 10 — з defaults</pre>
+      <div class="tip">dict lookup = hash(key) + C array index. При 100 умовах if-elif — dict у 50-100 разів швидший!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Групування та просунуті паттерни</div>
+      <pre>
+from itertools import groupby
+
+# groupby вимагає попереднього сортування!
+employees = sorted(employees, key=lambda e: e.dept)
+by_dept = {k: list(v) for k, v in
+           groupby(employees, key=lambda e: e.dept)}
+
+# setdefault — атомарна ініціалізація
+d.setdefault('key', []).append(value)
+# Еквівалент але одна lookup замість двох
+
+# dict.fromkeys — масова ініціалізація
+zeroes = dict.fromkeys(['a','b','c'], 0)
+# {'a': 0, 'b': 0, 'c': 0}
+
+# Підрахунок унікальних елементів
+freq = {}
+for x in data:
+    freq[x] = freq.get(x, 0) + 1</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SET ══════════════════ -->
+<div class="section" id="tab-set">
+  <div class="section-head">set / frozenset — hash table без values</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом</div>
+      <p>set реалізований як hash table без values (тільки keys). Та сама відкрита адресація що і dict. Внутрішньо: setentry = структура з полями hash (Py_hash_t) + key (PyObject*).</p>
+      <p>Мінімальний розмір = 8 слотів. Load factor &lt; 2/3. При resize × 4.</p>
+      <div class="tip">x in set = O(1). x in list = O(n). Для дедублікації та перевірки наявності — завжди set. 1000 елементів: list ~1мс, set ~100нс.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Складність операцій</div>
+      <table>
+        <tr><td>x in s</td><td>O(1) avg</td></tr>
+        <tr><td>s.add(x)</td><td>O(1) avg</td></tr>
+        <tr><td>s.remove(x)</td><td>O(1) avg, KeyError якщо нема</td></tr>
+        <tr><td>s.discard(x)</td><td>O(1) avg, без помилки</td></tr>
+        <tr><td>s.pop()</td><td>O(1) — довільний елемент</td></tr>
+        <tr><td>s | t (union)</td><td>O(len(s) + len(t))</td></tr>
+        <tr><td>s & t (intersect)</td><td>O(min(len(s), len(t)))</td></tr>
+        <tr><td>s - t (diff)</td><td>O(len(s))</td></tr>
+        <tr><td>s ^ t (sym_diff)</td><td>O(len(s) + len(t))</td></tr>
+        <tr><td>s.issubset(t)</td><td>O(len(s))</td></tr>
+        <tr><td>s.issuperset(t)</td><td>O(len(t))</td></tr>
+        <tr><td>s.isdisjoint(t)</td><td>O(min(len(s),len(t)))</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">set vs frozenset + паттерни</div>
+      <pre>
+# frozenset — immutable, hashable!
+# Можна як ключ dict або елемент set
+fs = frozenset({1, 2, 3})
+d = {fs: "value"}    # OK!
+s = {fs, frozenset({4, 5})}  # OK!
+
+# Перетин кількох sets:
+result = set.intersection(*list_of_sets)
+
+# Дедублікація зі збереженням порядку (3.7+):
+unique = list(dict.fromkeys(lst))   # O(n)
+
+# set comprehension:
+evens = {x for x in range(100) if x % 2 == 0}
+
+# Знайти дублікати O(n):
+from collections import Counter
+dups = {k for k, v in Counter(lst).items() if v > 1}
+
+# Перевірка унікальності O(n):
+def all_unique(lst):
+    return len(lst) == len(set(lst))
+
+# Powerset:
+from itertools import chain, combinations
+def powerset(s):
+    s = list(s)
+    return chain.from_iterable(
+        combinations(s, r) for r in range(len(s)+1)
+    )</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ TUPLE ══════════════════ -->
+<div class="section" id="tab-tuple">
+  <div class="section-head">tuple — immutable static array</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом</div>
+      <p>tuple — статичний C-масив покажчиків PyObject*. Розмір фіксований при створенні. CPython кешує tuple розміром 0 і 1 як singletons.</p>
+      <pre>
+import sys
+sys.getsizeof((1, 2, 3))  # 64 bytes
+sys.getsizeof([1, 2, 3])  # 88 bytes — більше на 24!
+
+# tuple швидший за list для ітерації та розпакування
+# (менше метаданих, кращий cache locality)</pre>
+      <div class="tip">Tuple unpacking компілюється в ефективний UNPACK_SEQUENCE bytecode. CPython також кешує literal tuples з числовими елементами в константному пулі.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">namedtuple — tuple з атрибутами</div>
+      <pre>
+from collections import namedtuple
+from typing import NamedTuple
+
+# Typed NamedTuple (рекомендовано):
+class Point(NamedTuple):
+    x: float
+    y: float
+    z: float = 0.0   # default значення!
+    label: str = ""
+
+p = Point(1.0, 2.0)
+p.x              # атрибут O(1)
+p[0]             # індекс O(1) — tuple access
+p._asdict()      # OrderedDict {'x': 1.0, 'y': 2.0, 'z': 0.0}
+p._replace(x=5.0)  # новий об'єкт!
+p._fields        # ('x', 'y', 'z', 'label')
+
+# Пам'ять: namedtuple = звичайний tuple по розміру!
+# На відміну від class — немає __dict__</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Просунуті паттерни</div>
+      <pre>
+# Extended unpacking (Python 3)
+a, *b, c = (1, 2, 3, 4, 5)
+# a=1, b=[2,3,4], c=5
+
+# Swap без temp (атомарний в Python!)
+a, b = b, a
+# CPython: LOAD_FAST x2, ROT_TWO або BUILD_TUPLE + UNPACK
+
+# Composite dict key:
+cache = {}
+cache[(row, col)] = value    # 2D lookup O(1)
+cache[(y, m, d)] = holidays  # date key
+
+# Tuple як return multiple values:
+def divmod_custom(a, b):
+    return a // b, a % b    # автоматично tuple
+
+quot, rem = divmod_custom(17, 5)
+
+# Лексикографічне порівняння:
+(1, 2, 3) < (1, 2, 4)   # True — порівнює по елементах
+(1, 2) < (1, 2, 0)      # True — коротший менший
+
+# Структурний паттерн (Python 3.10+):
+match point:
+    case Point(x=0, y=0): print("origin")
+    case Point(x=0, y=y): print(f"y={y}")
+    case Point(x=x, y=0): print(f"x={x}")</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ STR ══════════════════ -->
+<div class="section" id="tab-str">
+  <div class="section-head">str — Unicode flexible string (PEP 393)</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом — 3 внутрішніх формати</div>
+      <p>З Python 3.3 рядки зберігаються у 3 форматах залежно від максимального символу: Latin-1 (1 байт/символ), UCS-2 (2 байти), UCS-4 (4 байти). Python автоматично обирає найкомпактніший.</p>
+      <pre>
+# Latin-1: ASCII + деякі European = 1 байт/char
+"hello"       # 50 байт (5 символів × 1 + заголовок)
+
+# UCS-2: базовий Unicode до U+FFFF = 2 байти/char
+"привіт"      # 58 байт (6 символів × 2 + заголовок)
+
+# UCS-4: всі Unicode = 4 байти/char
+"hello 🎉"   # активує UCS-4 для ВСЬОГО рядка!</pre>
+      <div class="tip">Рядки immutable і інтерновані для коротких ідентифікаторів. "hello" is "hello" — True (один об'єкт у пам'яті).</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Складність</div>
+      <table>
+        <tr><td>s[i]</td><td>O(1) — прямий доступ</td></tr>
+        <tr><td>s[a:b]</td><td>O(k) — копіює символи</td></tr>
+        <tr><td>s + t</td><td>O(n+m) — завжди новий об'єкт!</td></tr>
+        <tr><td>"".join(lst)</td><td>O(n) — один alloc, один прохід</td></tr>
+        <tr><td>s.find(sub)</td><td>O(n·m) worst, O(n) avg</td></tr>
+        <tr><td>s.replace(a,b)</td><td>O(n)</td></tr>
+        <tr><td>s.split()</td><td>O(n) — лінійний прохід</td></tr>
+        <tr><td>s.strip()</td><td>O(n) worst</td></tr>
+        <tr><td>s.encode('utf-8')</td><td>O(n)</td></tr>
+        <tr><td>sub in s</td><td>O(n·m) — Boyer-Moore-Horspool</td></tr>
+        <tr><td>len(s)</td><td>O(1) — зберігається в заголовку</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">f-strings під капотом + порівняння</div>
+      <pre>
+# f-string (3.12+) компілюється як FORMAT_VALUE + BUILD_STRING
+# Без виклику str.format() — прямий bytecode!
+name = "Світ"
+msg = f"Привіт, {name}!"   # найшвидший варіант
+
+# Швидкість (приблизно):
+# f-string  : 100ns
+# % format  : 120ns
+# .format() : 160ns
+
+# Просунуті f-string:
+x = 3.14159
+f"{x:.2f}"          # '3.14'
+f"{x!r}"            # repr()
+f"{name!s:>20}"     # вирівнювання
+f"{x = }"           # 'x = 3.14159' (debug, 3.8+)
+f"{2**10 = }"       # '2**10 = 1024'
+f"{'hello':^20}"    # центрування
+f"{1_000_000:,}"    # '1,000,000'</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Конкатенація — пастка O(n²)</div>
+      <pre>
+# ПОГАНО — O(n^2)! Кожен += створює новий рядок
+result = ""
+for word in words:
+    result += word + " "
+
+# ДОБРЕ — O(n), один alloc:
+result = " ".join(words)
+
+# StringIO для складної побудови:
+from io import StringIO
+buf = StringIO()
+for chunk in data:
+    buf.write(chunk)
+final = buf.getvalue()
+
+# bytes конкатенація — та сама проблема!
+# Використовуй bytearray або b"".join()</pre>
+      <div class="danger">1000 рядків по 100 символів + конкатенація = ~50 МБ зайвих алокацій і ~50000 об'єктів для GC!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Корисні методи і паттерни</div>
+      <pre>
+# Перевірки
+s.startswith(('py', 'ru'))  # tuple arg — O(k)!
+s.isidentifier()   # valid Python name?
+s.isascii()        # всі ASCII?
+s.isprintable()    # без control chars?
+
+# Трансформації
+s.center(20, '*')  # ***hello world****
+s.zfill(5)         # '00042'
+
+# translate — ефективне char mapping O(n)
+t = str.maketrans('aeiou', '*****')
+"hello".translate(t)  # 'h*ll*'
+
+# Видалити пунктуацію ефективно:
+import string
+clean = s.translate(str.maketrans(
+    '', '', string.punctuation
+))
+
+# Regex vs str methods:
+# str.split() >> re.split() для простих випадків
+# str.replace() >> re.sub() без спецсимволів
+
+# textwrap для форматування
+import textwrap
+wrapped = textwrap.fill(long_text, width=80)
+dedented = textwrap.dedent("""
+    hello
+    world
+""")</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ DEQUE ══════════════════ -->
+<div class="section" id="tab-deque">
+  <div class="section-head">deque — doubly-linked list of blocks</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом</div>
+      <p>collections.deque — двозв'язний список фіксованих блоків (fixed-size blocks). Кожен блок = 64 елементи. Блоки зв'язані між собою. Не переміщує елементи при insert/pop з обох кінців.</p>
+      <div class="tip">list.insert(0, x) = O(n) — зсуває всі елементи. deque.appendleft(x) = O(1). Для черг і стеків — deque ЗАВЖДИ краще list!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Складність операцій</div>
+      <table>
+        <tr><td>d.append(x)</td><td>O(1)</td></tr>
+        <tr><td>d.appendleft(x)</td><td>O(1)</td></tr>
+        <tr><td>d.pop()</td><td>O(1)</td></tr>
+        <tr><td>d.popleft()</td><td>O(1)</td></tr>
+        <tr><td>d[0], d[-1]</td><td>O(1)</td></tr>
+        <tr><td>d[i] (середина)</td><td>O(n) — обхід блоків!</td></tr>
+        <tr><td>d.rotate(k)</td><td>O(k)</td></tr>
+        <tr><td>d.extend(it)</td><td>O(k)</td></tr>
+        <tr><td>x in d</td><td>O(n)</td></tr>
+        <tr><td>len(d)</td><td>O(1)</td></tr>
+      </table>
+      <div class="warn">d[i] — O(n) на відміну від list! deque НЕ є заміною list для random access.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Паттерни використання</div>
+      <pre>
+from collections import deque
+
+# BFS — класичне використання
+def bfs(graph, start):
+    queue = deque([start])
+    visited = {start}
+    while queue:
+        node = queue.popleft()   # O(1)!
+        for nbr in graph[node]:
+            if nbr not in visited:
+                visited.add(nbr)
+                queue.append(nbr)
+
+# Sliding window (maxlen = автовидалення старих)
+window = deque(maxlen=5)
+for x in stream:
+    window.append(x)  # якщо > 5 елементів, видаляє з лівого кінця
+    avg = sum(window) / len(window)
+
+# Circular buffer — rotate
+d = deque([1, 2, 3, 4, 5])
+d.rotate(2)    # deque([4, 5, 1, 2, 3])
+d.rotate(-1)   # deque([5, 1, 2, 3, 4])
+
+# Undo/Redo система
+history = deque(maxlen=100)
+history.append(state)
+previous = history.pop()</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ HEAPQ ══════════════════ -->
+<div class="section" id="tab-heap">
+  <div class="section-head">heapq — binary min-heap поверх list</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Під капотом</div>
+      <p>heapq реалізує binary min-heap поверх звичайного Python list. Heap property: <code>heap[k] &lt;= heap[2k+1]</code> та <code>heap[k] &lt;= heap[2k+2]</code>. Елемент heap[0] завжди мінімальний.</p>
+      <pre>
+# Структура в пам'яті (list під капотом):
+#        1
+#       / \
+#      3   2
+#     / \ / \
+#    7  5 4  6
+# [1, 3, 2, 7, 5, 4, 6]
+
+# heap[k] = parent of heap[2k+1] і heap[2k+2]</pre>
+      <div class="tip">heapify(lst) = O(n), НЕ O(n log n)! Це нетривіальний математичний факт. heappush кожен раз = O(n log n) загалом.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Складність операцій</div>
+      <table>
+        <tr><td>heapify(lst)</td><td>O(n) — математичне диво!</td></tr>
+        <tr><td>heappush(h, x)</td><td>O(log n) — sift up</td></tr>
+        <tr><td>heappop(h)</td><td>O(log n) — sift down</td></tr>
+        <tr><td>heappushpop(h,x)</td><td>O(log n) — атомарно!</td></tr>
+        <tr><td>heapreplace(h,x)</td><td>O(log n) — pop потім push</td></tr>
+        <tr><td>nsmallest(k,it)</td><td>O(n log k)</td></tr>
+        <tr><td>nlargest(k,it)</td><td>O(n log k)</td></tr>
+        <tr><td>h[0] (peek)</td><td>O(1) — мінімум без видалення</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Просунуті паттерни</div>
+      <pre>
+import heapq
+
+# Max-heap через negation
+max_heap = []
+heapq.heappush(max_heap, -value)
+max_val = -heapq.heappop(max_heap)
+
+# Priority queue з tie-breaking
+# (priority, counter, item) — counter вирішує рівні
+import itertools
+counter = itertools.count()
+pq = []
+heapq.heappush(pq, (priority, next(counter), task))
+_, _, task = heapq.heappop(pq)
+
+# Merge k sorted iterators O(n log k)
+merged = heapq.merge(*sorted_lists)
+
+# K найближчих точок до origin O(n log k)
+points = [(1,3), (2,2), (3,1)]
+k = 2
+result = heapq.nsmallest(k, points,
+    key=lambda p: p[0]**2 + p[1]**2)
+
+# Медіан потоку (two heaps trick)
+lo = []  # max-heap (зберігаємо negated)
+hi = []  # min-heap
+
+def add_num(num):
+    heapq.heappush(lo, -num)
+    heapq.heappush(hi, -heapq.heappop(lo))
+    if len(lo) < len(hi):
+        heapq.heappush(lo, -heapq.heappop(hi))</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ GENERATORS ══════════════════ -->
+<div class="section" id="tab-generators">
+  <div class="section-head">generators — lazy evaluation</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Як працюють генератори</div>
+      <p>Generator function повертає generator object — реалізує протокол ітератора (__iter__ + __next__). При yield виконання призупиняється, стан (frame) зберігається.</p>
+      <p>Під капотом: generator = Python frame object + стан виконання. Frame зберігає локальні змінні, стек та поточну інструкцію (lasti).</p>
+      <pre>
+def gen():
+    print("start")
+    yield 1         # призупиняється тут
+    print("resume")
+    yield 2         # призупиняється тут
+
+g = gen()
+next(g)   # виводить "start", повертає 1
+next(g)   # виводить "resume", повертає 2
+next(g)   # StopIteration</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">yield from — делегування</div>
+      <pre>
+# yield from = делегує до sub-generator
+# Підтримує send() та throw() через generator chain
+def chain(*iterables):
+    for it in iterables:
+        yield from it
+
+# Coroutine через send()
+def accumulate():
+    total = 0
+    while True:
+        value = yield total
+        if value is None: break
+        total += value
+
+acc = accumulate()
+next(acc)        # ініціалізація! повертає 0
+acc.send(10)     # 10
+acc.send(20)     # 30
+acc.send(5)      # 35
+acc.send(None)   # StopIteration</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Generator expressions + пайплайни</div>
+      <pre>
+# Lazy — не обчислює все відразу!
+gen = (x*x for x in range(10**9))  # ~200 bytes
+lst = [x*x for x in range(10**9)]  # ~8 GB!
+
+# Без додаткових дужок:
+total = sum(x*x for x in range(1000))
+result = max(len(s) for s in strings)
+
+# Pipeline — O(1) пам'ять для будь-якого обсягу:
+def read_lines(files):
+    for f in files: yield from open(f)
+
+def parse(lines):
+    for line in lines: yield json.loads(line)
+
+def filter_errors(records):
+    for r in records:
+        if r['level'] == 'ERROR': yield r
+
+# Весь файл не завантажується в RAM!
+errors = filter_errors(parse(read_lines(files)))</pre>
+      <div class="tip">Generator pipeline — ключ до обробки файлів на 100+ ГБ з константним споживанням пам'яті!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">send(), throw(), close()</div>
+      <pre>
+import inspect
+
+def controlled():
+    try:
+        while True:
+            x = yield
+            print(f"Got: {x}")
+    except GeneratorExit:
+        print("Closed!")      # .close() викликає це
+    except ValueError as e:
+        print(f"Error: {e}")  # .throw(ValueError)
+
+g = controlled()
+next(g)           # ініціалізація (ОБОВ'ЯЗКОВО!)
+g.send(42)        # Got: 42
+g.throw(ValueError, "oops")  # Error: oops
+g.close()         # Closed!
+
+# Стан генератора:
+inspect.getgeneratorstate(g)
+# GEN_CREATED   — створений, не запускався
+# GEN_RUNNING   — зараз виконується
+# GEN_SUSPENDED — призупинений на yield
+# GEN_CLOSED    — завершив роботу</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ ITERTOOLS ══════════════════ -->
+<div class="section" id="tab-itertools">
+  <div class="section-head">itertools — батарея готових алгоритмів</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Нескінченні ітератори</div>
+      <pre>
+import itertools as it
+
+# count(start, step) — нескінченний лічильник
+for i, x in zip(it.count(1), data):
+    print(f"{i}: {x}")
+
+# cycle — нескінченне повторення
+colors = it.cycle(['red', 'green', 'blue'])
+
+# repeat — повторення одного об'єкта
+it.repeat(0, 10)    # [0,0,0,0,0,0,0,0,0,0]
+# map(pow, range(10), it.repeat(2))  # квадрати!</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Комбінаторика</div>
+      <pre>
+# combinations — без повторень, порядок не важливий
+list(it.combinations('ABC', 2))
+# [('A','B'), ('A','C'), ('B','C')]
+# Кількість: C(n,r) = n! / (r! * (n-r)!)
+
+# permutations — впорядковані варіанти
+list(it.permutations('ABC', 2))
+# [('A','B'), ('A','C'), ('B','A'), ...]
+# Кількість: P(n,r) = n! / (n-r)!
+
+# combinations_with_replacement
+list(it.combinations_with_replacement('AB', 2))
+# [('A','A'), ('A','B'), ('B','B')]
+
+# product — декартовий добуток
+list(it.product('AB', repeat=2))
+# [('A','A'), ('A','B'), ('B','A'), ('B','B')]
+# Кількість: n^r</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Термінуючі ітератори</div>
+      <pre>
+# chain — зв'язує ітерабельні без копіювання
+it.chain([1,2], [3,4], [5])            # 1,2,3,4,5
+it.chain.from_iterable([[1,2],[3,4]])  # те саме
+
+# groupby — ВИМАГАЄ попереднього сортування!
+for key, group in it.groupby(
+    sorted(data, key=f), key=f
+):
+    print(key, list(group))
+
+# islice — ліниве зрізання ітератора
+first100 = it.islice(big_generator, 100)
+skip_first10 = it.islice(gen, 10, None)
+
+# takewhile / dropwhile
+it.takewhile(lambda x: x < 5, [1,2,3,6,1])  # 1,2,3
+it.dropwhile(lambda x: x < 5, [1,2,3,6,1])  # 6,1
+
+# starmap — map з розпакуванням tuple
+it.starmap(pow, [(2,3), (3,2), (4,1)])  # 8, 9, 4
+
+# zip_longest — zip з fill
+it.zip_longest([1,2], [3], fillvalue=0)
+# (1,3), (2,0)
+
+# accumulate — накопичення (prefix sums і т.д.)
+import operator
+it.accumulate([1,2,3,4,5])                      # 1,3,6,10,15
+it.accumulate([1,2,3,4], operator.mul)           # 1,2,6,24
+it.accumulate([3,1,4,1,5], max)                  # 3,3,4,4,5
+
+# pairwise (Python 3.10+)
+it.pairwise([1,2,3,4])  # (1,2),(2,3),(3,4)
+
+# batched (Python 3.12+)
+it.batched([1,2,3,4,5], 2)  # (1,2),(3,4),(5,)</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ GC / MEMORY ══════════════════ -->
+<div class="section" id="tab-gc">
+  <div class="section-head">GC / Memory — як Python керує пам'яттю</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Reference Counting</div>
+      <p>CPython використовує reference counting як основний механізм. Кожен PyObject має поле ob_refcnt. При refcnt=0 — об'єкт звільняється НЕГАЙНО (детерміновано).</p>
+      <pre>
+import sys
+a = [1, 2, 3]
+sys.getrefcount(a)  # 2 (a + аргумент функції)
+
+b = a               # refcnt = 3
+del b               # refcnt = 2
+del a               # refcnt = 1 → 0 → звільняється
+
+# Проблема: циклічні посилання
+a = []
+a.append(a)    # refcnt ніколи не стане 0!
+# → потрібен cyclic GC</pre>
+      <div class="tip">__del__ викликається при refcnt=0. Не покладайся на час виклику — з cyclic GC він недетермінований. Використовуй context managers!</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Cyclic GC — три покоління</div>
+      <pre>
+import gc
+
+# Трипоколінний mark-and-sweep GC
+gc.get_threshold()   # (700, 10, 10)
+# Gen 0: кожні 700 нових alloc
+# Gen 1: кожні 10 збірок gen0
+# Gen 2: кожні 10 збірок gen1
+
+gc.collect()         # примусова збірка
+gc.collect(0)        # тільки gen0
+gc.disable()         # вимкнути (для perf-critical)
+gc.enable()
+
+# Знайти і вивести циклічні посилання:
+gc.set_debug(gc.DEBUG_LEAK)
+gc.collect()
+
+# Оптимізація: __slots__ = без __dict__
+class Point:
+    __slots__ = ['x', 'y']
+    def __init__(self, x, y):
+        self.x, self.y = x, y
+# Економить ~200 байт на екземпляр!</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Object interning та small int cache</div>
+      <pre>
+# CPython кешує int від -5 до 256
+a = 256; b = 256; a is b  # True!
+a = 257; b = 257; a is b  # False (зазвичай)
+
+# String interning (автоматично для ідентифікаторів)
+a = "hello"; b = "hello"; a is b  # True!
+a = "hello world"; b = "hello world"
+a is b  # Залежить від реалізації
+
+# Примусовий інтернінг:
+import sys
+a = sys.intern("my long string")
+b = sys.intern("my long string")
+a is b  # True завжди!
+
+# Singletons:
+None is None   # True завжди
+True is True   # True завжди
+False is False # True завжди
+
+# Перевірка identity vs equality:
+[] == []   # True  (порівнює значення)
+[] is []   # False (різні об'єкти!)
+None == None  # True
+None is None  # True (singleton!)</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">weakref та кешування</div>
+      <pre>
+import weakref
+
+# weakref НЕ збільшує refcnt!
+class ImageCache:
+    def __init__(self):
+        # Зображення звільняються коли більше немає
+        # сильних посилань — кеш не тримає їх живими
+        self._cache = weakref.WeakValueDictionary()
+
+    def get(self, key, factory):
+        val = self._cache.get(key)
+        if val is None:
+            val = factory()
+            self._cache[key] = val
+        return val
+
+# WeakSet — автовидалення "мертвих" об'єктів
+observers = weakref.WeakSet()
+
+# weakref.ref — прямий слабкий покажчик
+r = weakref.ref(obj)
+r()      # повертає obj або None якщо видалений
+r() is None  # True якщо obj звільнений</pre>
+      <div class="tip">WeakValueDictionary — ідеально для LRU-кешів де ти не хочеш тримати об'єкти живими лише через кеш.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ GIL / ASYNC ══════════════════ -->
+<div class="section" id="tab-gil">
+  <div class="section-head">GIL / Threading / Async</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">GIL — Global Interpreter Lock</div>
+      <p>GIL — mutex що гарантує: лише один потік виконує Python bytecode в будь-який момент. Захищає refcnt від race conditions. Знімається при I/O, C extensions, кожні ~5мс.</p>
+      <pre>
+import sys
+sys.getswitchinterval()  # 0.005 (5ms)
+sys.setswitchinterval(0.001)  # частіше перемикатись
+
+# Threading — для I/O bound tasks
+import threading
+t = threading.Thread(target=func, args=(x,))
+t.start(); t.join()
+
+# CPU-bound — треба multiprocessing!
+from multiprocessing import Pool
+with Pool(4) as p:
+    results = p.map(cpu_heavy, data)
+
+# concurrent.futures — уніфікований API
+from concurrent.futures import (
+    ThreadPoolExecutor, ProcessPoolExecutor
+)
+# I/O bound:
+with ThreadPoolExecutor(max_workers=10) as ex:
+    futures = [ex.submit(fetch_url, u) for u in urls]
+    results = [f.result() for f in futures]</pre>
+      <div class="warn">Python 3.13 вводить "free-threaded" режим (no-GIL) як experimental! Вмикається: PYTHON_GIL=0 або --disable-gil.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">asyncio — event loop</div>
+      <pre>
+import asyncio
+
+async def fetch(url):
+    async with aiohttp.ClientSession() as s:
+        async with s.get(url) as resp:
+            return await resp.text()
+
+async def main():
+    # Паралельний запуск (не sequential!)
+    tasks = [asyncio.create_task(fetch(u)) for u in urls]
+    results = await asyncio.gather(*tasks)
+
+    # З обробкою помилок окремо:
+    results = await asyncio.gather(*tasks, return_exceptions=True)
+
+# Timeout (Python 3.11+):
+async def with_timeout():
+    async with asyncio.timeout(5.0):
+        result = await slow_operation()
+
+# asyncio.wait — гнучкіший контроль:
+done, pending = await asyncio.wait(
+    tasks, return_when=asyncio.FIRST_COMPLETED
+)</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">async generators та patterns</div>
+      <pre>
+# Async generator
+async def async_paginate(url):
+    page = 1
+    while True:
+        data = await fetch_page(url, page)
+        if not data: break
+        for item in data: yield item
+        page += 1
+
+async def main():
+    async for item in async_paginate(api_url):
+        process(item)
+
+    # Async comprehension:
+    results = [i async for i in async_paginate(url)]
+
+# asynccontextmanager:
+from contextlib import asynccontextmanager
+
+@asynccontextmanager
+async def db_connection():
+    conn = await connect_db()
+    try:
+        yield conn
+    finally:
+        await conn.close()
+
+# asyncio.Queue — producer/consumer:
+async def producer(q):
+    for item in data:
+        await q.put(item)
+    await q.put(None)  # sentinel
+
+async def consumer(q):
+    while (item := await q.get()) is not None:
+        await process(item)
+        q.task_done()</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ TRICKS ══════════════════ -->
+<div class="section" id="tab-tricks">
+  <div class="section-head">🔥 Просунуті техніки</div>
+  <div class="grid">
+    <div class="card">
+      <div class="card-title">Магічні методи (dunder)</div>
+      <pre>
+class Vector:
+    def __init__(self, x, y): self.x, self.y = x, y
+
+    # Арифметика
+    def __add__(self, o):  return Vector(self.x+o.x, self.y+o.y)
+    def __sub__(self, o):  return Vector(self.x-o.x, self.y-o.y)
+    def __mul__(self, n):  return Vector(self.x*n, self.y*n)
+    def __rmul__(self, n): return self.__mul__(n)  # 3 * v
+    def __neg__(self):     return Vector(-self.x, -self.y)
+    def __abs__(self):     return (self.x**2 + self.y**2)**0.5
+
+    # Порівняння (+ functools.total_ordering)
+    def __eq__(self, o): return (self.x, self.y) == (o.x, o.y)
+    def __lt__(self, o): return abs(self) < abs(o)
+    def __hash__(self):  return hash((self.x, self.y))
+
+    # Представлення
+    def __repr__(self):  return f"Vector({self.x}, {self.y})"
+    def __str__(self):   return f"({self.x}, {self.y})"
+    def __bool__(self):  return bool(self.x or self.y)
+
+    # Контейнер
+    def __iter__(self):  yield self.x; yield self.y
+    def __len__(self):   return 2
+    def __getitem__(self, i): return (self.x, self.y)[i]
+
+    # Callable
+    def __call__(self, t): return Vector(self.x*t, self.y*t)</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Descriptor protocol</div>
+      <pre>
+# Descriptor = об'єкт що керує атрибутом іншого класу
+class TypedAttr:
+    def __set_name__(self, owner, name):
+        self.name = name
+        self.private = f"_{name}"
+
+    def __get__(self, obj, objtype=None):
+        if obj is None: return self  # клас, не екземпляр!
+        return getattr(obj, self.private, None)
+
+    def __set__(self, obj, value):
+        if not isinstance(value, self.type):
+            raise TypeError(f"{self.name}: expected {self.type}")
+        setattr(obj, self.private, value)
+
+class IntAttr(TypedAttr): type = int
+class StrAttr(TypedAttr): type = str
+
+class Person:
+    age  = IntAttr()   # descriptor!
+    name = StrAttr()
+
+# property — вбудований descriptor:
+class Circle:
+    def __init__(self, r): self._r = r
+
+    @property
+    def radius(self): return self._r
+
+    @radius.setter
+    def radius(self, v):
+        if v < 0: raise ValueError("radius >= 0")
+        self._r = v
+
+    @property
+    def area(self): return 3.14159 * self._r ** 2</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Metaclasses та __init_subclass__</div>
+      <pre>
+# Metaclass = клас класів
+class SingletonMeta(type):
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            cls._instances[cls] = super().__call__(*args, **kwargs)
+        return cls._instances[cls]
+
+class DB(metaclass=SingletonMeta): pass
+DB() is DB()  # True!
+
+# __init_subclass__ — простіший спосіб (3.6+):
+class Plugin:
+    _registry = {}
+
+    def __init_subclass__(cls, name=None, **kw):
+        super().__init_subclass__(**kw)
+        if name:
+            Plugin._registry[name] = cls
+
+class JSONPlugin(Plugin, name="json"):
+    def process(self, data): return json.loads(data)
+
+Plugin._registry["json"]  # JSONPlugin!
+
+# Abstract Base Classes
+from abc import ABC, abstractmethod
+class Shape(ABC):
+    @abstractmethod
+    def area(self) -> float: ...  # must implement!</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">dataclasses + functools</div>
+      <pre>
+from dataclasses import dataclass, field
+
+@dataclass(frozen=True, slots=True, order=True)
+class Point:
+    x: float
+    y: float
+    z: float = 0.0
+    tags: list = field(default_factory=list)
+
+# frozen=True → __hash__ + FrozenInstanceError на зміну
+# slots=True  → __slots__ (3.10+), менше пам'яті
+# order=True  → __lt__, __le__, __gt__, __ge__
+
+from functools import lru_cache, cache, cached_property
+
+@lru_cache(maxsize=128)
+def fib(n):
+    return n if n < 2 else fib(n-1) + fib(n-2)
+
+fib.cache_info()   # CacheInfo(hits=..., misses=...)
+fib.cache_clear()  # очистити
+
+# cache (3.9+) = lru_cache(maxsize=None)
+@cache
+def expensive(x): ...
+
+# cached_property — обчислюється ОДИН РАЗ
+class Circle:
+    def __init__(self, r): self.r = r
+
+    @cached_property
+    def area(self):  # перший доступ → обчислення, потім attribute
+        return 3.14159 * self.r ** 2
+
+# partial — фіксує аргументи
+from functools import partial
+double = partial(pow, exp=2)
+double(base=5)  # 25</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Context managers</div>
+      <pre>
+# __enter__ + __exit__
+class Timer:
+    def __enter__(self):
+        import time
+        self.start = time.perf_counter()
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.elapsed = time.perf_counter() - self.start
+        return False  # True = suppress exception
+
+with Timer() as t:
+    result = slow_operation()
+print(f"Took {t.elapsed:.3f}s")
+
+# contextmanager decorator — простіший спосіб
+from contextlib import contextmanager, suppress
+
+@contextmanager
+def managed_resource():
+    r = acquire()
+    try:
+        yield r
+    finally:
+        release(r)
+
+# suppress — замінює try/except pass
+with suppress(FileNotFoundError):
+    os.remove("temp.txt")
+
+# ExitStack — динамічна кількість context managers
+from contextlib import ExitStack
+with ExitStack() as stack:
+    files = [stack.enter_context(open(f)) for f in filenames]</pre>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Нетривіальні однолінійники</div>
+      <pre>
+# Transpose matrix:
+T = list(zip(*matrix))
+
+# Flatten nested (один рівень):
+flat = list(itertools.chain.from_iterable(nested))
+
+# Circular shift string:
+s, k = "Hello", 2
+rotated = s[k:] + s[:k]  # "lloHe"
+
+# Most frequent element:
+from statistics import mode
+mode([1, 2, 2, 3, 2])  # 2
+
+# dict з enumerated list:
+d = dict(enumerate(['a', 'b', 'c']))  # {0:'a', 1:'b', 2:'c'}
+
+# Flatten dict:
+flat = {f"{k}.{k2}": v2
+    for k, v in nested.items()
+    for k2, v2 in v.items()}
+
+# Deep get з nested dict:
+from functools import reduce
+def deep_get(d, *keys):
+    return reduce(lambda x, k: x.get(k, {}), keys, d)
+deep_get(data, 'user', 'address', 'city')
+
+# Running sum (prefix sums):
+from itertools import accumulate
+prefix = list(accumulate(nums))  # O(n), O(1) range sum потім
+
+# Batch/chunk list:
+def batch(lst, n):
+    return [lst[i:i+n] for i in range(0, len(lst), n)]
+
+# Safe division:
+result = x / y if y else 0  # замість try/except</pre>
+    </div>
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<script>
+  document.getElementById('nav').addEventListener('click', function(e) {
+    const btn = e.target.closest('.nav-btn');
+    if (!btn) return;
+    const tab = btn.dataset.tab;
+    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+    window.scrollTo({top: 0, behavior: 'smooth'});
+  });
+</script>
+</body>
+</html>

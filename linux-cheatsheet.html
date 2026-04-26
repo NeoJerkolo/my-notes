@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linux — Шпаргалка команд</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Unbounded:wght@700;900&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e2a;
+    --border: #252a38;
+    --accent: #00e5a0;
+    --accent2: #0099ff;
+    --accent3: #ff6b35;
+    --text: #e2e8f0;
+    --text-dim: #7a8599;
+    --text-mono: #a8d8b8;
+    --tag-bg: #0d2a1f;
+    --tag-text: #00e5a0;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+
+  /* Scanlines overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(0,229,160,0.015) 2px,
+      rgba(0,229,160,0.015) 4px
+    );
+    pointer-events: none;
+    z-index: 1000;
+  }
+
+  .container { max-width: 960px; margin: 0 auto; }
+
+  header {
+    display: flex;
+    align-items: flex-end;
+    gap: 24px;
+    margin-bottom: 56px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .os-icon {
+    width: 72px; height: 72px;
+    background: linear-gradient(135deg, #00e5a0 0%, #0099ff 100%);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 36px;
+    flex-shrink: 0;
+    box-shadow: 0 0 40px rgba(0,229,160,0.25);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { box-shadow: 0 0 40px rgba(0,229,160,0.25); }
+    50% { box-shadow: 0 0 60px rgba(0,229,160,0.45); }
+  }
+
+  .header-text h1 {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 42px;
+    font-weight: 900;
+    line-height: 1;
+    background: linear-gradient(90deg, #00e5a0, #0099ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -1px;
+  }
+
+  .header-text p {
+    color: var(--text-dim);
+    font-size: 14px;
+    margin-top: 8px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .badge {
+    margin-left: auto;
+    background: var(--tag-bg);
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 6px 12px;
+    border-radius: 6px;
+    letter-spacing: 1px;
+    align-self: flex-start;
+  }
+
+  /* Section */
+  .section {
+    margin-bottom: 48px;
+    animation: fadeInUp 0.5s ease both;
+  }
+
+  .section:nth-child(1) { animation-delay: 0.05s; }
+  .section:nth-child(2) { animation-delay: 0.1s; }
+  .section:nth-child(3) { animation-delay: 0.15s; }
+  .section:nth-child(4) { animation-delay: 0.2s; }
+  .section:nth-child(5) { animation-delay: 0.25s; }
+  .section:nth-child(6) { animation-delay: 0.3s; }
+  .section:nth-child(7) { animation-delay: 0.35s; }
+
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .section-icon { font-size: 20px; }
+
+  .section-title {
+    font-family: 'Unbounded', sans-serif;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border), transparent);
+  }
+
+  /* Cards grid */
+  .cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+    gap: 12px;
+  }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    transition: border-color 0.2s, transform 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px; height: 100%;
+    background: linear-gradient(180deg, var(--accent), var(--accent2));
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .card:hover {
+    border-color: rgba(0,229,160,0.3);
+    transform: translateY(-2px);
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .cmd-line {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .cmd-prompt {
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .cmd {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    font-weight: 600;
+    color: #ffffff;
+    background: var(--surface2);
+    padding: 4px 10px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+
+  .cmd-desc {
+    font-size: 13px;
+    color: var(--text-dim);
+    line-height: 1.5;
+    margin-bottom: 10px;
+  }
+
+  .examples {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .example-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ex-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: 2px 6px;
+    border-radius: 4px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .ex-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-mono);
+    line-height: 1.5;
+  }
+
+  .ex-note {
+    font-size: 11px;
+    color: var(--text-dim);
+    font-style: italic;
+  }
+
+  /* flags */
+  .flags {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .flag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    background: rgba(0,153,255,0.08);
+    border: 1px solid rgba(0,153,255,0.2);
+    color: var(--accent2);
+    padding: 2px 8px;
+    border-radius: 4px;
+  }
+
+  .flag span {
+    color: var(--text-dim);
+    margin-left: 4px;
+  }
+
+  /* Full-width cards */
+  .cards.full { grid-template-columns: 1fr; }
+
+  .footer {
+    margin-top: 64px;
+    text-align: center;
+    color: var(--text-dim);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding-top: 24px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media (max-width: 640px) {
+    .cards { grid-template-columns: 1fr; }
+    .header-text h1 { font-size: 28px; }
+    body { padding: 24px 16px 60px; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <div class="os-icon">🐧</div>
+    <div class="header-text">
+      <h1>LINUX</h1>
+      <p>// шпаргалка основних команд термінала</p>
+    </div>
+    <div class="badge">v2025</div>
+  </header>
+
+  <!-- НАВІГАЦІЯ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">📁</span>
+      <span class="section-title">Навігація та файлова система</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">pwd</span></div>
+        <div class="cmd-desc">Показує поточну директорію (Print Working Directory).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">pwd</span></div>
+          <div class="example-row"><span class="ex-label">ВИВІД</span><span class="ex-code">/home/user/projects</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">ls</span></div>
+        <div class="cmd-desc">Виводить список файлів та директорій у поточній папці.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">ls -la</span></div>
+          <div class="example-row"><span class="ex-note">— список з прихованими файлами та правами</span></div>
+        </div>
+        <div class="flags">
+          <span class="flag">-l <span>докладний вигляд</span></span>
+          <span class="flag">-a <span>приховані файли</span></span>
+          <span class="flag">-h <span>розмір у KB/MB</span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">cd</span></div>
+        <div class="cmd-desc">Перехід між директоріями (Change Directory).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">cd /var/log</span></div>
+          <div class="example-row"><span class="ex-label">НАЗАД</span><span class="ex-code">cd ..</span></div>
+          <div class="example-row"><span class="ex-label">ДОМАШНЯ</span><span class="ex-code">cd ~ або cd</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">find</span></div>
+        <div class="cmd-desc">Пошук файлів за іменем, типом або датою зміни.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">find . -name "*.log"</span></div>
+          <div class="example-row"><span class="ex-label">ТИП</span><span class="ex-code">find /etc -type f -name "nginx*"</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ФАЙЛИ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">✏️</span>
+      <span class="section-title">Робота з файлами</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">cp</span></div>
+        <div class="cmd-desc">Копіює файли або директорії.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ФАЙЛ</span><span class="ex-code">cp file.txt /backup/file.txt</span></div>
+          <div class="example-row"><span class="ex-label">ПАПКА</span><span class="ex-code">cp -r ./src ./dist</span></div>
+        </div>
+        <div class="flags">
+          <span class="flag">-r <span>рекурсивно (папки)</span></span>
+          <span class="flag">-v <span>показувати процес</span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">mv</span></div>
+        <div class="cmd-desc">Переміщує або перейменовує файли та директорії.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПЕРЕМІСТИТИ</span><span class="ex-code">mv file.txt /tmp/</span></div>
+          <div class="example-row"><span class="ex-label">ПЕРЕЙМ.</span><span class="ex-code">mv old.txt new.txt</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">rm</span></div>
+        <div class="cmd-desc">Видаляє файли або директорії. ⚠️ Без кошика — назавжди!</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ФАЙЛ</span><span class="ex-code">rm file.txt</span></div>
+          <div class="example-row"><span class="ex-label">ПАПКА</span><span class="ex-code">rm -rf ./node_modules</span></div>
+        </div>
+        <div class="flags">
+          <span class="flag">-r <span>рекурсивно</span></span>
+          <span class="flag">-f <span>без підтвердження</span></span>
+          <span class="flag">-i <span>з підтвердженням</span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">mkdir</span></div>
+        <div class="cmd-desc">Створює нову директорію.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРОСТА</span><span class="ex-code">mkdir myproject</span></div>
+          <div class="example-row"><span class="ex-label">ВКЛАДЕНІ</span><span class="ex-code">mkdir -p a/b/c/d</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">cat / less / head / tail</span></div>
+        <div class="cmd-desc">Читання вмісту файлів різними способами.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">cat</span><span class="ex-code">cat file.txt — вивести весь вміст</span></div>
+          <div class="example-row"><span class="ex-label">less</span><span class="ex-code">less file.txt — посторінково (q — вихід)</span></div>
+          <div class="example-row"><span class="ex-label">head</span><span class="ex-code">head -n 20 file.txt — перші 20 рядків</span></div>
+          <div class="example-row"><span class="ex-label">tail</span><span class="ex-code">tail -f app.log — слідкувати за логом</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">chmod</span></div>
+        <div class="cmd-desc">Змінює права доступу до файлу (read/write/execute).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ВИКОНАВ.</span><span class="ex-code">chmod +x script.sh</span></div>
+          <div class="example-row"><span class="ex-label">ЦИФРИ</span><span class="ex-code">chmod 755 deploy.sh</span></div>
+          <div class="example-row"><span class="ex-note">755 = rwx r-x r-x (власник / група / інші)</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ПРОЦЕСИ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">⚙️</span>
+      <span class="section-title">Процеси та система</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">ps</span></div>
+        <div class="cmd-desc">Показує запущені процеси.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ВСІ</span><span class="ex-code">ps aux</span></div>
+          <div class="example-row"><span class="ex-label">ПОШУК</span><span class="ex-code">ps aux | grep nginx</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">kill / killall</span></div>
+        <div class="cmd-desc">Завершує процес за його PID або назвою.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ЗА PID</span><span class="ex-code">kill 1234</span></div>
+          <div class="example-row"><span class="ex-label">ПРИМУС.</span><span class="ex-code">kill -9 1234</span></div>
+          <div class="example-row"><span class="ex-label">ЗА ІМ.</span><span class="ex-code">killall node</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">top / htop</span></div>
+        <div class="cmd-desc">Моніторинг процесів у реальному часі. htop — зручніша версія з кольорами.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ЗАПУСК</span><span class="ex-code">top</span></div>
+          <div class="example-row"><span class="ex-label">КРАЩИЙ</span><span class="ex-code">htop</span></div>
+          <div class="example-row"><span class="ex-note">q — вихід, k — вбити процес</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">df / du</span></div>
+        <div class="cmd-desc">Перевірка вільного місця на диску та розміру директорій.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ДИСК</span><span class="ex-code">df -h</span></div>
+          <div class="example-row"><span class="ex-label">ПАПКА</span><span class="ex-code">du -sh ./dist</span></div>
+          <div class="example-row"><span class="ex-label">ТОП-10</span><span class="ex-code">du -sh * | sort -rh | head -10</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- МЕРЕЖА -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🌐</span>
+      <span class="section-title">Мережа</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">ping</span></div>
+        <div class="cmd-desc">Перевіряє доступність хоста в мережі.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">ping google.com</span></div>
+          <div class="example-row"><span class="ex-label">N РАЗІВ</span><span class="ex-code">ping -c 4 8.8.8.8</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">curl</span></div>
+        <div class="cmd-desc">HTTP-запити з командного рядка. Завантаження файлів та тестування API.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">GET</span><span class="ex-code">curl https://api.example.com/users</span></div>
+          <div class="example-row"><span class="ex-label">POST</span><span class="ex-code">curl -X POST -d '{"name":"test"}' URL</span></div>
+          <div class="example-row"><span class="ex-label">ФАЙЛ</span><span class="ex-code">curl -O https://example.com/file.zip</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">ssh</span></div>
+        <div class="cmd-desc">Підключення до віддаленого сервера через SSH.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">БАЗОВО</span><span class="ex-code">ssh user@192.168.1.10</span></div>
+          <div class="example-row"><span class="ex-label">ПОРТ</span><span class="ex-code">ssh -p 2222 user@host</span></div>
+          <div class="example-row"><span class="ex-label">КЛЮЧ</span><span class="ex-code">ssh -i ~/.ssh/id_rsa user@host</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">scp</span></div>
+        <div class="cmd-desc">Копіювання файлів між локальною машиною та сервером через SSH.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">НА СЕРВЕР</span><span class="ex-code">scp file.txt user@host:/tmp/</span></div>
+          <div class="example-row"><span class="ex-label">З СЕРВЕРА</span><span class="ex-code">scp user@host:/var/log/app.log .</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ТЕКСТ / ПОШУК -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">🔍</span>
+      <span class="section-title">Пошук та обробка тексту</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">grep</span></div>
+        <div class="cmd-desc">Пошук тексту за патерном у файлах або виводі команд.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">У ФАЙЛІ</span><span class="ex-code">grep "ERROR" app.log</span></div>
+          <div class="example-row"><span class="ex-label">РЕКУРС.</span><span class="ex-code">grep -r "TODO" ./src</span></div>
+          <div class="example-row"><span class="ex-label">РЯДОК №</span><span class="ex-code">grep -n "function" main.js</span></div>
+        </div>
+        <div class="flags">
+          <span class="flag">-i <span>без регістру</span></span>
+          <span class="flag">-v <span>інвертувати</span></span>
+          <span class="flag">-c <span>кількість</span></span>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">| (pipe)</span></div>
+        <div class="cmd-desc">Передає вивід однієї команди на вхід іншої. Основа Linux-магії.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">ps aux | grep node | wc -l</span></div>
+          <div class="example-row"><span class="ex-label">ЛОГИ</span><span class="ex-code">cat app.log | grep ERROR | tail -50</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">wc</span></div>
+        <div class="cmd-desc">Підрахунок рядків, слів, символів у файлі.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">РЯДКИ</span><span class="ex-code">wc -l file.txt</span></div>
+          <div class="example-row"><span class="ex-label">СЛОВА</span><span class="ex-code">wc -w file.txt</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">awk / sed</span></div>
+        <div class="cmd-desc">Потужна обробка та редагування тексту рядок за рядком.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">awk</span><span class="ex-code">awk '{print $1, $3}' file.txt</span></div>
+          <div class="example-row"><span class="ex-label">sed</span><span class="ex-code">sed 's/foo/bar/g' file.txt</span></div>
+          <div class="example-row"><span class="ex-note">sed — замінює текст; awk — обробляє колонки</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- КОРИСНЕ -->
+  <div class="section">
+    <div class="section-header">
+      <span class="section-icon">💡</span>
+      <span class="section-title">Корисне різне</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="cards">
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">sudo</span></div>
+        <div class="cmd-desc">Виконує команду з правами адміністратора (root).</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">sudo apt update</span></div>
+          <div class="example-row"><span class="ex-label">ROOT</span><span class="ex-code">sudo -i — увійти як root</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">history</span></div>
+        <div class="cmd-desc">Показує список виконаних команд. Швидкий повтор через !! або !n.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">history | tail -20</span></div>
+          <div class="example-row"><span class="ex-label">ПОШУК</span><span class="ex-code">history | grep git</span></div>
+          <div class="example-row"><span class="ex-label">ПОВТОР</span><span class="ex-code">!! — остання команда</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">alias</span></div>
+        <div class="cmd-desc">Створює коротке ім'я для довгої команди. Зберігати в ~/.bashrc.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">СТВОРИТИ</span><span class="ex-code">alias ll='ls -la'</span></div>
+          <div class="example-row"><span class="ex-label">СПИСОК</span><span class="ex-code">alias — показати всі</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="cmd-line"><span class="cmd-prompt">$</span><span class="cmd">man</span></div>
+        <div class="cmd-desc">Довідка по будь-якій команді. Найкращий спосіб дізнатись про прапори.</div>
+        <div class="examples">
+          <div class="example-row"><span class="ex-label">ПРИКЛАД</span><span class="ex-code">man ls</span></div>
+          <div class="example-row"><span class="ex-label">КОРОТКО</span><span class="ex-code">ls --help</span></div>
+          <div class="example-row"><span class="ex-note">q — вихід з довідки</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    🐧 LINUX CHEATSHEET &nbsp;|&nbsp; Ctrl+C — перервати &nbsp;|&nbsp; Ctrl+Z — фон &nbsp;|&nbsp; Tab — автодоповнення &nbsp;|&nbsp; ↑↓ — історія
+  </div>
+
+</div>
+</body>
+</html>
