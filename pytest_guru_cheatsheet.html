@@ -1,0 +1,1226 @@
+
+<h2 class="sr-only">Повна шпаргалка по pytest для Python 3.9 — від базового до просунутого рівня</h2>
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-mono); }
+
+.container { padding: 1.5rem 0; }
+
+.nav { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 2rem; }
+.nav-btn {
+  font-size: 12px; padding: 5px 12px; border-radius: 999px;
+  border: 0.5px solid var(--color-border-secondary);
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary); cursor: pointer;
+  font-family: var(--font-sans); transition: all 0.15s;
+}
+.nav-btn:hover, .nav-btn.active {
+  background: var(--color-background-info);
+  color: var(--color-text-info);
+  border-color: var(--color-border-info);
+}
+
+.section { display: none; }
+.section.active { display: block; }
+
+.section-title {
+  font-family: var(--font-sans); font-size: 18px; font-weight: 500;
+  color: var(--color-text-primary); margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem; border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+
+.grid { display: grid; gap: 1rem; }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.grid-1 { grid-template-columns: 1fr; }
+
+.card {
+  background: var(--color-background-primary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-lg);
+  padding: 1rem 1.25rem;
+}
+
+.card-title {
+  font-family: var(--font-sans); font-size: 13px; font-weight: 500;
+  color: var(--color-text-secondary); margin-bottom: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.05em;
+}
+
+.badge {
+  display: inline-block; font-size: 11px; padding: 2px 8px;
+  border-radius: 999px; font-family: var(--font-sans); font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+.badge-blue { background: #E6F1FB; color: #0C447C; }
+.badge-green { background: #EAF3DE; color: #27500A; }
+.badge-amber { background: #FAEEDA; color: #633806; }
+.badge-red { background: #FCEBEB; color: #791F1F; }
+.badge-purple { background: #EEEDFE; color: #3C3489; }
+.badge-teal { background: #E1F5EE; color: #085041; }
+
+pre {
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-tertiary);
+  border-radius: var(--border-radius-md);
+  padding: 0.875rem 1rem;
+  font-size: 12px; line-height: 1.7;
+  overflow-x: auto;
+  margin: 0.5rem 0;
+  font-family: var(--font-mono);
+  color: var(--color-text-primary);
+}
+
+.comment { color: var(--color-text-tertiary); }
+.kw { color: #185FA5; }
+.fn { color: #0F6E56; }
+.str { color: #639922; }
+.deco { color: #854F0B; }
+.num { color: #993556; }
+
+.tip {
+  background: var(--color-background-info);
+  border-left: 3px solid var(--color-border-info);
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  padding: 0.75rem 1rem;
+  font-size: 13px; line-height: 1.6;
+  color: var(--color-text-primary);
+  margin: 0.75rem 0;
+  font-family: var(--font-sans);
+}
+
+.warn {
+  background: var(--color-background-warning);
+  border-left: 3px solid var(--color-border-warning);
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  padding: 0.75rem 1rem;
+  font-size: 13px; line-height: 1.6;
+  color: var(--color-text-primary);
+  margin: 0.75rem 0;
+  font-family: var(--font-sans);
+}
+
+.danger {
+  background: var(--color-background-danger);
+  border-left: 3px solid var(--color-border-danger);
+  border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0;
+  padding: 0.75rem 1rem;
+  font-size: 13px; line-height: 1.6;
+  color: var(--color-text-primary);
+  margin: 0.75rem 0;
+  font-family: var(--font-sans);
+}
+
+.explain {
+  font-family: var(--font-sans); font-size: 13px; line-height: 1.7;
+  color: var(--color-text-secondary); margin: 0.5rem 0 0.75rem;
+}
+
+.cmd {
+  display: inline-block;
+  background: var(--color-background-secondary);
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  padding: 2px 8px; font-size: 12px; font-family: var(--font-mono);
+  color: var(--color-text-primary);
+}
+
+.table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.table th {
+  text-align: left; padding: 6px 10px;
+  background: var(--color-background-secondary);
+  color: var(--color-text-secondary); font-family: var(--font-sans);
+  font-weight: 500; border-bottom: 0.5px solid var(--color-border-tertiary);
+}
+.table td {
+  padding: 6px 10px; border-bottom: 0.5px solid var(--color-border-tertiary);
+  color: var(--color-text-primary); font-family: var(--font-mono);
+  vertical-align: top;
+}
+.table td:last-child { font-family: var(--font-sans); color: var(--color-text-secondary); }
+.table tr:last-child td { border-bottom: none; }
+
+h3 {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 500;
+  color: var(--color-text-primary); margin: 1rem 0 0.4rem;
+}
+</style>
+
+<div class="container">
+  <div style="margin-bottom: 1.5rem;">
+    <p style="font-family: var(--font-sans); font-size: 22px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 4px;">pytest Guru Cheatsheet</p>
+    <p style="font-family: var(--font-sans); font-size: 13px; color: var(--color-text-secondary);">Python 3.9 · pytest 7.x — від основ до архітектурного рівня</p>
+  </div>
+
+  <div class="nav" id="nav">
+    <button class="nav-btn active" onclick="show('basics')">Основи</button>
+    <button class="nav-btn" onclick="show('fixtures')">Фікстури</button>
+    <button class="nav-btn" onclick="show('markers')">Маркери</button>
+    <button class="nav-btn" onclick="show('parametrize')">Параметризація</button>
+    <button class="nav-btn" onclick="show('mocking')">Моки</button>
+    <button class="nav-btn" onclick="show('conftest')">conftest.py</button>
+    <button class="nav-btn" onclick="show('exceptions')">Виключення</button>
+    <button class="nav-btn" onclick="show('plugins')">Плагіни</button>
+    <button class="nav-btn" onclick="show('advanced')">Просунуте</button>
+    <button class="nav-btn" onclick="show('cli')">CLI</button>
+  </div>
+
+  <!-- BASICS -->
+  <div class="section active" id="basics">
+    <p class="section-title">Основи pytest</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Структура тесту</p>
+        <p class="explain">Кожна функція, що починається з <span class="cmd">test_</span>, або клас з <span class="cmd">Test</span> — тест.</p>
+        <pre><span class="comment"># test_example.py</span>
+<span class="kw">def</span> <span class="fn">test_addition</span>():
+    result = <span class="num">2</span> + <span class="num">2</span>
+    <span class="kw">assert</span> result == <span class="num">4</span>
+
+<span class="kw">def</span> <span class="fn">test_string</span>():
+    s = <span class="str">"hello"</span>
+    <span class="kw">assert</span> s.upper() == <span class="str">"HELLO"</span>
+    <span class="kw">assert</span> <span class="str">"ell"</span> <span class="kw">in</span> s
+
+<span class="comment"># Клас-тест (без __init__!)</span>
+<span class="kw">class</span> <span class="fn">TestMath</span>:
+    <span class="kw">def</span> <span class="fn">test_multiply</span>(self):
+        <span class="kw">assert</span> <span class="num">3</span> * <span class="num">4</span> == <span class="num">12</span>
+
+    <span class="kw">def</span> <span class="fn">test_divide</span>(self):
+        <span class="kw">assert</span> <span class="num">10</span> / <span class="num">2</span> == <span class="num">5.0</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Assert — детальний вивід</p>
+        <p class="explain">pytest переписує assert для детальних повідомлень про помилки — не потрібен unittest.</p>
+        <pre><span class="comment"># pytest показує різницю автоматично</span>
+<span class="kw">def</span> <span class="fn">test_list</span>():
+    expected = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+    actual   = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">4</span>]
+    <span class="kw">assert</span> actual == expected
+    <span class="comment"># AssertionError:
+    #   assert [1, 2, 4] == [1, 2, 3]
+    #   At index 2 diff: 4 != 3</span>
+
+<span class="comment"># Власне повідомлення</span>
+<span class="kw">assert</span> result > <span class="num">0</span>, <span class="str">f"Очікували > 0, отримали {result}"</span>
+
+<span class="comment"># Порівняння рядків — diff по рядках</span>
+<span class="kw">assert</span> got_text == expected_text</pre>
+        <div class="tip">pytest використовує AST-rewriting — assert перетворюється у момент збору тестів, а не під час запуску.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">Файлова структура проєкту</p>
+        <pre>project/
+├── src/
+│   └── myapp/
+│       ├── __init__.py
+│       └── calculator.py
+├── tests/
+│   ├── conftest.py       <span class="comment"># спільні фікстури</span>
+│   ├── unit/
+│   │   └── test_calc.py
+│   └── integration/
+│       └── test_api.py
+├── pytest.ini            <span class="comment"># або pyproject.toml</span>
+└── setup.py</pre>
+        <div class="tip">Рекомендована структура: тести окремо від коду. Додай <span class="cmd">src</span> layout для ізоляції пакетів.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">pytest.ini / pyproject.toml</p>
+        <pre><span class="comment"># pytest.ini</span>
+[pytest]
+testpaths = tests
+python_files = test_*.py *_test.py
+python_classes = Test*
+python_functions = test_*
+addopts = -v --tb=short -ra
+markers =
+    slow: повільні тести
+    smoke: базові тести
+
+<span class="comment"># pyproject.toml</span>
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["-v", "--tb=short"]
+markers = ["slow", "smoke"]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- FIXTURES -->
+  <div class="section" id="fixtures">
+    <p class="section-title">Фікстури (Fixtures)</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Базові фікстури</p>
+        <p class="explain">Фікстури — функції, що забезпечують тести даними або ресурсами. Передаються як аргументи.</p>
+        <pre><span class="kw">import</span> pytest
+
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">user</span>():
+    <span class="kw">return</span> {<span class="str">"name"</span>: <span class="str">"Alice"</span>, <span class="str">"age"</span>: <span class="num">30</span>}
+
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">admin_user</span>(user):  <span class="comment"># фікстура у фікстурі!</span>
+    user[<span class="str">"role"</span>] = <span class="str">"admin"</span>
+    <span class="kw">return</span> user
+
+<span class="kw">def</span> <span class="fn">test_user_name</span>(user):
+    <span class="kw">assert</span> user[<span class="str">"name"</span>] == <span class="str">"Alice"</span>
+
+<span class="kw">def</span> <span class="fn">test_admin</span>(admin_user):
+    <span class="kw">assert</span> admin_user[<span class="str">"role"</span>] == <span class="str">"admin"</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Scope — область видимості</p>
+        <p class="explain">Контролює, як часто фікстура створюється.</p>
+        <pre><span class="deco">@pytest.fixture</span>(scope=<span class="str">"function"</span>)  <span class="comment"># за замовч.</span>
+<span class="kw">def</span> <span class="fn">func_fix</span>(): ...  <span class="comment"># новий для кожного тесту</span>
+
+<span class="deco">@pytest.fixture</span>(scope=<span class="str">"class"</span>)
+<span class="kw">def</span> <span class="fn">class_fix</span>(): ...  <span class="comment"># одна на клас</span>
+
+<span class="deco">@pytest.fixture</span>(scope=<span class="str">"module"</span>)
+<span class="kw">def</span> <span class="fn">db_connection</span>():  <span class="comment"># одна на файл</span>
+    conn = create_connection()
+    <span class="kw">yield</span> conn          <span class="comment"># teardown після yield</span>
+    conn.close()
+
+<span class="deco">@pytest.fixture</span>(scope=<span class="str">"session"</span>)
+<span class="kw">def</span> <span class="fn">app_server</span>():    <span class="comment"># одна на весь запуск</span>
+    server = start_server()
+    <span class="kw">yield</span> server
+    server.stop()</pre>
+        <div class="warn">Фікстура з нижчим scope не може залежати від вищого! <span class="cmd">function</span> не може взяти <span class="cmd">session</span> фікстуру.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">yield — setup та teardown</p>
+        <p class="explain">yield розділяє setup (до) і teardown (після). Гарантує очищення навіть при помилці.</p>
+        <pre><span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">temp_file</span>(tmp_path):
+    f = tmp_path / <span class="str">"data.txt"</span>
+    f.write_text(<span class="str">"hello"</span>)
+    <span class="kw">yield</span> f              <span class="comment"># ← тест отримує це</span>
+    <span class="comment"># teardown — виконується після тесту</span>
+    f.unlink(missing_ok=<span class="kw">True</span>)
+
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">database</span>():
+    db = Database.connect(<span class="str">"test.db"</span>)
+    db.migrate()
+    <span class="kw">yield</span> db
+    db.rollback()        <span class="comment"># відкат після кожного тесту</span>
+    db.disconnect()</pre>
+        <div class="tip">tmp_path — вбудована фікстура pytest. Надає тимчасову директорію як pathlib.Path.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">autouse — автоматична фікстура</p>
+        <pre><span class="deco">@pytest.fixture</span>(autouse=<span class="kw">True</span>)
+<span class="kw">def</span> <span class="fn">reset_env</span>(monkeypatch):
+    <span class="comment"># виконується для КОЖНОГО тесту в модулі</span>
+    monkeypatch.setenv(<span class="str">"ENV"</span>, <span class="str">"test"</span>)
+
+<span class="deco">@pytest.fixture</span>(autouse=<span class="kw">True</span>, scope=<span class="str">"session"</span>)
+<span class="kw">def</span> <span class="fn">setup_logging</span>():
+    <span class="kw">import</span> logging
+    logging.basicConfig(level=logging.DEBUG)
+
+<span class="comment"># У conftest.py autouse=True → діє на весь пакет</span></pre>
+        <div class="warn">Не зловживай autouse — складніше відстежити, що відбувається у тесті.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">params у фікстурах</p>
+        <p class="explain">Фікстура з params автоматично запускає тест для кожного значення.</p>
+        <pre><span class="deco">@pytest.fixture</span>(params=[<span class="str">"sqlite"</span>, <span class="str">"postgres"</span>])
+<span class="kw">def</span> <span class="fn">db_backend</span>(request):
+    backend = request.param   <span class="comment"># поточне значення</span>
+    db = Database(backend)
+    <span class="kw">yield</span> db
+    db.close()
+
+<span class="kw">def</span> <span class="fn">test_query</span>(db_backend):
+    <span class="comment"># запуститься 2 рази: для sqlite і postgres</span>
+    result = db_backend.query(<span class="str">"SELECT 1"</span>)
+    <span class="kw">assert</span> result <span class="kw">is not None</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">request — метаінформація фікстури</p>
+        <pre><span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">smart_fixture</span>(request):
+    <span class="comment"># Доступ до мета-інформації тесту</span>
+    test_name = request.node.name
+    module = request.module
+    cls = request.cls       <span class="comment"># None якщо не в класі</span>
+    scope = request.scope
+    param = request.param   <span class="comment"># якщо є params</span>
+
+    <span class="comment"># Фіналізатор (альтернатива yield)</span>
+    <span class="kw">def</span> <span class="fn">cleanup</span>():
+        print(<span class="str">f"Очищення після {test_name}"</span>)
+    request.addfinalizer(cleanup)
+
+    <span class="kw">return</span> {<span class="str">"test"</span>: test_name}</pre>
+      </div>
+    </div>
+    <div class="card" style="margin-top: 1rem;">
+      <p class="card-title">Вбудовані фікстури pytest</p>
+      <table class="table">
+        <thead><tr><th>Фікстура</th><th>Опис</th></tr></thead>
+        <tbody>
+          <tr><td>tmp_path</td><td>Тимчасова директорія (pathlib.Path), нова для кожного тесту</td></tr>
+          <tr><td>tmp_path_factory</td><td>Фабрика tmp_path для scope=session фікстур</td></tr>
+          <tr><td>monkeypatch</td><td>Патчинг атрибутів, env vars, sys.path — з автовідновленням</td></tr>
+          <tr><td>capsys</td><td>Захоплення stdout/stderr (capfd — для файлових дескрипторів)</td></tr>
+          <tr><td>caplog</td><td>Захоплення logging повідомлень</td></tr>
+          <tr><td>request</td><td>Метаінформація поточного тесту/фікстури</td></tr>
+          <tr><td>pytestconfig</td><td>Доступ до конфігурації pytest і CLI-аргументів</td></tr>
+          <tr><td>recwarn</td><td>Захоплення попереджень (warnings)</td></tr>
+          <tr><td>cache</td><td>Зберігає дані між запусками (для --lf, --ff)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- MARKERS -->
+  <div class="section" id="markers">
+    <p class="section-title">Маркери (Markers)</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Вбудовані маркери</p>
+        <pre><span class="kw">import</span> pytest
+<span class="kw">import</span> sys
+
+<span class="comment"># Пропустити тест</span>
+<span class="deco">@pytest.mark.skip</span>(reason=<span class="str">"ще не реалізовано"</span>)
+<span class="kw">def</span> <span class="fn">test_feature</span>(): ...
+
+<span class="comment"># Очікуємо падіння (xfail)</span>
+<span class="deco">@pytest.mark.xfail</span>(reason=<span class="str">"відомий баг #123"</span>)
+<span class="kw">def</span> <span class="fn">test_buggy</span>():
+    <span class="kw">assert</span> <span class="num">1</span> == <span class="num">2</span>  <span class="comment"># XFAIL — очікувана помилка</span>
+
+<span class="comment"># xfail strict — якщо раптом пройде, це помилка!</span>
+<span class="deco">@pytest.mark.xfail</span>(strict=<span class="kw">True</span>, reason=<span class="str">"має падати"</span>)
+<span class="kw">def</span> <span class="fn">test_strict_xfail</span>(): ...
+
+<span class="comment"># Умовний skip</span>
+<span class="deco">@pytest.mark.skipif</span>(
+    sys.platform == <span class="str">"win32"</span>,
+    reason=<span class="str">"не підтримується на Windows"</span>
+)
+<span class="kw">def</span> <span class="fn">test_unix_only</span>(): ...</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Власні маркери</p>
+        <pre><span class="comment"># pytest.ini — реєстрація маркерів</span>
+[pytest]
+markers =
+    slow: тест займає > 1 секунди
+    smoke: мінімальний набір тестів
+    db: тести з базою даних
+    api: тести HTTP API
+
+<span class="comment"># Використання</span>
+<span class="deco">@pytest.mark.slow</span>
+<span class="deco">@pytest.mark.db</span>
+<span class="kw">def</span> <span class="fn">test_heavy_query</span>(database):
+    result = database.run_complex_query()
+    <span class="kw">assert</span> result
+
+<span class="comment"># Запуск тільки певних маркерів</span>
+<span class="comment"># pytest -m "smoke and not slow"</span>
+<span class="comment"># pytest -m "db or api"</span>
+<span class="comment"># pytest -m "not slow"</span></pre>
+        <div class="tip">Завжди реєструй власні маркери у pytest.ini — інакше отримаєш PytestUnknownMarkWarning.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">Маркери на класах та модулях</p>
+        <pre><span class="comment"># Весь клас позначається маркером</span>
+<span class="deco">@pytest.mark.integration</span>
+<span class="kw">class</span> <span class="fn">TestAPI</span>:
+    <span class="kw">def</span> <span class="fn">test_get</span>(self): ...
+    <span class="kw">def</span> <span class="fn">test_post</span>(self): ...
+
+<span class="comment"># Весь модуль (на рівні файлу)</span>
+pytestmark = [pytest.mark.slow, pytest.mark.db]
+
+<span class="kw">def</span> <span class="fn">test_one</span>(): ...  <span class="comment"># автоматично slow + db</span>
+<span class="kw">def</span> <span class="fn">test_two</span>(): ...  <span class="comment"># автоматично slow + db</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Динамічні маркери через request</p>
+        <pre><span class="comment"># conftest.py — додати маркер через хук</span>
+<span class="kw">def</span> <span class="fn">pytest_collection_modifyitems</span>(items):
+    <span class="kw">for</span> item <span class="kw">in</span> items:
+        <span class="kw">if</span> <span class="str">"integration"</span> <span class="kw">in</span> item.nodeid:
+            item.add_marker(pytest.mark.slow)
+
+<span class="comment"># Читати маркер з тесту у фікстурі</span>
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">db</span>(request):
+    marker = request.node.get_closest_marker(<span class="str">"db"</span>)
+    <span class="kw">if</span> marker:
+        dsn = marker.kwargs.get(<span class="str">"dsn"</span>, <span class="str">"sqlite"</span>)
+    <span class="kw">return</span> connect(dsn)
+
+<span class="comment"># Маркер з аргументами</span>
+<span class="deco">@pytest.mark.db</span>(dsn=<span class="str">"postgresql://localhost/test"</span>)
+<span class="kw">def</span> <span class="fn">test_pg</span>(db): ...</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARAMETRIZE -->
+  <div class="section" id="parametrize">
+    <p class="section-title">Параметризація</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Базова параметризація</p>
+        <pre><span class="kw">import</span> pytest
+
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"input, expected"</span>, [
+    (<span class="num">2</span>, <span class="num">4</span>),
+    (<span class="num">3</span>, <span class="num">9</span>),
+    (<span class="num">-1</span>, <span class="num">1</span>),
+    (<span class="num">0</span>, <span class="num">0</span>),
+])
+<span class="kw">def</span> <span class="fn">test_square</span>(input, expected):
+    <span class="kw">assert</span> input ** <span class="num">2</span> == expected
+
+<span class="comment"># Один параметр</span>
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"value"</span>, [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>])
+<span class="kw">def</span> <span class="fn">test_positive</span>(value):
+    <span class="kw">assert</span> value > <span class="num">0</span></pre>
+        <div class="tip">pytest генерує ID для кожного кейсу: test_square[2-4], test_square[3-9]</div>
+      </div>
+      <div class="card">
+        <p class="card-title">ids та pytest.param</p>
+        <pre><span class="deco">@pytest.mark.parametrize</span>(<span class="str">"x, y"</span>, [
+    pytest.param(<span class="num">1</span>, <span class="num">2</span>, id=<span class="str">"прості числа"</span>),
+    pytest.param(<span class="num">0</span>, <span class="num">0</span>, id=<span class="str">"нулі"</span>),
+    pytest.param(
+        <span class="num">-1</span>, <span class="num">1</span>,
+        id=<span class="str">"від'ємне"</span>,
+        marks=pytest.mark.xfail
+    ),
+    pytest.param(
+        <span class="kw">None</span>, <span class="num">0</span>,
+        marks=pytest.mark.skip(reason=<span class="str">"TODO"</span>)
+    ),
+])
+<span class="kw">def</span> <span class="fn">test_sum</span>(x, y):
+    <span class="kw">assert</span> (x <span class="kw">or</span> <span class="num">0</span>) + y >= <span class="num">0</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Комбінація параметрів (стекування)</p>
+        <pre><span class="comment"># Стекування = декартовий добуток</span>
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"browser"</span>, [<span class="str">"chrome"</span>, <span class="str">"firefox"</span>])
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"os"</span>, [<span class="str">"linux"</span>, <span class="str">"macos"</span>])
+<span class="kw">def</span> <span class="fn">test_compatibility</span>(browser, os):
+    <span class="comment"># Запуститься 4 рази:
+    # chrome+linux, chrome+macos,
+    # firefox+linux, firefox+macos</span>
+    <span class="kw">assert</span> check(browser, os)
+
+<span class="comment"># Параметризація через indirect</span>
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"db"</span>, [<span class="str">"sqlite"</span>, <span class="str">"pg"</span>],
+                          indirect=<span class="kw">True</span>)
+<span class="kw">def</span> <span class="fn">test_with_db</span>(db):
+    <span class="comment"># db — фікстура, яка отримує "sqlite"/"pg"</span>
+    <span class="kw">assert</span> db.query(<span class="str">"SELECT 1"</span>)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Динамічна параметризація</p>
+        <pre><span class="comment"># Генерація кейсів програмно</span>
+<span class="kw">def</span> <span class="fn">generate_cases</span>():
+    <span class="kw">for</span> n <span class="kw">in</span> range(<span class="num">1</span>, <span class="num">6</span>):
+        <span class="kw">yield</span> pytest.param(
+            n, n * n,
+            id=<span class="str">f"n={n}"</span>
+        )
+
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"n, expected"</span>,
+                          list(generate_cases()))
+<span class="kw">def</span> <span class="fn">test_squares</span>(n, expected):
+    <span class="kw">assert</span> n ** <span class="num">2</span> == expected
+
+<span class="comment"># Із файлу / бази даних</span>
+<span class="kw">import</span> json
+cases = json.load(open(<span class="str">"test_cases.json"</span>))
+<span class="deco">@pytest.mark.parametrize</span>(<span class="str">"case"</span>, cases)
+<span class="kw">def</span> <span class="fn">test_from_file</span>(case):
+    <span class="kw">assert</span> process(case[<span class="str">"input"</span>]) == case[<span class="str">"out"</span>]</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- MOCKING -->
+  <div class="section" id="mocking">
+    <p class="section-title">Мокування (Mocking)</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">monkeypatch — вбудований патчер</p>
+        <pre><span class="kw">def</span> <span class="fn">test_env</span>(monkeypatch):
+    monkeypatch.setenv(<span class="str">"API_KEY"</span>, <span class="str">"test-key"</span>)
+    monkeypatch.delenv(<span class="str">"SECRET"</span>, raising=<span class="kw">False</span>)
+
+    <span class="kw">import</span> os
+    <span class="kw">assert</span> os.environ[<span class="str">"API_KEY"</span>] == <span class="str">"test-key"</span>
+
+<span class="kw">def</span> <span class="fn">test_patch_attr</span>(monkeypatch):
+    <span class="comment"># Патч атрибута об'єкта</span>
+    monkeypatch.setattr(<span class="str">"myapp.config.DEBUG"</span>, <span class="kw">True</span>)
+    monkeypatch.setattr(os.path, <span class="str">"exists"</span>,
+                        <span class="kw">lambda</span> x: <span class="kw">True</span>)
+
+<span class="kw">def</span> <span class="fn">test_patch_dict</span>(monkeypatch):
+    <span class="comment"># Безпечний патч словника</span>
+    monkeypatch.setitem(config, <span class="str">"timeout"</span>, <span class="num">30</span>)
+    monkeypatch.delitem(config, <span class="str">"debug"</span>)
+
+<span class="kw">def</span> <span class="fn">test_syspath</span>(monkeypatch):
+    monkeypatch.syspath_prepend(<span class="str">"/custom/path"</span>)
+    monkeypatch.chdir(<span class="str">"/tmp"</span>)</pre>
+        <div class="tip">monkeypatch автоматично відновлює оригінальні значення після тесту. Не треба cleanup!</div>
+      </div>
+      <div class="card">
+        <p class="card-title">unittest.mock + pytest</p>
+        <pre><span class="kw">from</span> unittest.mock <span class="kw">import</span> MagicMock, patch, Mock
+
+<span class="kw">def</span> <span class="fn">test_mock_call</span>():
+    mock_db = MagicMock()
+    mock_db.query.return_value = [<span class="str">"row1"</span>]
+    
+    result = process_data(mock_db)
+    
+    mock_db.query.assert_called_once()
+    mock_db.query.assert_called_with(<span class="str">"SELECT *"</span>)
+    <span class="kw">assert</span> result == [<span class="str">"row1"</span>]
+
+<span class="deco">@patch</span>(<span class="str">"myapp.services.requests.get"</span>)
+<span class="kw">def</span> <span class="fn">test_http</span>(mock_get):
+    mock_get.return_value.json.return_value = {
+        <span class="str">"status"</span>: <span class="str">"ok"</span>
+    }
+    result = fetch_data()
+    <span class="kw">assert</span> result[<span class="str">"status"</span>] == <span class="str">"ok"</span>
+    mock_get.assert_called_once()</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">pytest-mock (рекомендований плагін)</p>
+        <pre><span class="comment"># pip install pytest-mock</span>
+<span class="comment"># надає фікстуру mocker</span>
+
+<span class="kw">def</span> <span class="fn">test_with_mocker</span>(mocker):
+    <span class="comment"># mocker.patch — як @patch, але з автоcleanup</span>
+    mock_send = mocker.patch(<span class="str">"myapp.email.send"</span>)
+    mock_send.return_value = <span class="kw">True</span>
+
+    send_welcome_email(<span class="str">"user@example.com"</span>)
+    
+    mock_send.assert_called_once_with(
+        to=<span class="str">"user@example.com"</span>,
+        subject=<span class="str">"Ласкаво просимо!"</span>
+    )
+
+    <span class="comment"># MagicMock через mocker</span>
+    mock_obj = mocker.MagicMock()
+    mock_obj.attr = <span class="num">42</span>
+    
+    <span class="comment"># Шпигун (spy) — зберігає реальну поведінку</span>
+    spy = mocker.spy(MyClass, <span class="str">"method"</span>)
+    obj = MyClass()
+    obj.method(<span class="num">1</span>, <span class="num">2</span>)
+    spy.assert_called_once_with(obj, <span class="num">1</span>, <span class="num">2</span>)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Side effects та складні моки</p>
+        <pre>mock = MagicMock()
+
+<span class="comment"># Послідовні значення</span>
+mock.next_id.side_effect = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>]
+<span class="kw">assert</span> mock.next_id() == <span class="num">1</span>
+<span class="kw">assert</span> mock.next_id() == <span class="num">2</span>
+
+<span class="comment"># Кидати виключення</span>
+mock.fetch.side_effect = ConnectionError(<span class="str">"timeout"</span>)
+
+<span class="comment"># Функція як side_effect</span>
+<span class="kw">def</span> <span class="fn">fake_read</span>(path):
+    <span class="kw">return</span> <span class="str">f"content of {path}"</span>
+mock.read.side_effect = fake_read
+
+<span class="comment"># Перевірка кількості викликів</span>
+<span class="kw">assert</span> mock.method.call_count == <span class="num">3</span>
+calls = mock.method.call_args_list
+<span class="kw">assert</span> calls[<span class="num">0</span>] == call(<span class="str">"first"</span>)
+
+<span class="comment"># ANY — довільне значення</span>
+<span class="kw">from</span> unittest.mock <span class="kw">import</span> ANY
+mock.save.assert_called_with(ANY, status=<span class="str">"ok"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- CONFTEST -->
+  <div class="section" id="conftest">
+    <p class="section-title">conftest.py — серце конфігурації</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Ієрархія conftest.py</p>
+        <pre>tests/
+├── conftest.py         <span class="comment"># ← доступно всюди</span>
+├── unit/
+│   ├── conftest.py     <span class="comment"># ← тільки для unit/</span>
+│   └── test_calc.py
+└── integration/
+    ├── conftest.py     <span class="comment"># ← тільки для integration/</span>
+    └── test_api.py
+
+<span class="comment"># pytest шукає conftest.py знизу вверх</span>
+<span class="comment"># Фікстура з вищого рівня доступна нижче</span></pre>
+        <div class="tip">conftest.py НЕ потребує імпорту — pytest знаходить його автоматично. Це магія pytest!</div>
+      </div>
+      <div class="card">
+        <p class="card-title">Хуки у conftest.py</p>
+        <pre><span class="comment"># conftest.py</span>
+
+<span class="comment"># Хук після збору тестів</span>
+<span class="kw">def</span> <span class="fn">pytest_collection_modifyitems</span>(items, config):
+    <span class="kw">for</span> item <span class="kw">in</span> items:
+        <span class="kw">if</span> <span class="str">"slow"</span> <span class="kw">in</span> item.keywords:
+            item.add_marker(
+                pytest.mark.timeout(<span class="num">30</span>)
+            )
+
+<span class="comment"># Хук перед запуском тестів</span>
+<span class="kw">def</span> <span class="fn">pytest_runtest_setup</span>(item):
+    <span class="kw">if</span> item.get_closest_marker(<span class="str">"db"</span>):
+        ensure_test_db_ready()
+
+<span class="comment"># Кастомний звіт</span>
+<span class="kw">def</span> <span class="fn">pytest_terminal_summary</span>(terminalreporter):
+    passed = len(terminalreporter.stats.get(<span class="str">"passed"</span>, []))
+    print(<span class="str">f"\nПройшло тестів: {passed}"</span>)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Спільні фікстури</p>
+        <pre><span class="comment"># tests/conftest.py</span>
+<span class="kw">import</span> pytest
+<span class="kw">from</span> myapp <span class="kw">import</span> create_app, db
+
+<span class="deco">@pytest.fixture</span>(scope=<span class="str">"session"</span>)
+<span class="kw">def</span> <span class="fn">app</span>():
+    app = create_app({<span class="str">"TESTING"</span>: <span class="kw">True</span>})
+    <span class="kw">with</span> app.app_context():
+        db.create_all()
+        <span class="kw">yield</span> app
+        db.drop_all()
+
+<span class="deco">@pytest.fixture</span>(scope=<span class="str">"function"</span>)
+<span class="kw">def</span> <span class="fn">client</span>(app):
+    <span class="kw">return</span> app.test_client()
+
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">auth_headers</span>(client):
+    token = client.post(<span class="str">"/auth/login"</span>, json={
+        <span class="str">"user"</span>: <span class="str">"test"</span>, <span class="str">"pass"</span>: <span class="str">"test"</span>
+    }).json[<span class="str">"token"</span>]
+    <span class="kw">return</span> {<span class="str">"Authorization"</span>: <span class="str">f"Bearer {token}"</span>}</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">pytest_configure та плагіни</p>
+        <pre><span class="comment"># conftest.py може реєструвати плагіни</span>
+<span class="kw">def</span> <span class="fn">pytest_configure</span>(config):
+    config.addinivalue_line(
+        <span class="str">"markers"</span>,
+        <span class="str">"smoke: базові smoke тести"</span>
+    )
+    <span class="comment"># Встановити кастомний рівень логування</span>
+    <span class="kw">import</span> logging
+    logging.getLogger(<span class="str">"sqlalchemy"</span>).setLevel(
+        logging.WARNING
+    )
+
+<span class="comment"># Додати CLI опції</span>
+<span class="kw">def</span> <span class="fn">pytest_addoption</span>(parser):
+    parser.addoption(
+        <span class="str">"--env"</span>,
+        default=<span class="str">"dev"</span>,
+        help=<span class="str">"Середовище: dev|staging|prod"</span>
+    )
+
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">env</span>(pytestconfig):
+    <span class="kw">return</span> pytestconfig.getoption(<span class="str">"--env"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXCEPTIONS -->
+  <div class="section" id="exceptions">
+    <p class="section-title">Виключення та попередження</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">pytest.raises</p>
+        <pre><span class="kw">import</span> pytest
+
+<span class="kw">def</span> <span class="fn">test_raises_basic</span>():
+    <span class="kw">with</span> pytest.raises(ValueError):
+        int(<span class="str">"не число"</span>)
+
+<span class="comment"># Перевірка повідомлення</span>
+<span class="kw">def</span> <span class="fn">test_raises_message</span>():
+    <span class="kw">with</span> pytest.raises(ValueError, match=<span class="str">r"invalid"</span>):
+        raise ValueError(<span class="str">"invalid literal"</span>)
+
+<span class="comment"># Детальна перевірка ExceptionInfo</span>
+<span class="kw">def</span> <span class="fn">test_exception_info</span>():
+    <span class="kw">with</span> pytest.raises(TypeError) <span class="kw">as</span> exc_info:
+        <span class="str">"text"</span> + <span class="num">5</span>
+    
+    exc = exc_info.value
+    <span class="kw">assert</span> <span class="str">"str"</span> <span class="kw">in</span> str(exc)
+    <span class="kw">assert</span> exc_info.type <span class="kw">is</span> TypeError
+
+<span class="comment"># Ланцюгові виключення</span>
+<span class="kw">def</span> <span class="fn">test_chained</span>():
+    <span class="kw">with</span> pytest.raises(RuntimeError) <span class="kw">as</span> exc:
+        <span class="kw">try</span>:
+            <span class="num">1</span>/<span class="num">0</span>
+        <span class="kw">except</span> ZeroDivisionError <span class="kw">as</span> e:
+            <span class="kw">raise</span> RuntimeError(<span class="str">"wrap"</span>) <span class="kw">from</span> e
+    <span class="kw">assert</span> exc.value.__cause__ <span class="kw">is not None</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">pytest.warns — перевірка попереджень</p>
+        <pre><span class="kw">import</span> warnings
+<span class="kw">import</span> pytest
+
+<span class="kw">def</span> <span class="fn">test_deprecation</span>():
+    <span class="kw">with</span> pytest.warns(DeprecationWarning):
+        warnings.warn(<span class="str">"old API"</span>, DeprecationWarning)
+
+<span class="comment"># Перевірити текст попередження</span>
+<span class="kw">def</span> <span class="fn">test_warns_match</span>():
+    <span class="kw">with</span> pytest.warns(UserWarning, match=<span class="str">"unsafe"</span>):
+        warnings.warn(<span class="str">"unsafe operation"</span>, UserWarning)
+
+<span class="comment"># Кілька попереджень</span>
+<span class="kw">def</span> <span class="fn">test_multiple_warns</span>(recwarn):
+    warnings.warn(<span class="str">"one"</span>, UserWarning)
+    warnings.warn(<span class="str">"two"</span>, DeprecationWarning)
+    
+    <span class="kw">assert</span> len(recwarn) == <span class="num">2</span>
+    <span class="kw">assert</span> str(recwarn[<span class="num">0</span>].message) == <span class="str">"one"</span>
+
+<span class="comment"># Фільтрація попереджень у pytest.ini</span>
+<span class="comment"># filterwarnings =</span>
+<span class="comment">#     error::DeprecationWarning</span>
+<span class="comment">#     ignore::PendingDeprecationWarning</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">capsys — захоплення stdout/stderr</p>
+        <pre><span class="kw">def</span> <span class="fn">test_print_output</span>(capsys):
+    print(<span class="str">"Hello, World!"</span>)
+    print(<span class="str">"Error!"</span>, file=__import__(<span class="str">'sys'</span>).stderr)
+    
+    captured = capsys.readouterr()
+    <span class="kw">assert</span> <span class="str">"Hello"</span> <span class="kw">in</span> captured.out
+    <span class="kw">assert</span> <span class="str">"Error"</span> <span class="kw">in</span> captured.err
+
+<span class="comment"># caplog — захоплення логів</span>
+<span class="kw">import</span> logging
+
+<span class="kw">def</span> <span class="fn">test_logging</span>(caplog):
+    <span class="kw">import</span> logging
+    <span class="kw">with</span> caplog.at_level(logging.WARNING):
+        logging.warning(<span class="str">"Попередження!"</span>)
+        logging.info(<span class="str">"Info (не захопить)"</span>)
+    
+    <span class="kw">assert</span> <span class="str">"Попередження"</span> <span class="kw">in</span> caplog.text
+    <span class="kw">assert</span> caplog.records[<span class="num">0</span>].levelname == <span class="str">"WARNING"</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Очікувані падіння та умовні xfail</p>
+        <pre><span class="comment"># xfail з умовою</span>
+<span class="deco">@pytest.mark.xfail</span>(
+    sys.version_info < (<span class="num">3</span>, <span class="num">10</span>),
+    reason=<span class="str">"match statement needs 3.10+"</span>
+)
+<span class="kw">def</span> <span class="fn">test_match</span>(): ...
+
+<span class="comment"># Динамічний xfail всередині тесту</span>
+<span class="kw">def</span> <span class="fn">test_dynamic_xfail</span>():
+    <span class="kw">if</span> <span class="kw">not</span> has_feature():
+        pytest.xfail(<span class="str">"функція недоступна"</span>)
+    <span class="kw">assert</span> use_feature() == <span class="kw">True</span>
+
+<span class="comment"># Пропустити всередині тесту</span>
+<span class="kw">def</span> <span class="fn">test_conditional_skip</span>():
+    <span class="kw">if not</span> is_network_available():
+        pytest.skip(<span class="str">"немає мережі"</span>)
+    <span class="kw">assert</span> fetch_url(<span class="str">"https://example.com"</span>)</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- PLUGINS -->
+  <div class="section" id="plugins">
+    <p class="section-title">Плагіни та розширення</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">pytest-cov — покриття коду</p>
+        <pre><span class="comment"># pip install pytest-cov</span>
+
+<span class="comment"># Базовий запуск</span>
+<span class="comment"># pytest --cov=myapp --cov-report=html</span>
+<span class="comment"># pytest --cov=myapp --cov-report=term-missing</span>
+
+<span class="comment"># .coveragerc або pyproject.toml</span>
+[tool.coverage.run]
+source = ["myapp"]
+omit = ["*/tests/*", "*/migrations/*"]
+branch = true    <span class="comment"># гілковий аналіз</span>
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    <span class="str">"raise NotImplementedError"</span>
+]
+fail_under = <span class="num">80</span>   <span class="comment"># мінімальне покриття %</span>
+
+<span class="comment"># Виключити рядок з аналізу:</span>
+<span class="kw">if</span> debug:  <span class="comment"># pragma: no cover</span>
+    print(state)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">pytest-asyncio — async тести</p>
+        <pre><span class="comment"># pip install pytest-asyncio</span>
+<span class="kw">import</span> pytest
+<span class="kw">import</span> asyncio
+
+<span class="comment"># pytest.ini або pyproject.toml</span>
+<span class="comment"># asyncio_mode = auto</span>
+
+<span class="deco">@pytest.mark.asyncio</span>
+<span class="kw">async def</span> <span class="fn">test_async_func</span>():
+    result = <span class="kw">await</span> some_async_function()
+    <span class="kw">assert</span> result == <span class="str">"expected"</span>
+
+<span class="comment"># Async фікстури</span>
+<span class="deco">@pytest.fixture</span>
+<span class="kw">async def</span> <span class="fn">async_client</span>():
+    <span class="kw">async with</span> AsyncClient(app=app) <span class="kw">as</span> client:
+        <span class="kw">yield</span> client
+
+<span class="deco">@pytest.mark.asyncio</span>
+<span class="kw">async def</span> <span class="fn">test_api</span>(async_client):
+    response = <span class="kw">await</span> async_client.get(<span class="str">"/health"</span>)
+    <span class="kw">assert</span> response.status_code == <span class="num">200</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">pytest-xdist — паралельний запуск</p>
+        <pre><span class="comment"># pip install pytest-xdist</span>
+
+<span class="comment"># Запуск на N воркерів</span>
+<span class="comment"># pytest -n 4           # 4 паралельних воркери</span>
+<span class="comment"># pytest -n auto        # авто — по CPU</span>
+<span class="comment"># pytest -n logical     # по логічних CPU</span>
+
+<span class="comment"># Розподіл тестів</span>
+<span class="comment"># pytest -n 4 --dist=loadscope   # по модулях</span>
+<span class="comment"># pytest -n 4 --dist=loadfile    # по файлах</span>
+
+<span class="comment"># ВАЖЛИВО: тести мають бути незалежними!</span>
+<span class="comment"># Спільний стан = race condition!</span>
+
+<span class="comment"># Перевірка в тесті чи є xdist</span>
+<span class="kw">def</span> <span class="fn">test_worker_id</span>(worker_id):
+    <span class="comment"># worker_id: "gw0", "gw1"... або "master"</span>
+    print(<span class="str">f"Воркер: {worker_id}"</span>)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Інші важливі плагіни</p>
+        <table class="table">
+          <thead><tr><th>Плагін</th><th>Призначення</th></tr></thead>
+          <tbody>
+            <tr><td>pytest-mock</td><td>Зручна фікстура mocker для мокування</td></tr>
+            <tr><td>pytest-freezegun</td><td>Заморозити час (datetime.now())</td></tr>
+            <tr><td>pytest-timeout</td><td>Ліміт часу виконання тесту</td></tr>
+            <tr><td>pytest-randomly</td><td>Рандомний порядок тестів (виявляє залежності)</td></tr>
+            <tr><td>pytest-benchmark</td><td>Бенчмаркінг продуктивності</td></tr>
+            <tr><td>pytest-httpx</td><td>Мок для httpx запитів</td></tr>
+            <tr><td>responses</td><td>Мок для requests</td></tr>
+            <tr><td>factory-boy</td><td>Фабрики тестових об'єктів</td></tr>
+            <tr><td>pytest-django</td><td>Django інтеграція</td></tr>
+            <tr><td>pytest-flask</td><td>Flask інтеграція</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADVANCED -->
+  <div class="section" id="advanced">
+    <p class="section-title">Просунуті техніки</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Власні плагіни та хуки</p>
+        <pre><span class="comment"># my_plugin.py або conftest.py</span>
+<span class="kw">import</span> pytest
+
+<span class="comment"># Хук: модифікація збору тестів</span>
+<span class="kw">def</span> <span class="fn">pytest_collect_file</span>(parent, file_path):
+    <span class="kw">if</span> file_path.suffix == <span class="str">".yaml"</span>:
+        <span class="kw">return</span> YamlFile.from_parent(parent, path=file_path)
+
+<span class="comment"># Хук: кастомний звіт по тесту</span>
+<span class="kw">def</span> <span class="fn">pytest_runtest_logreport</span>(report):
+    <span class="kw">if</span> report.failed:
+        take_screenshot(report.nodeid)
+
+<span class="comment"># Реєстрація плагіну через setup.py:</span>
+<span class="comment"># entry_points={</span>
+<span class="comment">#   "pytest11": ["my_plugin = my_plugin"]</span>
+<span class="comment"># }</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Property-based testing (Hypothesis)</p>
+        <pre><span class="comment"># pip install hypothesis</span>
+<span class="kw">from</span> hypothesis <span class="kw">import</span> given, strategies <span class="kw">as</span> st
+
+<span class="deco">@given</span>(st.integers(), st.integers())
+<span class="kw">def</span> <span class="fn">test_add_commutative</span>(a, b):
+    <span class="comment"># Hypothesis генерує сотні кейсів!</span>
+    <span class="kw">assert</span> add(a, b) == add(b, a)
+
+<span class="deco">@given</span>(st.lists(st.integers(), min_size=<span class="num">1</span>))
+<span class="kw">def</span> <span class="fn">test_sort_idempotent</span>(lst):
+    <span class="kw">assert</span> sorted(sorted(lst)) == sorted(lst)
+
+<span class="deco">@given</span>(st.text(min_size=<span class="num">1</span>))
+<span class="kw">def</span> <span class="fn">test_encode_decode</span>(s):
+    <span class="kw">assert</span> decode(encode(s)) == s
+
+<span class="comment"># Власні стратегії</span>
+email_strategy = st.from_regex(
+    r"[a-z]+@[a-z]+\.[a-z]{2,4}", fullmatch=<span class="kw">True</span>
+)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Snapshot testing</p>
+        <pre><span class="comment"># pip install syrupy</span>
+<span class="kw">from</span> syrupy <span class="kw">import</span> AssertionHandler
+
+<span class="kw">def</span> <span class="fn">test_api_response</span>(snapshot):
+    response = api.get_user(<span class="num">1</span>)
+    <span class="comment"># Перший запуск: збереже знімок</span>
+    <span class="comment"># Наступні: порівняє з попереднім</span>
+    <span class="kw">assert</span> response == snapshot
+
+<span class="comment"># Оновити знімки:</span>
+<span class="comment"># pytest --snapshot-update</span>
+
+<span class="comment"># Знімок HTML/JSON зберігається у файл:</span>
+<span class="comment"># tests/__snapshots__/test_api.ambr</span></pre>
+        <div class="tip">Ідеально для API відповідей, HTML рендерингу, складних словників де важлива структура.</div>
+      </div>
+      <div class="card">
+        <p class="card-title">Тестування з базою даних (транзакції)</p>
+        <pre><span class="deco">@pytest.fixture</span>(scope=<span class="str">"session"</span>)
+<span class="kw">def</span> <span class="fn">engine</span>():
+    eng = create_engine(<span class="str">"postgresql://test/testdb"</span>)
+    Base.metadata.create_all(eng)
+    <span class="kw">yield</span> eng
+    Base.metadata.drop_all(eng)
+
+<span class="deco">@pytest.fixture</span>
+<span class="kw">def</span> <span class="fn">session</span>(engine):
+    conn = engine.connect()
+    trans = conn.begin()        <span class="comment"># відкрити транзакцію</span>
+    session = Session(bind=conn)
+    <span class="kw">yield</span> session
+    session.close()
+    trans.rollback()            <span class="comment"># ← відкат після тесту!</span>
+    conn.close()
+
+<span class="comment"># Кожен тест чистий — без delete/truncate!</span>
+<span class="kw">def</span> <span class="fn">test_create_user</span>(session):
+    user = User(name=<span class="str">"Alice"</span>)
+    session.add(user)
+    session.flush()
+    <span class="kw">assert</span> user.id <span class="kw">is not None</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Власний Assert Helper</p>
+        <pre><span class="comment"># Кастомний assert для складних об'єктів</span>
+<span class="kw">class</span> <span class="fn">ResponseAssertion</span>:
+    <span class="kw">def</span> __init__(self, response):
+        self.response = response
+
+    <span class="kw">def</span> <span class="fn">has_status</span>(self, code):
+        <span class="kw">assert</span> self.response.status_code == code, (
+            <span class="str">f"Очікували {code}, отримали "
+            f"{self.response.status_code}: "
+            f"{self.response.text}"</span>
+        )
+        <span class="kw">return</span> self  <span class="comment"># ← ланцюгові виклики</span>
+
+    <span class="kw">def</span> <span class="fn">has_json_key</span>(self, key):
+        data = self.response.json()
+        <span class="kw">assert</span> key <span class="kw">in</span> data, <span class="str">f"Ключ {key!r} відсутній"</span>
+        <span class="kw">return</span> self
+
+<span class="kw">def</span> <span class="fn">assert_response</span>(r): <span class="kw">return</span> ResponseAssertion(r)
+
+<span class="comment"># Використання:</span>
+assert_response(r).has_status(<span class="num">200</span>).has_json_key(<span class="str">"id"</span>)</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Benchmark тестування</p>
+        <pre><span class="comment"># pip install pytest-benchmark</span>
+
+<span class="kw">def</span> <span class="fn">test_sort_performance</span>(benchmark):
+    data = list(range(<span class="num">10000</span>, <span class="num">0</span>, -<span class="num">1</span>))
+    
+    result = benchmark(sorted, data)
+    <span class="kw">assert</span> result[<span class="num">0</span>] == <span class="num">1</span>
+
+<span class="comment"># З налаштуваннями</span>
+<span class="kw">def</span> <span class="fn">test_api_speed</span>(benchmark):
+    benchmark.pedantic(
+        api_call,
+        args=(<span class="str">"payload"</span>,),
+        iterations=<span class="num">10</span>,
+        rounds=<span class="num">5</span>,
+        warmup_rounds=<span class="num">2</span>
+    )
+
+<span class="comment"># Запуск: pytest --benchmark-only</span>
+<span class="comment"># Порівняння: pytest --benchmark-compare</span></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLI -->
+  <div class="section" id="cli">
+    <p class="section-title">CLI — командний рядок</p>
+    <div class="grid grid-2">
+      <div class="card">
+        <p class="card-title">Основні команди</p>
+        <table class="table">
+          <thead><tr><th>Команда</th><th>Дія</th></tr></thead>
+          <tbody>
+            <tr><td>pytest</td><td>Запустити всі тести</td></tr>
+            <tr><td>pytest tests/unit/</td><td>Тести в директорії</td></tr>
+            <tr><td>pytest test_calc.py</td><td>Тести у файлі</td></tr>
+            <tr><td>pytest test_calc.py::test_add</td><td>Один тест</td></tr>
+            <tr><td>pytest test_calc.py::TestMath::test_mul</td><td>Метод класу</td></tr>
+            <tr><td>pytest -k "add or sub"</td><td>За назвою (keyword)</td></tr>
+            <tr><td>pytest -m smoke</td><td>За маркером</td></tr>
+            <tr><td>pytest -v</td><td>Детальний вивід</td></tr>
+            <tr><td>pytest -vv</td><td>Дуже детальний вивід</td></tr>
+            <tr><td>pytest -s</td><td>Показати print/stdout</td></tr>
+            <tr><td>pytest -x</td><td>Зупинитись на першій помилці</td></tr>
+            <tr><td>pytest --maxfail=3</td><td>Зупинитись після N помилок</td></tr>
+            <tr><td>pytest -lf</td><td>Тільки падаючі з минулого разу</td></tr>
+            <tr><td>pytest -ff</td><td>Спочатку падаючі, потім решта</td></tr>
+            <tr><td>pytest --tb=short</td><td>Короткий traceback</td></tr>
+            <tr><td>pytest --tb=no</td><td>Без traceback</td></tr>
+            <tr><td>pytest --co</td><td>Тільки зібрати (не запускати)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="card">
+        <p class="card-title">Запуск та відлагодження</p>
+        <pre><span class="comment"># Показати вбудовані фікстури</span>
+pytest --fixtures
+
+<span class="comment"># Показати markers</span>
+pytest --markers
+
+<span class="comment"># Виконати з pdb при помилці</span>
+pytest --pdb
+pytest --pdb -x    <span class="comment"># зупинитись + дебагер</span>
+
+<span class="comment"># Власна точка входу pdb</span>
+<span class="kw">def</span> <span class="fn">test_debug</span>():
+    x = compute()
+    import pdb; pdb.set_trace()  <span class="comment"># або breakpoint()</span>
+    <span class="kw">assert</span> x > <span class="num">0</span>
+
+<span class="comment"># Verbose з повним шляхом</span>
+pytest -v --tb=long
+
+<span class="comment"># Тихий режим (тільки підсумок)</span>
+pytest -q
+
+<span class="comment"># Показати N найповільніших тестів</span>
+pytest --durations=10
+
+<span class="comment"># Профілювання</span>
+pytest --profile  <span class="comment"># pytest-profiling</span></pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Типові робочі команди</p>
+        <pre><span class="comment"># CI/CD пайплайн</span>
+pytest \
+  --cov=myapp \
+  --cov-report=xml \
+  --cov-fail-under=<span class="num">80</span> \
+  --tb=short \
+  -q \
+  --junitxml=report.xml
+
+<span class="comment"># Локальна розробка — тільки швидкі</span>
+pytest -m <span class="str">"not slow"</span> -x --tb=short
+
+<span class="comment"># Перед пушем — всі тести паралельно</span>
+pytest -n auto --tb=short
+
+<span class="comment"># Знайти повільні тести</span>
+pytest --durations=<span class="num">0</span> -q
+
+<span class="comment"># Перегенерувати кеш (lf/ff)</span>
+pytest --cache-clear
+
+<span class="comment"># Конкретне середовище</span>
+pytest --env=staging -m integration</pre>
+      </div>
+      <div class="card">
+        <p class="card-title">Розбір виводу та коди виходу</p>
+        <pre><span class="comment"># Exit codes:</span>
+<span class="comment"># 0 — всі тести пройшли</span>
+<span class="comment"># 1 — є падаючі тести</span>
+<span class="comment"># 2 — перервано (Ctrl+C)</span>
+<span class="comment"># 3 — внутрішня помилка pytest</span>
+<span class="comment"># 4 — помилка в команді</span>
+<span class="comment"># 5 — жодного тесту не знайдено</span>
+
+<span class="comment"># Символи у виводі:</span>
+<span class="comment"># .  — PASSED</span>
+<span class="comment"># F  — FAILED</span>
+<span class="comment"># E  — ERROR (в фікстурі)</span>
+<span class="comment"># x  — XFAIL (очікувана помилка)</span>
+<span class="comment"># X  — XPASS (несподівано пройшло)</span>
+<span class="comment"># s  — SKIPPED</span>
+
+<span class="comment"># -ra: показати підсумок всіх != pass</span>
+pytest -ra
+<span class="comment"># -rN: failed; -rs: skipped; -rx: xfail</span></pre>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function show(id) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>

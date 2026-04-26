@@ -1,0 +1,886 @@
+
+<h2 class="sr-only">Повна шпаргалка: ітератори, генератори, ітераторні вирази та контекстні менеджери в Python 3.9</h2>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.root{padding:1.5rem 0;font-family:var(--font-sans)}
+.header{margin-bottom:1.5rem}
+.header h1{font-size:22px;font-weight:500;color:var(--color-text-primary);margin-bottom:4px}
+.header p{font-size:13px;color:var(--color-text-secondary)}
+.nav{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:2rem}
+.nb{font-size:12px;padding:5px 14px;border-radius:999px;border:0.5px solid var(--color-border-secondary);background:var(--color-background-secondary);color:var(--color-text-secondary);cursor:pointer;font-family:var(--font-sans);transition:all .15s}
+.nb.on,.nb:hover{background:#E6F1FB;color:#0C447C;border-color:#185FA5}
+.nb.on-teal{background:#E1F5EE;color:#085041;border-color:#0F6E56}
+.nb.on-purple{background:#EEEDFE;color:#3C3489;border-color:#534AB7}
+.nb.on-amber{background:#FAEEDA;color:#633806;border-color:#854F0B}
+.nb.on-coral{background:#FAECE7;color:#712B13;border-color:#993C1D}
+.sec{display:none}
+.sec.active{display:block}
+.grid{display:grid;gap:1rem}
+.g2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.g1{grid-template-columns:1fr}
+.card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:1rem 1.25rem}
+.ct{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.75rem}
+pre{background:var(--color-background-secondary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:.875rem 1rem;font-size:12px;line-height:1.75;overflow-x:auto;margin:.5rem 0;font-family:var(--font-mono);color:var(--color-text-primary)}
+.cm{color:var(--color-text-tertiary)}
+.kw{color:#185FA5}
+.fn{color:#0F6E56}
+.st{color:#3B6D11}
+.dc{color:#854F0B}
+.nm{color:#993556}
+.bi{color:#534AB7}
+.tip{background:#E6F1FB;border-left:3px solid #185FA5;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.75rem 1rem;font-size:13px;line-height:1.6;color:var(--color-text-primary);margin:.75rem 0}
+.warn{background:#FAEEDA;border-left:3px solid #854F0B;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.75rem 1rem;font-size:13px;line-height:1.6;color:var(--color-text-primary);margin:.75rem 0}
+.good{background:#EAF3DE;border-left:3px solid #3B6D11;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.75rem 1rem;font-size:13px;line-height:1.6;color:var(--color-text-primary);margin:.75rem 0}
+.danger{background:#FCEBEB;border-left:3px solid #A32D2D;border-radius:0 var(--border-radius-md) var(--border-radius-md) 0;padding:.75rem 1rem;font-size:13px;line-height:1.6;color:var(--color-text-primary);margin:.75rem 0}
+.exp{font-size:13px;line-height:1.7;color:var(--color-text-secondary);margin:.5rem 0 .75rem}
+.cmd{display:inline-block;background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:1px 7px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary)}
+.stitle{font-size:18px;font-weight:500;color:var(--color-text-primary);margin-bottom:1.5rem;padding-bottom:.75rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.badge{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:500;margin:0 2px 4px}
+.b-blue{background:#E6F1FB;color:#0C447C}
+.b-teal{background:#E1F5EE;color:#085041}
+.b-purple{background:#EEEDFE;color:#3C3489}
+.b-amber{background:#FAEEDA;color:#633806}
+.b-coral{background:#FAECE7;color:#712B13}
+.b-green{background:#EAF3DE;color:#27500A}
+.b-red{background:#FCEBEB;color:#791F1F}
+h3{font-size:14px;font-weight:500;color:var(--color-text-primary);margin:1rem 0 .4rem}
+.tbl{width:100%;border-collapse:collapse;font-size:12px}
+.tbl th{text-align:left;padding:6px 10px;background:var(--color-background-secondary);color:var(--color-text-secondary);font-family:var(--font-sans);font-weight:500;border-bottom:0.5px solid var(--color-border-tertiary)}
+.tbl td{padding:6px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary);vertical-align:top}
+.tbl td:first-child{font-family:var(--font-mono);font-size:11px}
+.tbl tr:last-child td{border-bottom:none}
+.diff-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin:.75rem 0}
+.diff-card{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:.875rem}
+.diff-title{font-size:12px;font-weight:500;margin-bottom:.5rem}
+.diff-title.blue{color:#0C447C}
+.diff-title.teal{color:#085041}
+.diff-title.purple{color:#3C3489}
+.diff-title.amber{color:#633806}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:.75rem 0}
+.flow-box{background:var(--color-background-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);padding:5px 12px;font-size:12px;font-family:var(--font-mono);color:var(--color-text-primary)}
+.flow-arr{color:var(--color-text-tertiary);font-size:14px}
+</style>
+
+<div class="root">
+<div class="header">
+  <h1>Ітератори, генератори та контекстні менеджери</h1>
+  <p>Python 3.9 — від протоколів до просунутих патернів</p>
+</div>
+
+<div class="nav" id="nav">
+  <button class="nb" onclick="show('compare','on')">Порівняння</button>
+  <button class="nb" onclick="show('iterator','on')">Ітератор</button>
+  <button class="nb" onclick="show('iterable','on')">Ітерований об'єкт</button>
+  <button class="nb" onclick="show('generator','on-teal')">Генератор</button>
+  <button class="nb" onclick="show('genexpr','on-purple')">Генераторний вираз</button>
+  <button class="nb" onclick="show('advanced','on-blue')">Просунуте</button>
+  <button class="nb" onclick="show('context','on-amber')">Контекстні менеджери</button>
+</div>
+
+<div class="sec active" id="compare">
+  <p class="stitle">Порівняння — у чому різниця?</p>
+  <div class="card" style="margin-bottom:1rem">
+    <p class="ct">Чотири ключові концепції</p>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin-bottom:1rem">
+      <div class="diff-card"><div class="diff-title blue">Iterable</div><div class="exp" style="margin:0;font-size:12px">Об'єкт з <span class="cmd">__iter__</span>. Можна обійти for-циклом. Сам НЕ зберігає позицію.</div></div>
+      <div class="diff-card"><div class="diff-title teal">Iterator</div><div class="exp" style="margin:0;font-size:12px">Об'єкт з <span class="cmd">__iter__</span> + <span class="cmd">__next__</span>. Зберігає поточну позицію. Одноразовий.</div></div>
+      <div class="diff-card"><div class="diff-title purple">Generator</div><div class="exp" style="margin:0;font-size:12px">Функція з <span class="cmd">yield</span>. Автоматично є ітератором. Лінивий — обчислює по запиту.</div></div>
+      <div class="diff-card"><div class="diff-title amber">Gen expression</div><div class="exp" style="margin:0;font-size:12px">Коротка форма генератора. Синтаксис як list comprehension, але в дужках <span class="cmd">()</span>.</div></div>
+    </div>
+    <div class="flow">
+      <div class="flow-box">for x in obj</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">obj.__iter__()</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">iterator</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">__next__()</div>
+      <div class="flow-arr">→</div>
+      <div class="flow-box">StopIteration</div>
+    </div>
+  </div>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">Швидке порівняння</p>
+      <table class="tbl">
+        <thead><tr><th>Властивість</th><th>Iterable</th><th>Iterator</th><th>Generator</th></tr></thead>
+        <tbody>
+          <tr><td>__iter__</td><td>✓</td><td>✓</td><td>✓</td></tr>
+          <tr><td>__next__</td><td>✗</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Зберігає стан</td><td>✗</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Лінивий</td><td>✗ / ✓</td><td>✓</td><td>✓</td></tr>
+          <tr><td>Повторне обходження</td><td>✓</td><td>✗</td><td>✗</td></tr>
+          <tr><td>Пам'ять</td><td>вся</td><td>O(1)</td><td>O(1)</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="card">
+      <p class="ct">Перевірка через isinstance</p>
+      <pre><span class="kw">from</span> collections.abc <span class="kw">import</span> (
+    Iterable, Iterator, Generator
+)
+
+lst = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]
+it  = iter(lst)
+gen = (x*x <span class="kw">for</span> x <span class="kw">in</span> lst)
+
+<span class="bi">isinstance</span>(lst, Iterable)   <span class="cm"># True</span>
+<span class="bi">isinstance</span>(lst, Iterator)   <span class="cm"># False !</span>
+<span class="bi">isinstance</span>(it,  Iterator)   <span class="cm"># True</span>
+<span class="bi">isinstance</span>(it,  Iterable)   <span class="cm"># True (iter є iterable)</span>
+<span class="bi">isinstance</span>(gen, Generator)  <span class="cm"># True</span>
+<span class="bi">isinstance</span>(gen, Iterator)   <span class="cm"># True</span>
+
+<span class="cm"># Кожен Iterator є Iterable!</span>
+<span class="cm"># Але не навпаки.</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="iterator">
+  <p class="stitle">Ітератор (Iterator)</p>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">Ітераторний протокол</p>
+      <p class="exp">Два обов'язкових методи. Без них — не ітератор.</p>
+      <pre><span class="kw">class</span> <span class="fn">Counter</span>:
+    <span class="cm">"""Власний ітератор від 1 до max"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, max):
+        self.max = max
+        self.current = <span class="nm">0</span>
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(self):
+        <span class="cm"># Повертає self — ітератор сам є iterable!</span>
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__next__</span>(self):
+        self.current += <span class="nm">1</span>
+        <span class="kw">if</span> self.current > self.max:
+            <span class="kw">raise</span> <span class="bi">StopIteration</span>  <span class="cm"># сигнал кінця</span>
+        <span class="kw">return</span> self.current
+
+c = Counter(<span class="nm">3</span>)
+<span class="bi">next</span>(c)  <span class="cm"># → 1</span>
+<span class="bi">next</span>(c)  <span class="cm"># → 2</span>
+<span class="kw">for</span> n <span class="kw">in</span> Counter(<span class="nm">5</span>):
+    <span class="bi">print</span>(n)  <span class="cm"># 1, 2, 3, 4, 5</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">Як працює for під капотом</p>
+      <pre><span class="cm"># Цей код:</span>
+<span class="kw">for</span> x <span class="kw">in</span> [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]:
+    <span class="bi">print</span>(x)
+
+<span class="cm"># Рівнозначний цьому:</span>
+_iter = <span class="bi">iter</span>([<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>])  <span class="cm"># → list.__iter__()</span>
+<span class="kw">while True</span>:
+    <span class="kw">try</span>:
+        x = <span class="bi">next</span>(_iter)    <span class="cm"># → list_iterator.__next__()</span>
+        <span class="bi">print</span>(x)
+    <span class="kw">except</span> <span class="bi">StopIteration</span>:
+        <span class="kw">break</span>              <span class="cm"># for ловить StopIteration</span>
+
+<span class="cm"># iter() викликає __iter__</span>
+<span class="cm"># next() викликає __next__</span>
+<span class="cm"># StopIteration → кінець циклу</span></pre>
+      <div class="tip">Починаючи з Python 3.7 StopIteration всередині генератора перетворюється на RuntimeError. Завжди використовуй return замість raise StopIteration у генераторах.</div>
+    </div>
+    <div class="card">
+      <p class="ct">Ітератор — одноразовий!</p>
+      <pre><span class="kw">from</span> collections.abc <span class="kw">import</span> Iterator
+
+lst = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]
+it = <span class="bi">iter</span>(lst)
+
+<span class="cm"># Перший обхід</span>
+<span class="bi">list</span>(it)  <span class="cm"># → [1, 2, 3]</span>
+
+<span class="cm"># Другий обхід — ПОРОЖНЬО!</span>
+<span class="bi">list</span>(it)  <span class="cm"># → []  ← ітератор вичерпано</span>
+
+<span class="cm"># Список — не ітератор, можна обходити знову:</span>
+<span class="bi">list</span>(lst)  <span class="cm"># → [1, 2, 3]  ✓</span>
+<span class="bi">list</span>(lst)  <span class="cm"># → [1, 2, 3]  ✓</span>
+
+<span class="cm"># iter() на ітераторі повертає той самий об'єкт!</span>
+<span class="bi">iter</span>(it) <span class="kw">is</span> it  <span class="cm"># → True</span></pre>
+      <div class="warn">Ніколи не збережи ітератор і не чекай повторного обходу. Якщо потрібен повторний обхід — зроби list(it) або використай iterable.</div>
+    </div>
+    <div class="card">
+      <p class="ct">Практичний ітератор — зчитування файлу</p>
+      <pre><span class="kw">class</span> <span class="fn">FileLineIterator</span>:
+    <span class="cm">"""Читає файл рядок за рядком — O(1) пам'яті"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, path):
+        self._file = <span class="bi">open</span>(path, <span class="st">'r'</span>)
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(self):
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__next__</span>(self):
+        line = self._file.readline()
+        <span class="kw">if not</span> line:
+            self._file.close()
+            <span class="kw">raise</span> <span class="bi">StopIteration</span>
+        <span class="kw">return</span> line.rstrip(<span class="st">'\n'</span>)
+
+<span class="cm"># Використання:</span>
+<span class="kw">for</span> line <span class="kw">in</span> FileLineIterator(<span class="st">'data.txt'</span>):
+    <span class="bi">print</span>(line)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="iterable">
+  <p class="stitle">Ітерований об'єкт (Iterable)</p>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">Iterable vs Iterator — ключова різниця</p>
+      <pre><span class="kw">class</span> <span class="fn">NumberRange</span>:
+    <span class="cm">"""Iterable — можна обходити багато разів!"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, start, stop):
+        self.start = start
+        self.stop  = stop
+
+    <span class="kw">def</span> <span class="fn">__iter__</span>(self):
+        <span class="cm"># Щоразу створює НОВИЙ ітератор</span>
+        current = self.start
+        <span class="kw">while</span> current < self.stop:
+            <span class="kw">yield</span> current         <span class="cm"># ← це генератор!</span>
+            current += <span class="nm">1</span>
+
+r = NumberRange(<span class="nm">1</span>, <span class="nm">4</span>)
+<span class="bi">list</span>(r)  <span class="cm"># → [1, 2, 3]</span>
+<span class="bi">list</span>(r)  <span class="cm"># → [1, 2, 3]  ← знову! Не вичерпано.</span>
+
+<span class="cm"># iter(r) is iter(r) → False (новий кожного разу)</span></pre>
+      <div class="tip">Ключова різниця: __iter__ повертає self (ітератор) або новий об'єкт (iterable). Якщо повертає self — об'єкт є ітератором і вичерпується.</div>
+    </div>
+    <div class="card">
+      <p class="ct">Вбудовані iterables</p>
+      <pre><span class="cm"># Всі ці об'єкти — iterable, але НЕ iterator</span>
+lst  = [<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>]          <span class="cm"># list</span>
+tpl  = (<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>)          <span class="cm"># tuple</span>
+s    = <span class="st">"abc"</span>               <span class="cm"># str</span>
+d    = {<span class="st">"a"</span>: <span class="nm">1</span>}            <span class="cm"># dict (ітерує ключі)</span>
+st   = {<span class="nm">1</span>, <span class="nm">2</span>, <span class="nm">3</span>}          <span class="cm"># set</span>
+rng  = <span class="bi">range</span>(<span class="nm">10</span>)           <span class="cm"># range</span>
+
+<span class="cm"># iter() на них дає ітератор:</span>
+<span class="bi">type</span>(<span class="bi">iter</span>(lst))   <span class="cm"># list_iterator</span>
+<span class="bi">type</span>(<span class="bi">iter</span>(s))     <span class="cm"># str_ascii_iterator</span>
+<span class="bi">type</span>(<span class="bi">iter</span>(d))     <span class="cm"># dict_keyiterator</span>
+
+<span class="cm"># dict розпаковується по-різному:</span>
+<span class="kw">for</span> k    <span class="kw">in</span> d:          <span class="cm"># ключі</span>
+<span class="kw">for</span> k, v <span class="kw">in</span> d.items():  <span class="cm"># пари</span>
+<span class="kw">for</span> v    <span class="kw">in</span> d.values():  <span class="cm"># значення</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">__getitem__ — альтернативний протокол</p>
+      <pre><span class="kw">class</span> <span class="fn">OldStyleIterable</span>:
+    <span class="cm">"""Без __iter__! Але Python вміє ітерувати."""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, data):
+        self.data = data
+
+    <span class="kw">def</span> <span class="fn">__getitem__</span>(self, index):
+        <span class="kw">return</span> self.data[index]  <span class="cm"># IndexError → stop</span>
+
+obj = OldStyleIterable([<span class="nm">10</span>, <span class="nm">20</span>, <span class="nm">30</span>])
+<span class="kw">for</span> x <span class="kw">in</span> obj:
+    <span class="bi">print</span>(x)  <span class="cm"># 10, 20, 30</span>
+
+<span class="cm"># Python робить iter() → шукає __iter__,</span>
+<span class="cm"># якщо нема → шукає __getitem__(0, 1, 2...)</span>
+<span class="cm"># поки не отримає IndexError</span></pre>
+      <div class="warn">Це legacy-протокол. У новому коді завжди реалізуй __iter__.</div>
+    </div>
+    <div class="card">
+      <p class="ct">iter() з sentinel — зчитування до значення</p>
+      <pre><span class="cm"># iter(callable, sentinel) — особлива форма</span>
+<span class="kw">import</span> functools
+
+<span class="cm"># Читати файл блоками по 1024 байти</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">'file.bin'</span>, <span class="st">'rb'</span>) <span class="kw">as</span> f:
+    read_block = functools.partial(f.read, <span class="nm">1024</span>)
+    <span class="kw">for</span> block <span class="kw">in</span> <span class="bi">iter</span>(read_block, b<span class="st">''</span>):
+        process(block)
+        <span class="cm"># Зупиняється коли f.read(1024) → b''</span>
+
+<span class="cm"># Читати stdin до 'quit'</span>
+<span class="kw">for</span> line <span class="kw">in</span> <span class="bi">iter</span>(<span class="bi">input</span>, <span class="st">'quit'</span>):
+    <span class="bi">print</span>(<span class="st">f"Отримав: {line}"</span>)</pre>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="generator">
+  <p class="stitle">Генератор (Generator function)</p>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">Основи генераторів</p>
+      <p class="exp">Функція стає генератором як тільки в ній є хоча б одне <span class="cmd">yield</span>.</p>
+      <pre><span class="kw">def</span> <span class="fn">simple_gen</span>():
+    <span class="bi">print</span>(<span class="st">"крок 1"</span>)
+    <span class="kw">yield</span> <span class="nm">1</span>          <span class="cm"># ← зупинка, повертає 1</span>
+    <span class="bi">print</span>(<span class="st">"крок 2"</span>)
+    <span class="kw">yield</span> <span class="nm">2</span>          <span class="cm"># ← зупинка, повертає 2</span>
+    <span class="bi">print</span>(<span class="st">"крок 3"</span>)
+    <span class="kw">yield</span> <span class="nm">3</span>
+
+g = simple_gen()  <span class="cm"># нічого не виконалось!</span>
+<span class="bi">next</span>(g)  <span class="cm"># → "крок 1" → 1</span>
+<span class="bi">next</span>(g)  <span class="cm"># → "крок 2" → 2</span>
+<span class="bi">next</span>(g)  <span class="cm"># → "крок 3" → 3</span>
+<span class="bi">next</span>(g)  <span class="cm"># → StopIteration!</span></pre>
+      <div class="tip">Генераторна функція при виклику повертає об'єкт-генератор, але не виконує жодного коду! Код запускається лише при next().</div>
+    </div>
+    <div class="card">
+      <p class="ct">yield — пауза та передача значення</p>
+      <pre><span class="kw">def</span> <span class="fn">infinite_counter</span>(start=<span class="nm">0</span>):
+    <span class="cm">"""Нескінченна послідовність — О(1) пам'яті"""</span>
+    n = start
+    <span class="kw">while True</span>:
+        <span class="kw">yield</span> n
+        n += <span class="nm">1</span>
+
+<span class="kw">import</span> itertools
+<span class="kw">for</span> i, val <span class="kw">in</span> <span class="bi">zip</span>(
+    <span class="bi">range</span>(<span class="nm">5</span>),
+    infinite_counter(<span class="nm">10</span>)
+):
+    <span class="bi">print</span>(val)  <span class="cm"># 10, 11, 12, 13, 14</span>
+
+<span class="cm"># yield from — делегування</span>
+<span class="kw">def</span> <span class="fn">chain_gen</span>(*iterables):
+    <span class="kw">for</span> it <span class="kw">in</span> iterables:
+        <span class="kw">yield from</span> it   <span class="cm"># як for x in it: yield x</span>
+
+<span class="bi">list</span>(chain_gen([<span class="nm">1</span>,<span class="nm">2</span>], [<span class="nm">3</span>,<span class="nm">4</span>]))  <span class="cm"># [1, 2, 3, 4]</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">return у генераторі</p>
+      <pre><span class="kw">def</span> <span class="fn">gen_with_return</span>():
+    <span class="kw">yield</span> <span class="nm">1</span>
+    <span class="kw">yield</span> <span class="nm">2</span>
+    <span class="kw">return</span> <span class="st">"готово"</span>  <span class="cm"># стає value StopIteration</span>
+
+g = gen_with_return()
+<span class="bi">next</span>(g)  <span class="cm"># → 1</span>
+<span class="bi">next</span>(g)  <span class="cm"># → 2</span>
+<span class="kw">try</span>:
+    <span class="bi">next</span>(g)
+<span class="kw">except</span> <span class="bi">StopIteration</span> <span class="kw">as</span> e:
+    <span class="bi">print</span>(e.value)  <span class="cm"># → "готово"</span>
+
+<span class="cm"># yield from захоплює return value:</span>
+<span class="kw">def</span> <span class="fn">delegator</span>():
+    result = <span class="kw">yield from</span> gen_with_return()
+    <span class="bi">print</span>(<span class="st">f"результат: {result}"</span>)  <span class="cm"># "готово"</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">send(), throw(), close() — двостороннє спілкування</p>
+      <pre><span class="kw">def</span> <span class="fn">accumulator</span>():
+    total = <span class="nm">0</span>
+    <span class="kw">while True</span>:
+        value = <span class="kw">yield</span> total   <span class="cm"># ← yield повертає sent</span>
+        <span class="kw">if</span> value <span class="kw">is None</span>:
+            <span class="kw">break</span>
+        total += value
+
+g = accumulator()
+<span class="bi">next</span>(g)       <span class="cm"># → 0  (треба "прокрутити" до yield)</span>
+g.send(<span class="nm">10</span>)   <span class="cm"># → 10</span>
+g.send(<span class="nm">5</span>)    <span class="cm"># → 15</span>
+g.send(<span class="nm">3</span>)    <span class="cm"># → 18</span>
+
+<span class="cm"># throw() — кинути виключення в генератор</span>
+<span class="kw">def</span> <span class="fn">safe_gen</span>():
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> <span class="nm">1</span>
+    <span class="kw">except</span> <span class="bi">ValueError</span>:
+        <span class="bi">print</span>(<span class="st">"Перехоплено!"</span>)
+        <span class="kw">yield</span> <span class="nm">-1</span>
+
+g = safe_gen()
+<span class="bi">next</span>(g)               <span class="cm"># → 1</span>
+g.throw(<span class="bi">ValueError</span>)   <span class="cm"># → "Перехоплено!" → -1</span>
+
+<span class="cm"># close() — завершити генератор (GeneratorExit)</span>
+g.close()</pre>
+    </div>
+    <div class="card">
+      <p class="ct">Ланцюгування генераторів — pipeline</p>
+      <pre><span class="kw">def</span> <span class="fn">read_lines</span>(path):
+    <span class="kw">with</span> <span class="bi">open</span>(path) <span class="kw">as</span> f:
+        <span class="kw">yield from</span> f
+
+<span class="kw">def</span> <span class="fn">strip_comments</span>(lines):
+    <span class="kw">for</span> line <span class="kw">in</span> lines:
+        <span class="kw">if not</span> line.startswith(<span class="st">'#'</span>):
+            <span class="kw">yield</span> line.strip()
+
+<span class="kw">def</span> <span class="fn">parse_ints</span>(lines):
+    <span class="kw">for</span> line <span class="kw">in</span> lines:
+        <span class="kw">if</span> line.isdigit():
+            <span class="kw">yield int</span>(line)
+
+<span class="cm"># Весь pipeline — O(1) пам'яті!</span>
+lines   = read_lines(<span class="st">'data.txt'</span>)
+clean   = strip_comments(lines)
+numbers = parse_ints(clean)
+
+total = <span class="bi">sum</span>(numbers)  <span class="cm"># обробляє по 1 рядку</span></pre>
+      <div class="good">Генераторні pipeline — ідеальний патерн для ETL, обробки логів, потокових даних. Жодного рядка в пам'яті до обробки.</div>
+    </div>
+    <div class="card">
+      <p class="ct">Генератор зі станом — coroutine-стиль</p>
+      <pre><span class="kw">def</span> <span class="fn">running_average</span>():
+    <span class="cm">"""Обчислює середнє наростаючим підсумком"""</span>
+    total = <span class="nm">0.0</span>
+    count = <span class="nm">0</span>
+    avg   = <span class="nm">None</span>
+    <span class="kw">while True</span>:
+        value = <span class="kw">yield</span> avg
+        <span class="kw">if</span> value <span class="kw">is None</span>:
+            <span class="kw">return</span>
+        total += value
+        count += <span class="nm">1</span>
+        avg = total / count
+
+ra = running_average()
+<span class="bi">next</span>(ra)       <span class="cm"># ініціалізація → None</span>
+ra.send(<span class="nm">10</span>)   <span class="cm"># → 10.0</span>
+ra.send(<span class="nm">20</span>)   <span class="cm"># → 15.0</span>
+ra.send(<span class="nm">30</span>)   <span class="cm"># → 20.0</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="genexpr">
+  <p class="stitle">Генераторний вираз (Generator expression)</p>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">Синтаксис та різниця від list comprehension</p>
+      <pre><span class="cm"># List comprehension — список у пам'яті</span>
+squares_list = [x*x <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1000000</span>)]
+<span class="cm"># → 8 МБ у пам'яті одразу</span>
+
+<span class="cm"># Generator expression — лінивий</span>
+squares_gen  = (x*x <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">1000000</span>))
+<span class="cm"># → ~200 байт, обчислює по одному</span>
+
+<span class="bi">type</span>(squares_list)  <span class="cm"># list</span>
+<span class="bi">type</span>(squares_gen)   <span class="cm"># generator</span>
+
+<span class="cm"># Умова у виразі</span>
+evens = (x <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">20</span>) <span class="kw">if</span> x % <span class="nm">2</span> == <span class="nm">0</span>)
+
+<span class="cm"># Вкладені цикли</span>
+pairs = (
+    (x, y)
+    <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">3</span>)
+    <span class="kw">for</span> y <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">3</span>)
+    <span class="kw">if</span> x != y
+)</pre>
+    </div>
+    <div class="card">
+      <p class="ct">Коли list, коли generator?</p>
+      <pre><span class="cm"># Використовуй list [] коли:</span>
+data = [x*x <span class="kw">for</span> x <span class="kw">in</span> items]  <span class="cm"># потрібен len()</span>
+data = [x*x <span class="kw">for</span> x <span class="kw">in</span> items]  <span class="cm"># потрібен data[0]</span>
+data = [x*x <span class="kw">for</span> x <span class="kw">in</span> items]  <span class="cm"># обходиш кілька разів</span>
+data = [x*x <span class="kw">for</span> x <span class="kw">in</span> items]  <span class="cm"># потрібне сортування</span>
+
+<span class="cm"># Використовуй genexpr () коли:</span>
+total = <span class="bi">sum</span>(x*x <span class="kw">for</span> x <span class="kw">in</span> items)
+<span class="kw">if</span> <span class="bi">any</span>(x > <span class="nm">100</span> <span class="kw">for</span> x <span class="kw">in</span> items): ...  <span class="cm"># ранній вихід!</span>
+result = <span class="bi">max</span>(f(x) <span class="kw">for</span> x <span class="kw">in</span> big_dataset)
+<span class="kw">for</span> item <span class="kw">in</span> (process(x) <span class="kw">for</span> x <span class="kw">in</span> data): ...</pre>
+      <div class="tip">В sum(), min(), max(), any(), all() — завжди генераторний вираз. Можна опустити зайві дужки: sum(x*x for x in items).</div>
+    </div>
+    <div class="card">
+      <p class="ct">Небезпека пізнього зв'язування (late binding)</p>
+      <pre><span class="cm"># ПАСТКА! Closure-змінна</span>
+funcs = [<span class="kw">lambda</span>: x <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">3</span>)]
+[f() <span class="kw">for</span> f <span class="kw">in</span> funcs]  <span class="cm"># → [2, 2, 2] !</span>
+
+<span class="cm"># Теж пастка — genexpr з зовнішньою змінною</span>
+multiplier = <span class="nm">2</span>
+gen = (x * multiplier <span class="kw">for</span> x <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">5</span>))
+multiplier = <span class="nm">10</span>          <span class="cm"># змінили після створення</span>
+<span class="bi">list</span>(gen)  <span class="cm"># → [0, 10, 20, 30, 40] ← вже 10!</span>
+
+<span class="cm"># Але! Ітерований вираз обчислюється одразу:</span>
+data = <span class="bi">range</span>(<span class="nm">5</span>)
+gen = (x <span class="kw">for</span> x <span class="kw">in</span> data)  <span class="cm"># data фіксується тут</span>
+data = <span class="bi">range</span>(<span class="nm">100</span>)         <span class="cm"># не вплине на gen</span></pre>
+      <div class="danger">Ітерований об'єкт (після in) обчислюється при створенні генераторного виразу. Всі інші частини — ліниво при ітерації!</div>
+    </div>
+    <div class="card">
+      <p class="ct">Dict, set comprehensions та вкладені</p>
+      <pre><span class="cm"># Dict comprehension</span>
+word_len = {w: <span class="bi">len</span>(w) <span class="kw">for</span> w <span class="kw">in</span> [<span class="st">"hi"</span>, <span class="st">"hello"</span>]}
+<span class="cm"># → {'hi': 2, 'hello': 5}</span>
+
+<span class="cm"># Інвертувати словник</span>
+inv = {v: k <span class="kw">for</span> k, v <span class="kw">in</span> d.items()}
+
+<span class="cm"># Set comprehension</span>
+unique_lens = {<span class="bi">len</span>(w) <span class="kw">for</span> w <span class="kw">in</span> words}
+
+<span class="cm"># Вкладені comprehensions (матриця)</span>
+matrix = [[<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>],[<span class="nm">4</span>,<span class="nm">5</span>,<span class="nm">6</span>],[<span class="nm">7</span>,<span class="nm">8</span>,<span class="nm">9</span>]]
+flat = [x <span class="kw">for</span> row <span class="kw">in</span> matrix <span class="kw">for</span> x <span class="kw">in</span> row]
+<span class="cm"># [1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+
+transposed = [
+    [row[i] <span class="kw">for</span> row <span class="kw">in</span> matrix]
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">3</span>)
+]</pre>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="advanced">
+  <p class="stitle">Просунуте — itertools та патерни</p>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">itertools — арсенал ітерацій</p>
+      <pre><span class="kw">import</span> itertools <span class="kw">as</span> it
+
+<span class="cm"># Нескінченні</span>
+it.count(<span class="nm">10</span>, <span class="nm">2</span>)       <span class="cm"># 10, 12, 14, ...</span>
+it.cycle([<span class="st">'A'</span>,<span class="st">'B'</span>])   <span class="cm"># A, B, A, B, ...</span>
+it.repeat(<span class="nm">42</span>, <span class="nm">3</span>)       <span class="cm"># 42, 42, 42</span>
+
+<span class="cm"># Комбінаторні</span>
+it.product(<span class="st">'AB'</span>, <span class="bi">repeat</span>=<span class="nm">2</span>)    <span class="cm"># AA AB BA BB</span>
+it.permutations([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>], <span class="nm">2</span>)   <span class="cm"># (1,2)(1,3)...</span>
+it.combinations([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>], <span class="nm">2</span>)   <span class="cm"># (1,2)(1,3)(2,3)</span>
+
+<span class="cm"># Корисні</span>
+it.chain([<span class="nm">1</span>,<span class="nm">2</span>], [<span class="nm">3</span>,<span class="nm">4</span>])        <span class="cm"># 1 2 3 4</span>
+it.chain.from_iterable([[<span class="nm">1</span>],[<span class="nm">2</span>]])  <span class="cm"># 1 2</span>
+it.islice(gen, <span class="nm">5</span>, <span class="nm">10</span>)          <span class="cm"># зріз генератора!</span>
+it.takewhile(<span class="kw">lambda</span> x: x<<span class="nm">5</span>, nums)
+it.dropwhile(<span class="kw">lambda</span> x: x<<span class="nm">5</span>, nums)
+it.filterfalse(<span class="kw">lambda</span> x: x%<span class="nm">2</span>, nums)
+it.starmap(<span class="bi">pow</span>, [(2,3),(3,2)])  <span class="cm"># 8 9</span>
+it.accumulate([<span class="nm">1</span>,<span class="nm">2</span>,<span class="nm">3</span>])         <span class="cm"># 1 3 6</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">itertools.groupby — групування</p>
+      <pre><span class="kw">from</span> itertools <span class="kw">import</span> groupby
+
+data = [
+    {<span class="st">"dept"</span>: <span class="st">"dev"</span>,  <span class="st">"name"</span>: <span class="st">"Alice"</span>},
+    {<span class="st">"dept"</span>: <span class="st">"dev"</span>,  <span class="st">"name"</span>: <span class="st">"Bob"</span>},
+    {<span class="st">"dept"</span>: <span class="st">"qa"</span>,   <span class="st">"name"</span>: <span class="st">"Eve"</span>},
+]
+<span class="cm"># ВАЖЛИВО: дані мають бути відсортовані!</span>
+data.sort(key=<span class="kw">lambda</span> x: x[<span class="st">"dept"</span>])
+
+<span class="kw">for</span> dept, members <span class="kw">in</span> groupby(
+    data, key=<span class="kw">lambda</span> x: x[<span class="st">"dept"</span>]
+):
+    names = [m[<span class="st">"name"</span>] <span class="kw">for</span> m <span class="kw">in</span> members]
+    <span class="bi">print</span>(<span class="st">f"{dept}: {names}"</span>)
+<span class="cm"># dev: ['Alice', 'Bob']</span>
+<span class="cm"># qa: ['Eve']</span></pre>
+      <div class="warn">groupby НЕ накопичує! members — це ітератор. Після наступної ітерації по групах він вичерпується. Одразу роби list().</div>
+    </div>
+    <div class="card">
+      <p class="ct">zip, zip_longest, enumerate</p>
+      <pre><span class="cm"># zip — зупиняється на найкоротшому</span>
+names  = [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Eve"</span>]
+scores = [<span class="nm">90</span>, <span class="nm">85</span>]
+<span class="bi">list</span>(<span class="bi">zip</span>(names, scores))
+<span class="cm"># [('Alice', 90), ('Bob', 85)]</span>
+
+<span class="cm"># zip_longest — доповнює fillvalue</span>
+<span class="kw">from</span> itertools <span class="kw">import</span> zip_longest
+<span class="bi">list</span>(zip_longest(names, scores, fillvalue=<span class="nm">0</span>))
+<span class="cm"># [('Alice',90), ('Bob',85), ('Eve',0)]</span>
+
+<span class="cm"># enumerate — індекс + значення</span>
+<span class="kw">for</span> i, name <span class="kw">in</span> <span class="bi">enumerate</span>(names, start=<span class="nm">1</span>):
+    <span class="bi">print</span>(<span class="st">f"{i}. {name}"</span>)
+<span class="cm"># 1. Alice  2. Bob  3. Eve</span>
+
+<span class="cm"># Розпакування zip (transpose)</span>
+pairs = [(<span class="nm">1</span>, <span class="st">'a'</span>), (<span class="nm">2</span>, <span class="st">'b'</span>), (<span class="nm">3</span>, <span class="st">'c'</span>)]
+nums, chars = <span class="bi">zip</span>(*pairs)</pre>
+    </div>
+    <div class="card">
+      <p class="ct">Рекурсивний генератор — обхід дерева</p>
+      <pre><span class="kw">def</span> <span class="fn">flatten</span>(nested):
+    <span class="cm">"""Розгорнути довільно вкладену структуру"""</span>
+    <span class="kw">for</span> item <span class="kw">in</span> nested:
+        <span class="kw">if isinstance</span>(item, (<span class="bi">list</span>, <span class="bi">tuple</span>)):
+            <span class="kw">yield from</span> flatten(item)
+        <span class="kw">else</span>:
+            <span class="kw">yield</span> item
+
+data = [<span class="nm">1</span>, [<span class="nm">2</span>, [<span class="nm">3</span>, <span class="nm">4</span>], <span class="nm">5</span>], [<span class="nm">6</span>, [<span class="nm">7</span>]]]
+<span class="bi">list</span>(flatten(data))  <span class="cm"># [1, 2, 3, 4, 5, 6, 7]</span>
+
+<span class="cm"># Обхід дерева (BFS)</span>
+<span class="kw">def</span> <span class="fn">bfs</span>(root):
+    queue = [root]
+    <span class="kw">while</span> queue:
+        node = queue.pop(<span class="nm">0</span>)
+        <span class="kw">yield</span> node.value
+        queue.extend(node.children)</pre>
+    </div>
+    <div class="card">
+      <p class="ct">tee — розгалуження генератора</p>
+      <pre><span class="kw">from</span> itertools <span class="kw">import</span> tee
+
+<span class="kw">def</span> <span class="fn">expensive_gen</span>():
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="bi">range</span>(<span class="nm">10</span>):
+        <span class="bi">print</span>(<span class="st">f"генерую {i}"</span>)
+        <span class="kw">yield</span> i
+
+<span class="cm"># tee — клонує генератор на N незалежних</span>
+gen1, gen2, gen3 = tee(expensive_gen(), <span class="nm">3</span>)
+
+<span class="bi">next</span>(gen1)  <span class="cm"># "генерую 0" → 0</span>
+<span class="bi">next</span>(gen1)  <span class="cm"># "генерую 1" → 1</span>
+<span class="bi">next</span>(gen2)  <span class="cm"># (з кешу)   → 0</span>
+<span class="bi">next</span>(gen3)  <span class="cm"># (з кешу)   → 0</span></pre>
+      <div class="warn">tee кешує значення в пам'яті. Якщо один ітератор далеко попереду — витрати памʼяті ростуть. Для великих даних краще дублювати джерело.</div>
+    </div>
+    <div class="card">
+      <p class="ct">Ефективний пошук з генератором</p>
+      <pre><span class="cm"># next() зі значенням за замовчуванням</span>
+numbers = [<span class="nm">1</span>, <span class="nm">3</span>, <span class="nm">5</span>, <span class="nm">7</span>, <span class="nm">8</span>, <span class="nm">10</span>]
+
+first_even = <span class="bi">next</span>(
+    (x <span class="kw">for</span> x <span class="kw">in</span> numbers <span class="kw">if</span> x % <span class="nm">2</span> == <span class="nm">0</span>),
+    <span class="kw">None</span>              <span class="cm"># ← default якщо не знайдено</span>
+)
+<span class="cm"># → 8  (ранній вихід! не перебирає всі)</span>
+
+<span class="cm"># any/all теж з раннім виходом!</span>
+<span class="bi">any</span>(x > <span class="nm">100</span> <span class="kw">for</span> x <span class="kw">in</span> numbers)  <span class="cm"># False (пройде всі)</span>
+<span class="bi">all</span>(x >  <span class="nm">0</span> <span class="kw">for</span> x <span class="kw">in</span> numbers)   <span class="cm"># True</span>
+
+<span class="cm"># Перевірка без зайвих обчислень</span>
+<span class="kw">if</span> <span class="bi">any</span>(is_prime(x) <span class="kw">for</span> x <span class="kw">in</span> big_list):
+    ...  <span class="cm"># зупиниться на першому простому!</span></pre>
+    </div>
+  </div>
+</div>
+
+<div class="sec" id="context">
+  <p class="stitle">Контекстні менеджери (Context Managers)</p>
+  <div class="grid g2">
+    <div class="card">
+      <p class="ct">Протокол контекстного менеджера</p>
+      <p class="exp">Два методи: <span class="cmd">__enter__</span> (setup) та <span class="cmd">__exit__</span> (teardown). Гарантований cleanup навіть при виключенні.</p>
+      <pre><span class="kw">class</span> <span class="fn">Timer</span>:
+    <span class="kw">import</span> time
+    <span class="kw">def</span> <span class="fn">__enter__</span>(self):
+        self.start = <span class="bi">__import__</span>(<span class="st">'time'</span>).time()
+        <span class="kw">return</span> self   <span class="cm"># ← значення в "as"</span>
+
+    <span class="kw">def</span> <span class="fn">__exit__</span>(self, exc_type, exc_val, tb):
+        self.elapsed = (
+            <span class="bi">__import__</span>(<span class="st">'time'</span>).time() - self.start
+        )
+        <span class="bi">print</span>(<span class="st">f"Пройшло: {self.elapsed:.3f}с"</span>)
+        <span class="kw">return False</span>  <span class="cm"># False = не пригнічувати</span>
+                      <span class="cm"># виключення</span>
+
+<span class="kw">with</span> Timer() <span class="kw">as</span> t:
+    do_heavy_work()
+<span class="cm"># Пройшло: 1.234с</span>
+<span class="cm"># t.elapsed → 1.234</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">__exit__ — обробка виключень</p>
+      <pre><span class="kw">class</span> <span class="fn">Suppress</span>:
+    <span class="cm">"""Пригнічує вказані виключення"""</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, *exceptions):
+        self.exceptions = exceptions
+
+    <span class="kw">def</span> <span class="fn">__enter__</span>(self):
+        <span class="kw">return</span> self
+
+    <span class="kw">def</span> <span class="fn">__exit__</span>(self, exc_type, exc_val, tb):
+        <span class="cm"># True → пригнітити виключення</span>
+        <span class="cm"># False/None → пропустити далі</span>
+        <span class="kw">if</span> exc_type <span class="kw">and</span> <span class="bi">issubclass</span>(
+            exc_type, self.exceptions
+        ):
+            self.exception = exc_val
+            <span class="kw">return True</span>   <span class="cm"># поглинаємо!</span>
+        <span class="kw">return False</span>
+
+<span class="kw">with</span> Suppress(<span class="bi">FileNotFoundError</span>):
+    data = <span class="bi">open</span>(<span class="st">"maybe.txt"</span>).read()
+<span class="cm"># Продовжує без помилки</span>
+
+<span class="cm"># Є в stdlib: contextlib.suppress</span>
+<span class="kw">from</span> contextlib <span class="kw">import</span> suppress
+<span class="kw">with</span> suppress(<span class="bi">FileNotFoundError</span>): ...</pre>
+    </div>
+    <div class="card">
+      <p class="ct">@contextmanager — через генератор</p>
+      <pre><span class="kw">from</span> contextlib <span class="kw">import</span> contextmanager
+
+<span class="dc">@contextmanager</span>
+<span class="kw">def</span> <span class="fn">managed_db</span>(url):
+    conn = connect(url)      <span class="cm"># __enter__</span>
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> conn           <span class="cm"># ← тут виконується with</span>
+    <span class="kw">except</span> <span class="bi">Exception</span>:
+        conn.rollback()      <span class="cm"># обробка помилки</span>
+        <span class="kw">raise</span>
+    <span class="kw">finally</span>:
+        conn.close()         <span class="cm"># __exit__ завжди</span>
+
+<span class="kw">with</span> managed_db(<span class="st">"sqlite:///test.db"</span>) <span class="kw">as</span> db:
+    db.execute(<span class="st">"INSERT INTO ..."</span>)
+    <span class="cm"># При будь-якій помилці — rollback + close</span></pre>
+      <div class="tip">@contextmanager — найчистіший спосіб. yield повинен бути рівно один. finally гарантує cleanup.</div>
+    </div>
+    <div class="card">
+      <p class="ct">contextlib — готові утиліти</p>
+      <pre><span class="kw">from</span> contextlib <span class="kw">import</span> (
+    contextmanager,
+    suppress,
+    redirect_stdout,
+    redirect_stderr,
+    ExitStack,
+    nullcontext,
+    closing,
+    asynccontextmanager
+)
+
+<span class="cm"># redirect_stdout — перенаправити виведення</span>
+<span class="kw">import</span> io
+buf = io.StringIO()
+<span class="kw">with</span> redirect_stdout(buf):
+    <span class="bi">print</span>(<span class="st">"це в буфер"</span>)
+output = buf.getvalue()  <span class="cm"># → "це в буфер\n"</span>
+
+<span class="cm"># nullcontext — no-op менеджер</span>
+cm = managed_db(<span class="st">"..."</span>) <span class="kw">if</span> use_db <span class="kw">else</span> nullcontext()
+<span class="kw">with</span> cm: ...
+
+<span class="cm"># closing — для об'єктів з close() але без CM</span>
+<span class="kw">from</span> urllib.request <span class="kw">import</span> urlopen
+<span class="kw">with</span> closing(urlopen(<span class="st">"https://..."</span>)) <span class="kw">as</span> resp:
+    data = resp.read()</pre>
+    </div>
+    <div class="card">
+      <p class="ct">ExitStack — динамічна кількість менеджерів</p>
+      <pre><span class="kw">from</span> contextlib <span class="kw">import</span> ExitStack
+
+<span class="cm"># Відкрити динамічну кількість файлів</span>
+filenames = [<span class="st">"a.txt"</span>, <span class="st">"b.txt"</span>, <span class="st">"c.txt"</span>]
+
+<span class="kw">with</span> ExitStack() <span class="kw">as</span> stack:
+    files = [
+        stack.enter_context(<span class="bi">open</span>(f))
+        <span class="kw">for</span> f <span class="kw">in</span> filenames
+    ]
+    <span class="cm"># Всі файли відкриті</span>
+    data = [f.read() <span class="kw">for</span> f <span class="kw">in</span> files]
+<span class="cm"># Всі файли закриті після блоку</span>
+
+<span class="cm"># Умовний контекстний менеджер</span>
+<span class="kw">with</span> ExitStack() <span class="kw">as</span> stack:
+    <span class="kw">if</span> enable_logging:
+        stack.enter_context(capture_logs())
+    <span class="kw">if</span> use_transaction:
+        stack.enter_context(transaction())</pre>
+    </div>
+    <div class="card">
+      <p class="ct">Async контекстний менеджер</p>
+      <pre><span class="kw">from</span> contextlib <span class="kw">import</span> asynccontextmanager
+<span class="kw">import</span> asyncio
+
+<span class="dc">@asynccontextmanager</span>
+<span class="kw">async def</span> <span class="fn">async_db</span>(url):
+    conn = <span class="kw">await</span> async_connect(url)
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> conn
+    <span class="kw">finally</span>:
+        <span class="kw">await</span> conn.close()
+
+<span class="kw">async def</span> <span class="fn">main</span>():
+    <span class="kw">async with</span> async_db(<span class="st">"..."</span>) <span class="kw">as</span> db:
+        result = <span class="kw">await</span> db.fetch(<span class="st">"SELECT 1"</span>)
+
+<span class="cm"># Власний клас для async CM:</span>
+<span class="kw">class</span> <span class="fn">AsyncConn</span>:
+    <span class="kw">async def</span> <span class="fn">__aenter__</span>(self):
+        <span class="kw">await</span> self.connect()
+        <span class="kw">return</span> self
+    <span class="kw">async def</span> <span class="fn">__aexit__</span>(self, *args):
+        <span class="kw">await</span> self.close()</pre>
+    </div>
+    <div class="card">
+      <p class="ct">Реєнтерабельні та вкладені менеджери</p>
+      <pre><span class="cm"># Вкладені with — два стилі</span>
+<span class="cm"># Старий:</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">'a'</span>) <span class="kw">as</span> a:
+    <span class="kw">with</span> <span class="bi">open</span>(<span class="st">'b'</span>) <span class="kw">as</span> b:
+        ...
+
+<span class="cm"># Новий (Python 3.1+):</span>
+<span class="kw">with</span> <span class="bi">open</span>(<span class="st">'a'</span>) <span class="kw">as</span> a, <span class="bi">open</span>(<span class="st">'b'</span>) <span class="kw">as</span> b:
+    ...
+
+<span class="cm"># Python 3.10+ — дужки для кількох рядків:</span>
+<span class="kw">with</span> (
+    <span class="bi">open</span>(<span class="st">'a'</span>) <span class="kw">as</span> a,
+    <span class="bi">open</span>(<span class="st">'b'</span>) <span class="kw">as</span> b,
+    <span class="bi">open</span>(<span class="st">'c'</span>) <span class="kw">as</span> c,
+):
+    ...
+
+<span class="cm"># Повторне використання (reentrant)</span>
+<span class="kw">from</span> contextlib <span class="kw">import</span> redirect_stdout
+<span class="kw">import</span> io
+cm = redirect_stdout(io.StringIO())
+<span class="kw">with</span> cm: <span class="kw">with</span> cm: ...  <span class="cm"># ок для reentrant CM</span></pre>
+    </div>
+    <div class="card">
+      <p class="ct">Патерн: декоратор + контекстний менеджер</p>
+      <pre><span class="dc">@contextmanager</span>
+<span class="kw">def</span> <span class="fn">transaction</span>(session):
+    <span class="kw">try</span>:
+        <span class="kw">yield</span> session
+        session.commit()
+    <span class="kw">except</span>:
+        session.rollback()
+        <span class="kw">raise</span>
+
+<span class="cm"># Використання і як CM і як декоратор</span>
+<span class="dc">@transaction</span>(session)   <span class="cm"># ← як декоратор!</span>
+<span class="kw">def</span> <span class="fn">create_user</span>(name):
+    session.add(User(name=name))
+
+<span class="kw">with</span> transaction(session) <span class="kw">as</span> s:  <span class="cm"># ← як CM</span>
+    s.add(User(name=<span class="st">"Alice"</span>))</pre>
+      <div class="tip">contextmanager декоратор автоматично підтримує і with і @ використання — один код для двох патернів.</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+function show(id, cls) {
+  document.querySelectorAll('.sec').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nb').forEach(b => {
+    b.classList.remove('on','on-teal','on-purple','on-amber','on-coral','on-blue');
+  });
+  document.getElementById(id).classList.add('active');
+  event.target.classList.add(cls);
+}
+document.querySelector('.nb').classList.add('on');
+</script>
